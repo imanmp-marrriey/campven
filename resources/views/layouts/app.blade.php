@@ -6,6 +6,7 @@
     <title>@yield('title', 'Campven - Your Campus, Organized')</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    @stack('styles')
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
     <style>
         /* ===== GLOBAL STYLES ===== */
@@ -98,6 +99,69 @@
             background-color: #1D4ED8 !important;
             transform: translateY(-1px);
             box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3) !important;
+        }
+
+        /* ===== CARD HOVER EFFECTS ===== */
+        .event-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease !important;
+            will-change: transform;
+        }
+        .event-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.12) !important;
+            border-color: #C7D2FE !important;
+        }
+        .event-card .card-img-wrapper {
+            overflow: hidden;
+            height: 180px;
+            position: relative;
+        }
+        .event-card .card-img {
+            transition: transform 0.5s ease;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .event-card:hover .card-img {
+            transform: scale(1.05);
+        }
+
+        .category-card {
+            transition: all 0.3s ease !important;
+            will-change: transform;
+        }
+        .category-card:hover {
+            transform: translateY(-8px) !important;
+            box-shadow: 0 15px 35px rgba(108,99,255,0.15) !important;
+            border-color: #C7D2FE !important;
+        }
+
+        /* ===== SWIPER CUSTOM ===== */
+        .featured-swiper {
+            padding-bottom: 3.5rem !important;
+            padding-left: 0.25rem;
+            padding-right: 0.25rem;
+        }
+        .featured-swiper .swiper-pagination-bullet {
+            background: #6C63FF;
+            opacity: 0.4;
+        }
+        .featured-swiper .swiper-pagination-bullet-active {
+            opacity: 1;
+        }
+        .featured-swiper .swiper-button-next,
+        .featured-swiper .swiper-button-prev {
+            color: #6C63FF;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .featured-swiper .swiper-button-next::after,
+        .featured-swiper .swiper-button-prev::after {
+            font-size: 1rem;
+            font-weight: 700;
         }
     </style>
 </head>
@@ -221,5 +285,7 @@
             });
         });
     </script>
+
+    @stack('scripts')
 </body>
 </html>
