@@ -1,259 +1,178 @@
 @extends('layouts.app')
 
-@section('title', 'Profil - Campven')
+@section('title', 'Profil Akun - Campven')
 
 @section('content')
-<style>
-    .profile-wrapper {
-        display: grid;
-        grid-template-columns: 280px 1fr;
-        gap: 2rem;
-    }
-    .profile-card {
-        background: white;
-        border-radius: 16px;
-        border: 1px solid #E5E7EB;
-        padding: 2rem;
-        text-align: center;
-        position: sticky;
-        top: 80px;
-    }
-    .profile-card .avatar-placeholder {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #334155, #475569);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin: 0 auto 1rem;
-        border: 4px solid #E5E7EB;
-    }
-    .profile-card .avatar-img {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin: 0 auto 1rem;
-        border: 4px solid #E5E7EB;
-        display: block;
-    }
-    .profile-card h2 { font-size: 1.2rem; font-weight: 700; margin: 0.3rem 0; }
-    .profile-card .role-badge {
-        display: inline-block;
-        padding: 0.2rem 0.8rem;
-        border-radius: 50px;
-        font-size: 0.7rem;
-        font-weight: 600;
-    }
-    .profile-card .stats {
-        display: flex;
-        justify-content: center;
-        gap: 1.5rem;
-        margin: 1rem 0 0;
-        padding-top: 1rem;
-        border-top: 1px solid #E5E7EB;
-    }
-    .profile-card .stats .stat { text-align: center; }
-    .profile-card .stats .stat .number { font-size: 1.2rem; font-weight: 700; }
-    .profile-card .stats .stat .label { font-size: 0.7rem; color: #6B7280; }
+<!-- ===== TOP MODERN STICKY NAVBAR ===== -->
+<nav class="sticky top-0 z-50 glass-nav transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-20">
+            <!-- Brand Logo -->
+            <a href="{{ $back_url ?? route('home') }}" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-slate-900 to-slate-700 flex items-center justify-center text-white font-extrabold text-xl shadow-md shadow-slate-900/10 group-hover:scale-105 transition-transform duration-300">
+                    <i class="fas fa-cubes text-sm"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold text-slate-900 tracking-tight">Camp<span class="text-indigo-600">ven</span></span>
+                    <span class="block text-[10px] font-semibold text-slate-400 tracking-wider uppercase -mt-1">Campus Events</span>
+                </div>
+            </a>
 
-    .profile-form {
-        background: white;
-        border-radius: 16px;
-        border: 1px solid #E5E7EB;
-        padding: 2rem;
-    }
-    .profile-form h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 1.2rem; }
-    .profile-form h3 i { color: #334155; margin-right: 8px; }
-
-    .form-group { margin-bottom: 1rem; }
-    .form-group label { display: block; font-weight: 600; font-size: 0.85rem; color: #374151; margin-bottom: 0.2rem; }
-    .form-group .input-wrapper { position: relative; }
-    .form-group .input-wrapper i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 14px; }
-    .form-group input, .form-group textarea {
-        width: 100%;
-        padding: 0.65rem 1rem 0.65rem 2.4rem;
-        border: 1.5px solid #E5E7EB;
-        border-radius: 10px;
-        font-family: 'Inter', sans-serif;
-        font-size: 0.9rem;
-        transition: all 0.2s;
-        background: #FFFFFF;
-        color: #1F2937;
-    }
-    .form-group textarea {
-        padding-left: 1rem;
-        min-height: 80px;
-        resize: vertical;
-    }
-    .form-group input:focus, .form-group textarea:focus {
-        outline: none;
-        border-color: #334155;
-        box-shadow: 0 0 0 3px rgba(51,65,85,0.1);
-    }
-    .form-group input:disabled {
-        background: #F9FAFB;
-        color: #6B7280;
-        cursor: not-allowed;
-    }
-    .form-group .hint { font-size: 0.7rem; color: #9CA3AF; margin-top: 0.2rem; }
-
-    .form-actions { display: flex; gap: 10px; margin-top: 1.2rem; }
-
-    @media (max-width: 768px) {
-        .navbar { padding: 0 1rem; height: 56px; }
-        .container { padding: 1rem; }
-        .profile-wrapper { grid-template-columns: 1fr; }
-        .profile-card { position: static; }
-        .form-actions { flex-direction: column; }
-        .form-actions .btn { justify-content: center; }
-    }
-</style>
-
-<!-- ===== NAVBAR ===== -->
-<nav style="background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #E5E7EB;position:sticky;top:0;z-index:100;">
-    <a href="{{ $back_url ?? route('home') }}" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
-        <div style="width:36px;height:36px;background:linear-gradient(135deg,#334155,#475569);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;">C</div>
-        <div><span style="font-size:20px;font-weight:800;color:#1F2937;">Camp<span style="color:#334155;">ven</span></span></div>
-    </a>
-    <div style="display:flex;align-items:center;gap:12px;">
-        <a href="{{ $back_url ?? route('home') }}" class="btn btn-outline btn-sm" style="padding:0.3rem 0.8rem;border-radius:50px;border:1.5px solid #D1D5DB;background:transparent;color:#6B7280;font-weight:600;font-size:0.75rem;text-decoration:none;">
-            <i class="fas fa-arrow-left"></i> Kembali
-        </a>
-        <form method="POST" action="{{ route('logout') }}" style="display:inline;">
-            @csrf
-            <button type="submit" class="btn btn-danger btn-sm" style="padding:0.3rem 0.8rem;border-radius:50px;border:none;font-weight:600;font-size:0.75rem;cursor:pointer;background:#EF4444;color:white;font-family:'Inter',sans-serif;">
-                <i class="fas fa-sign-out-alt"></i> Keluar
-            </button>
-        </form>
+            <!-- Right Action -->
+            <div class="flex items-center gap-3">
+                <a href="{{ $back_url ?? route('home') }}" class="inline-flex items-center gap-2 text-xs font-bold px-4 py-2.5 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 transition btn-spring">
+                    <i class="fas fa-arrow-left text-slate-400"></i>
+                    <span>Kembali</span>
+                </a>
+            </div>
+        </div>
     </div>
 </nav>
 
-<div class="container" style="padding:1.5rem 2rem;max-width:900px;margin:0 auto;">
-    <div class="profile-wrapper">
-
-        <!-- ===== PROFILE CARD ===== -->
-        <div class="profile-card">
-            @if($user->foto && Storage::disk('public')->exists($user->foto))
-                <img src="{{ Storage::url($user->foto) }}" alt="Foto Profil" class="avatar-img">
-            @else
-                <div class="avatar-placeholder">
-                    {{ strtoupper(substr($user->nama, 0, 1)) }}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+        <!-- Profile Summary Card (Left) -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm text-center md:sticky md:top-28">
+            <div class="relative w-28 h-28 mx-auto mb-4 group">
+                <div class="w-28 h-28 rounded-full overflow-hidden ring-4 ring-slate-100 shadow-md bg-slate-900 text-white flex items-center justify-center text-3xl font-extrabold">
+                    @if($user->foto && Storage::disk('public')->exists($user->foto))
+                        <img id="avatarPreview" src="{{ Storage::url($user->foto) }}" alt="Foto Profil" class="w-full h-full object-cover">
+                    @else
+                        <span id="avatarPlaceholder">{{ strtoupper(substr($user->nama, 0, 1)) }}</span>
+                        <img id="avatarPreview" src="" alt="Foto Profil" class="w-full h-full object-cover hidden">
+                    @endif
                 </div>
-            @endif
+            </div>
 
-            <h2>{{ $user->nama }}</h2>
-            <span class="role-badge" style="
-                @if($user->role == 'admin')
-                    background:#FEF3C7;color:#92400E;
-                @elseif($user->role == 'penyelenggara')
-                    background:#D1FAE5;color:#065F46;
+            <h2 class="text-lg font-extrabold text-slate-900 leading-snug">{{ $user->nama }}</h2>
+            <p class="text-xs text-slate-500 mb-3">{{ $user->email }}</p>
+
+            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 capitalize mb-6">
+                <i class="fas fa-shield-alt text-[10px]"></i>
+                {{ $user->role }}
+            </span>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-100">
+                <div class="p-3 rounded-2xl bg-slate-50">
+                    <div class="text-xl font-extrabold text-slate-900">{{ $joined_events_count ?? 0 }}</div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Event Diikuti</div>
+                </div>
+                @if(in_array($user->role, ['admin', 'penyelenggara']))
+                <div class="p-3 rounded-2xl bg-slate-50">
+                    <div class="text-xl font-extrabold text-slate-900">{{ $my_events_count ?? 0 }}</div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Event Dibuat</div>
+                </div>
                 @else
-                    background:#DBEAFE;color:#1E40AF;
+                <div class="p-3 rounded-2xl bg-slate-50">
+                    <div class="text-xl font-extrabold text-emerald-600"><i class="fas fa-check"></i></div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Akun Aktif</div>
+                </div>
                 @endif
-            ">{{ ucfirst($user->role) }}</span>
+            </div>
 
-            <div class="stats">
-                <div class="stat">
-                    <div class="number">{{ $my_events_count }}</div>
-                    <div class="label">Event Dibuat</div>
-                </div>
-                <div class="stat">
-                    <div class="number">{{ $joined_events_count }}</div>
-                    <div class="label">Event Diikuti</div>
-                </div>
+            <!-- Tombol Keluar dari Akun (Logout) -->
+            <div class="pt-6 mt-6 border-t border-slate-100">
+                <button type="button" onclick="openLogoutModal()" class="w-full py-3 px-4 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200/80 font-bold text-xs transition-all flex items-center justify-center gap-2 btn-spring shadow-2xs">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Keluar dari Akun</span>
+                </button>
             </div>
         </div>
 
-        <!-- ===== PROFILE FORM ===== -->
-        <div class="profile-form">
-            <h3><i class="fas fa-user-edit"></i> Edit Profil</h3>
+        <!-- Edit Form Card (Right 2 cols) -->
+        <div class="md:col-span-2 bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-sm">
+            <h3 class="text-xl font-extrabold text-slate-900 mb-2 flex items-center gap-2.5">
+                <i class="fas fa-user-edit text-indigo-600"></i>
+                <span>Pengaturan Profil</span>
+            </h3>
+            <p class="text-xs text-slate-500 mb-8 leading-relaxed">
+                Perbarui informasi identitas pribadi, nomor kontak, serta kata sandi akun Anda.
+            </p>
 
-            @if(session('success'))
-            <div class="notification success" style="padding:0.8rem 1.2rem;border-radius:10px;margin-bottom:1.2rem;display:flex;align-items:center;gap:10px;font-weight:500;font-size:0.9rem;background:#D1FAE5;color:#065F46;border-left:4px solid #10B981;">
-                <i class="fas fa-check-circle"></i> {{ session('success') }}
-                <button onclick="this.parentElement.remove()" style="margin-left:auto;cursor:pointer;background:none;border:none;font-size:16px;opacity:0.5;">&times;</button>
-            </div>
-            @endif
-            @if($errors->any())
-            <div class="notification error" style="padding:0.8rem 1.2rem;border-radius:10px;margin-bottom:1.2rem;display:flex;align-items:center;gap:10px;font-weight:500;font-size:0.9rem;background:#FEE2E2;color:#991B1B;border-left:4px solid #EF4444;">
-                <i class="fas fa-exclamation-circle"></i> {{ $errors->first() }}
-                <button onclick="this.parentElement.remove()" style="margin-left:auto;cursor:pointer;background:none;border:none;font-size:16px;opacity:0.5;">&times;</button>
-            </div>
-            @endif
-
-            <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-6">
                 @csrf
-                <div class="form-group">
-                    <label>Foto Profil</label>
-                    <input type="file" name="foto" accept="image/*" style="padding-left:1rem;">
-                    <div class="hint">Kosongkan jika tidak ingin mengubah foto. Format: JPG, PNG, GIF (Max: 2MB)</div>
-                </div>
 
-                <div class="form-group">
-                    <label>Nama Lengkap</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-user"></i>
-                        <input type="text" name="nama" value="{{ old('nama', $user->nama) }}" required>
+                <!-- Nama -->
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-slate-700">Nama Lengkap <span class="text-rose-500">*</span></label>
+                    <div class="relative">
+                        <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" name="nama" value="{{ old('nama', $user->nama) }}" required class="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-slate-900 focus:bg-white transition">
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Email</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" value="{{ $user->email }}" disabled>
+                <!-- Email (Readonly) -->
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-slate-700">Alamat Email (Akun)</label>
+                    <div class="relative">
+                        <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="email" value="{{ $user->email }}" readonly disabled class="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-100 border border-slate-200 text-xs sm:text-sm text-slate-500 cursor-not-allowed">
                     </div>
-                    <div class="hint">Email tidak dapat diubah</div>
+                    <span class="text-[11px] text-slate-400">Email akun tidak dapat diubah sembarangan.</span>
                 </div>
 
-                <div class="form-group">
-                    <label>No. Telepon</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-phone"></i>
-                        <input type="number" name="no_telp" value="{{ old('no_telp', $user->no_telp ?? '') }}" placeholder="08123456789">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Bio / Deskripsi Diri</label>
-                    <textarea name="bio" placeholder="Ceritakan sedikit tentang diri Anda...">{{ old('bio', $user->bio ?? '') }}</textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Password Baru <span style="color:#9CA3AF;font-weight:400;">(kosongkan jika tidak diubah)</span></label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" name="password" placeholder="Minimal 6 karakter">
+                <!-- No Telepon -->
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-slate-700">Nomor WhatsApp / Telepon</label>
+                    <div class="relative">
+                        <i class="fas fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" name="no_telp" value="{{ old('no_telp', $user->no_telp) }}" placeholder="Contoh: 08123456789" class="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-slate-900 focus:bg-white transition">
                     </div>
                 </div>
 
-                <div class="form-actions">
-                    <button type="submit" name="update_profile" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#334155;color:white;display:inline-flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;">
-                        <i class="fas fa-save"></i> Simpan Perubahan
+                <!-- Bio -->
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-slate-700">Bio Singkat</label>
+                    <textarea name="bio" rows="3" placeholder="Ceritakan jurusan, minat kegiatan, atau organisasi Anda..." class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-slate-900 focus:bg-white transition">{{ old('bio', $user->bio) }}</textarea>
+                </div>
+
+                <!-- Ganti Foto -->
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-slate-700">Unggah Foto Profil Baru</label>
+                    <input type="file" name="foto" id="fotoInput" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 file:cursor-pointer file:transition">
+                    <span class="text-[11px] text-slate-400 block">Maksimal 2MB (Format: JPG, PNG, GIF).</span>
+                </div>
+
+                <!-- Password Baru (Optional) -->
+                <div class="pt-4 border-t border-slate-100 space-y-1.5">
+                    <label class="block text-xs font-bold text-slate-700">Ganti Password (Opsional)</label>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="password" name="password" placeholder="Kosongkan jika tidak ingin mengubah password" class="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-slate-900 focus:bg-white transition">
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-slate-100 flex items-center justify-end gap-3">
+                    <button type="submit" class="px-8 py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm shadow-md shadow-slate-900/10 transition btn-spring">
+                        Simpan Perubahan
                     </button>
-                    <a href="{{ $back_url ?? route('home') }}" class="btn btn-outline" style="padding:0.5rem 1.2rem;border-radius:50px;border:1.5px solid #D1D5DB;background:transparent;color:#6B7280;font-weight:600;font-size:0.85rem;text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;">
-                        Batal
-                    </a>
                 </div>
             </form>
         </div>
-
     </div>
 </div>
-
-<script>
-    setTimeout(function() {
-        const notif = document.querySelector('.notification');
-        if (notif) {
-            notif.style.transition = 'opacity 0.5s';
-            notif.style.opacity = '0';
-            setTimeout(() => notif.remove(), 500);
-        }
-    }, 5000);
-</script>
 @endsection
+
+@push('scripts')
+<script>
+    const fotoInput = document.getElementById('fotoInput');
+    const avatarPreview = document.getElementById('avatarPreview');
+    const avatarPlaceholder = document.getElementById('avatarPlaceholder');
+
+    if (fotoInput) {
+        fotoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    avatarPreview.src = evt.target.result;
+                    avatarPreview.classList.remove('hidden');
+                    if (avatarPlaceholder) avatarPlaceholder.classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+</script>
+@endpush

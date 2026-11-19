@@ -15,37 +15,54 @@ class HomeController extends Controller
     {
         $search = $request->input('search');
         $kategori = $request->input('kategori');
+        $rentang = $request->input('rentang');
+        $lokasi_filter = $request->input('lokasi_filter');
         $is_logged_in = Auth::check();
         $user = Auth::user();
 
-        // Search
-        if ($search) {
-            $events = Event::with('creator')
-                ->where('nama_event', 'LIKE', "%{$search}%")
-                ->orWhere('kategori', 'LIKE', "%{$search}%")
-                ->orWhere('lokasi', 'LIKE', "%{$search}%")
-                ->orWhere('deskripsi', 'LIKE', "%{$search}%")
-                ->orderBy('tanggal', 'DESC')
-                ->get();
-        } else {
-            $events = Event::with('creator')
-                ->orderBy('tanggal', 'DESC')
-                ->limit(9)
-                ->get();
+        $query = Event::with('creator');
 
-            if ($kategori) {
-                $events = Event::with('creator')
-                    ->where('kategori', $kategori)
-                    ->orderBy('tanggal', 'DESC')
-                    ->get();
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_event', 'LIKE', "%{$search}%")
+                  ->orWhere('kategori', 'LIKE', "%{$search}%")
+                  ->orWhere('lokasi', 'LIKE', "%{$search}%")
+                  ->orWhere('deskripsi', 'LIKE', "%{$search}%");
+            });
+        }
+
+        if (!empty($kategori)) {
+            $query->where('kategori', $kategori);
+        }
+
+        if (!empty($lokasi_filter)) {
+            $query->where('lokasi', 'LIKE', "%{$lokasi_filter}%");
+        }
+
+        if (!empty($rentang)) {
+            if ($rentang === 'minggu_ini') {
+                $query->whereBetween('tanggal', [\Carbon\Carbon::now()->startOfWeek()->toDateString(), \Carbon\Carbon::now()->endOfWeek()->toDateString()]);
+            } elseif ($rentang === 'bulan_ini') {
+                $query->whereMonth('tanggal', date('m'))->whereYear('tanggal', date('Y'));
+            } elseif ($rentang === 'semester') {
+                $query->whereYear('tanggal', date('Y'));
             }
         }
+
+        $events = $query->orderBy('tanggal', 'DESC')->get();
 
         $featured_events = Event::with('creator')
             ->where('tanggal', '>=', date('Y-m-d'))
             ->orderBy('tanggal', 'ASC')
             ->limit(6)
             ->get();
+
+        if ($featured_events->isEmpty()) {
+            $featured_events = Event::with('creator')
+                ->orderBy('tanggal', 'DESC')
+                ->limit(6)
+                ->get();
+        }
 
         $categories = Category::all();
         $announcements = Announcement::orderBy('created_at', 'DESC')->limit(3)->get();
@@ -64,7 +81,9 @@ class HomeController extends Controller
             'is_logged_in',
             'user',
             'search',
-            'kategori'
+            'kategori',
+            'rentang',
+            'lokasi_filter'
         ));
     }
 
@@ -85,25 +104,27 @@ class HomeController extends Controller
             ->get();
 
         $status_counts = [
+            'all' => Participant::where('user_id', $user->id)->count(),
             'registered' => Participant::where('user_id', $user->id)->where('status', 'registered')->count(),
             'confirmed' => Participant::where('user_id', $user->id)->where('status', 'confirmed')->count(),
             'attended' => Participant::where('user_id', $user->id)->where('status', 'attended')->count(),
+            'canceled' => Participant::where('user_id', $user->id)->where('status', 'canceled')->count(),
         ];
 
         return view('mahasiswa.my-events', compact('my_events', 'status_counts'));
     }
 
-    public function cancelEvent($id)
+    public function cancelEvent(Request $request, $id)
     {
         $participant = Participant::where('event_id', $id)
             ->where('user_id', Auth::id())
             ->first();
 
         if ($participant && in_array($participant->status, ['registered', 'confirmed'])) {
-            $participant->delete();
-            return redirect()->route('my.events')->with('success', 'Berhasil membatalkan pendaftaran!');
+            $participant->update(['status' => 'canceled']);
+            return redirect()->route('my.events')->with('success', 'Berhasil membatalkan pendaftaran event!');
         }
 
-        return redirect()->route('my.events')->with('error', 'Gagal membatalkan pendaftaran!');
+        return redirect()->route('my.events')->with('error', 'Pendaftaran tidak dapat dibatalkan atau sudah diproses.');
     }
 }

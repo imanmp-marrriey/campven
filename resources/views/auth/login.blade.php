@@ -3,71 +3,125 @@
 @section('title', 'Masuk - Campven')
 
 @section('content')
-<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#F0F2F5;padding:1.5rem;">
-    <div style="display:flex;max-width:1000px;width:100%;background:#FFFFFF;border-radius:24px;overflow:hidden;box-shadow:0 25px 80px rgba(0,0,0,0.08);">
-        <div style="flex:1;padding:3rem 2.5rem;background:#FFFFFF;">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;">
-                <div style="width:40px;height:40px;background:linear-gradient(135deg,#334155,#475569);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:20px;font-weight:800;">C</div>
-                <div><h1 style="font-size:24px;font-weight:800;color:#1A1A2E;">Camp<span style="color:#334155;">ven</span></h1><p style="font-size:13px;color:#8A8A9E;margin-top:-2px;">Your Campus, Organized.</p></div>
-            </div>
-
-            <h3 style="font-size:1.4rem;font-weight:700;color:#1A1A2E;margin-bottom:0.2rem;">Selamat Datang Kembali</h3>
-            <p style="color:#8A8A9E;font-size:0.9rem;margin-bottom:1.5rem;">Masuk untuk melanjutkan ke dashboard Anda</p>
-
-            @if(session('success'))
-            <div style="background:#D1FAE5;color:#065F46;padding:0.7rem 1rem;border-radius:12px;margin-bottom:1rem;font-size:0.85rem;border-left:4px solid #10B981;">
-                {{ session('success') }}
-            </div>
-            @endif
-
-            @if($errors->any())
-            <div style="background:#FEE2E2;color:#DC2626;padding:0.7rem 1rem;border-radius:12px;margin-bottom:1rem;font-size:0.85rem;border-left:4px solid #DC2626;">
-                {{ $errors->first() }}
-            </div>
-            @endif
-
-            <form method="POST" action="{{ route('login') }}">
-                @csrf
-                <div style="margin-bottom:1rem;">
-                    <label style="display:block;font-weight:600;font-size:0.85rem;color:#1A1A2E;margin-bottom:0.2rem;">Alamat Email</label>
-                    <div style="position:relative;">
-                        <i class="fas fa-envelope" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#8A8A9E;font-size:15px;"></i>
-                        <input type="email" name="email" value="{{ old('email') }}" placeholder="contoh@email.com" required style="width:100%;padding:0.75rem 1rem 0.75rem 2.8rem;border:2px solid #EAEAEF;border-radius:12px;font-size:0.95rem;font-family:'Inter',sans-serif;background:#F8F9FA;transition:all 0.3s;">
+<div class="min-h-screen bg-slate-50/70 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+    <div class="max-w-4xl w-full bg-white rounded-3xl border border-slate-200/90 shadow-2xl overflow-hidden flex flex-col md:flex-row">
+        
+        <!-- Left: Form Column -->
+        <div class="flex-1 p-8 sm:p-12 flex flex-col justify-between">
+            <div>
+                <!-- Brand Logo -->
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-extrabold text-xl shadow-md shadow-indigo-600/20">
+                        <i class="fas fa-cubes text-sm"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-extrabold text-slate-900 tracking-tight">Camp<span class="text-indigo-600">ven</span></span>
+                        <span class="block text-[10px] font-semibold text-slate-400 tracking-wider -mt-1">Pusat Kegiatan Kampus</span>
                     </div>
                 </div>
-                <div style="margin-bottom:1rem;">
-                    <label style="display:block;font-weight:600;font-size:0.85rem;color:#1A1A2E;margin-bottom:0.2rem;">Password</label>
-                    <div style="position:relative;">
-                        <i class="fas fa-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#8A8A9E;font-size:15px;"></i>
-                        <input type="password" name="password" placeholder="Masukkan password" required style="width:100%;padding:0.75rem 1rem 0.75rem 2.8rem;border:2px solid #EAEAEF;border-radius:12px;font-size:0.95rem;font-family:'Inter',sans-serif;background:#F8F9FA;transition:all 0.3s;">
-                    </div>
-                </div>
-                <button type="submit" style="width:100%;padding:0.85rem;background:#334155;color:white;border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.3s;font-family:'Inter',sans-serif;margin-top:0.3rem;">
-                    <i class="fas fa-sign-in-alt"></i> Masuk
-                </button>
-            </form>
 
-            <div style="text-align:center;margin-top:1.2rem;padding-top:1rem;border-top:1px solid #EAEAEF;font-size:0.9rem;color:#8A8A9E;">
-                <span>Belum punya akun?</span><br>
-                <a href="{{ route('register') }}" style="display:inline-block;margin-top:0.5rem;padding:0.6rem 1.8rem;background:linear-gradient(135deg,#334155,#5A52D5);color:white;border-radius:50px;text-decoration:none;font-weight:600;font-size:0.9rem;transition:all 0.3s;">
-                    <i class="fas fa-user-plus"></i> Daftar Sekarang
+                <div class="mb-6">
+                    <h2 class="text-2xl font-black text-slate-900 tracking-tight">Selamat Datang Kembali 👋</h2>
+                    <p class="text-xs text-slate-500 mt-1">Masuk untuk mengakses tiket, jadwal seminar, dan sertifikat SKPI Anda.</p>
+                </div>
+
+                @if(session('success'))
+                <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs mb-5 flex items-center gap-2">
+                    <i class="fas fa-check-circle text-emerald-600"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+                @endif
+
+                @if(isset($errors) && $errors->any())
+                <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs mb-5 flex items-center gap-2">
+                    <i class="fas fa-exclamation-circle text-rose-600"></i>
+                    <span>{{ $errors->first() }}</span>
+                </div>
+                @endif
+
+                <form method="POST" action="{{ route('login') }}" class="space-y-4 text-xs">
+                    @csrf
+                    
+                    <div class="space-y-1.5">
+                        <label class="block font-bold text-slate-700">Alamat Email Mahasiswa / Akun</label>
+                        <div class="relative">
+                            <i class="far fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="email" name="email" value="{{ old('email') }}" required placeholder="nim@polindra.ac.id atau email Anda" class="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:bg-white focus:border-indigo-600 transition">
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <label class="block font-bold text-slate-700">Kata Sandi</label>
+                        </div>
+                        <div class="relative">
+                            <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="password" name="password" required placeholder="Masukkan kata sandi akun" class="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:bg-white focus:border-indigo-600 transition">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 px-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs sm:text-sm shadow-md shadow-indigo-600/20 transition btn-spring mt-2 flex items-center justify-center gap-2">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Masuk ke Akun</span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="pt-8 border-t border-slate-100 text-center text-xs text-slate-500 mt-6">
+                <span>Belum memiliki akun Campven?</span>
+                <a href="{{ route('register') }}" class="text-indigo-600 font-extrabold hover:underline ml-1">
+                    Daftar Akun Baru →
                 </a>
             </div>
         </div>
-        <div style="flex:1;background:linear-gradient(145deg,#334155,#1E293B);padding:3rem 2.5rem;display:flex;flex-direction:column;justify-content:center;color:white;position:relative;overflow:hidden;">
-            <div style="position:absolute;top:-40%;right:-30%;width:400px;height:400px;background:rgba(255,255,255,0.05);border-radius:50%;"></div>
-            <div style="position:absolute;bottom:-30%;left:-20%;width:300px;height:300px;background:rgba(255,255,255,0.04);border-radius:50%;"></div>
-            <div style="position:relative;z-index:1;">
-                <h2 style="font-size:2rem;font-weight:800;margin-bottom:0.5rem;">Kampus <span style="color:#FFE66D;">Terorganisir</span></h2>
-                <p style="opacity:0.85;font-size:0.95rem;line-height:1.7;max-width:360px;">Temukan, ikuti, dan kelola event kampus dalam satu platform yang terintegrasi.</p>
-                <div style="margin-top:1.5rem;">
-                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:0.6rem;font-size:0.9rem;opacity:0.9;"><i class="fas fa-calendar-check" style="width:28px;height:28px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;"></i> Temukan event terbaru</div>
-                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:0.6rem;font-size:0.9rem;opacity:0.9;"><i class="fas fa-users" style="width:28px;height:28px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;"></i> Ikuti event favorit</div>
-                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:0.6rem;font-size:0.9rem;opacity:0.9;"><i class="fas fa-bell" style="width:28px;height:28px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;"></i> Notifikasi real-time</div>
-                    <div style="display:flex;align-items:center;gap:12px;font-size:0.9rem;opacity:0.9;"><i class="fas fa-chart-line" style="width:28px;height:28px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;"></i> Pantau perkembangan</div>
+
+        <!-- Right: Decorative Visual Column -->
+        <div class="hidden md:flex flex-1 bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 p-10 flex-col justify-between text-white relative overflow-hidden">
+            <div class="absolute -top-20 -right-20 w-80 h-80 bg-indigo-600/30 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-purple-600/20 rounded-full blur-3xl"></div>
+
+            <div class="relative z-10">
+                <span class="px-3 py-1 rounded-full bg-white/10 text-[10px] font-bold tracking-wider uppercase backdrop-blur-md border border-white/10">
+                    Sistem Kemahasiswaan 2026
+                </span>
+            </div>
+
+            <div class="relative z-10 space-y-4 my-auto">
+                <h3 class="text-2xl font-black leading-tight text-white drop-shadow-sm">
+                    Aktivitas Kampus <br><span class="text-indigo-300">Lebih Tertata & Terhubung</span>
+                </h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Satu portal resmi untuk eksplorasi seminar, pendaftaran kepanitiaan, presensi tiket QR, dan penarikan poin SKPI terakreditasi.
+                </p>
+
+                <div class="space-y-2.5 pt-4">
+                    <div class="flex items-center gap-3 text-xs text-slate-200">
+                        <div class="w-7 h-7 rounded-xl bg-white/10 flex items-center justify-center text-emerald-400 text-xs">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <span>Tiket Digital QR Otomatis</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-xs text-slate-200">
+                        <div class="w-7 h-7 rounded-xl bg-white/10 flex items-center justify-center text-indigo-300 text-xs">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <span>Poin SKPI & Sertifikat Resmi</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-xs text-slate-200">
+                        <div class="w-7 h-7 rounded-xl bg-white/10 flex items-center justify-center text-purple-300 text-xs">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <span>Sistem Verifikasi Gerbang Real-time</span>
+                    </div>
                 </div>
             </div>
+
+            <div class="relative z-10 pt-4 text-[11px] text-slate-400 flex items-center justify-between">
+                <span>Politeknik Negeri Indramayu</span>
+                <span>Campven Platform v2.6</span>
+            </div>
         </div>
+
     </div>
 </div>
 @endsection

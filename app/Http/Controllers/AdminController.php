@@ -81,13 +81,19 @@ class AdminController extends Controller
             'kategori' => 'required|string|max:50',
             'tanggal' => 'required|date',
             'waktu_mulai' => 'nullable|date_format:H:i',
-            'waktu_selesai' => 'nullable|date_format:H:i',
+            'waktu_selesai' => 'nullable|date_format:H:i|after:waktu_mulai',
             'lokasi' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'kuota' => 'nullable|integer|min:1',
+            'harga' => 'nullable|integer|min:0',
+            'skpi_poin' => 'nullable|integer|min:0',
             'created_by' => 'nullable|exists:users,id',
             'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'waktu_selesai.after' => 'Waktu selesai harus setelah waktu mulai.',
         ]);
+
+        $validated['created_by'] = $validated['created_by'] ?: Auth::id();
 
         // Handle poster upload
         $poster = null;
@@ -108,26 +114,28 @@ class AdminController extends Controller
     }
 
     public function updateEvent(Request $request, $id)
-{
-    // Cek role - jika bukan admin, redirect
-    if (Auth::user()->role !== 'admin') {
-        abort(403, 'Unauthorized access.');
-    }
+    {
+        // Cek role - jika bukan admin, redirect
+        if (Auth::user()->role !== 'admin') {
+            abort(403, 'Unauthorized access.');
+        }
 
-    $event = Event::findOrFail($id);
+        $event = Event::findOrFail($id);
 
-    $validated = $request->validate([
-        'nama_event' => 'required|string|max:200',
-        'kategori' => 'required|string|max:50',
-        'tanggal' => 'required|date',
-        'waktu_mulai' => 'nullable|date_format:H:i',
-        'waktu_selesai' => 'nullable|date_format:H:i',
-        'lokasi' => 'required|string|max:255',
-        'deskripsi' => 'nullable|string',
-        'kuota' => 'nullable|integer|min:1',
-        'created_by' => 'nullable|exists:users,id',
-        'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-    ]);
+        $validated = $request->validate([
+            'nama_event' => 'required|string|max:200',
+            'kategori' => 'required|string|max:50',
+            'tanggal' => 'required|date',
+            'waktu_mulai' => 'nullable|date_format:H:i',
+            'waktu_selesai' => 'nullable|date_format:H:i',
+            'lokasi' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
+            'kuota' => 'nullable|integer|min:1',
+            'harga' => 'nullable|integer|min:0',
+            'skpi_poin' => 'nullable|integer|min:0',
+            'created_by' => 'nullable|exists:users,id',
+            'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
     // Handle poster upload
     if ($request->hasFile('poster') && $request->file('poster')->isValid()) {

@@ -1,873 +1,513 @@
 @extends('layouts.app')
 
-@section('title', 'Campven - Your Campus, Organized')
+@section('title', 'Campven - Platform Kegiatan Kampus Terpadu')
 
 @push('styles')
-<link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-<style>
-    /* ===== NAVBAR ===== */
-    .navbar {
-        background: rgba(255,255,255,0.92);
-        backdrop-filter: blur(12px);
-        padding: 0 2rem;
-        height: 72px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border-bottom: 1px solid var(--gray-200);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-    }
-    .navbar-brand {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        text-decoration: none;
-    }
-    .navbar-logo {
-        width: 38px;
-        height: 38px;
-        background: linear-gradient(135deg, var(--primary), var(--primary-light));
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 18px;
-        font-weight: 800;
-    }
-    .navbar-title {
-        font-size: 22px;
-        font-weight: 800;
-        color: var(--gray-900);
-    }
-    .nav-links {
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-        list-style: none;
-    }
-    .nav-link {
-        text-decoration: none;
-        color: var(--gray-500);
-        font-weight: 500;
-        font-size: 0.9rem;
-        transition: color 0.2s;
-    }
-    .nav-link:hover { color: var(--primary); }
-    .nav-actions {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-    .avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary), var(--primary-light));
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
-        font-size: 14px;
-        text-decoration: none;
-        transition: all 0.2s;
-    }
-    .avatar:hover { transform: scale(1.05); }
-    .logout-btn {
-        background: transparent;
-        border: 1.5px solid var(--gray-300);
-        padding: 0.3rem 0.8rem;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 0.75rem;
-        cursor: pointer;
-        color: var(--gray-500);
-        font-family: 'Inter', sans-serif;
-        transition: all 0.2s;
-    }
-    .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
-    .menu-toggle {
-        display: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: var(--gray-500);
-        background: none;
-        border: none;
-    }
-
-    /* ===== HERO ===== */
-    .hero {
-        padding: 4rem 2rem 3rem;
-        background: linear-gradient(135deg, var(--primary), #1E293B);
-        color: white;
-        position: relative;
-        overflow: hidden;
-    }
-    .hero::before,
-    .hero::after {
-        content: '';
-        position: absolute;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.05);
-    }
-    .hero::before { top: -30%; right: -10%; width: 500px; height: 500px; }
-    .hero::after { bottom: -20%; left: -5%; width: 300px; height: 300px; background: rgba(255,255,255,0.03); }
-    .hero-grid {
-        max-width: 1280px;
-        margin: 0 auto;
-        position: relative;
-        z-index: 1;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 3rem;
-        align-items: center;
-    }
-    .hero-title { font-size: 3.2rem; font-weight: 900; line-height: 1.1; }
-    .hero-title span { color: #FFE66D; }
-    .hero-subtitle {
-        font-size: 1.1rem;
-        opacity: 0.85;
-        margin: 1rem 0 1.5rem;
-        max-width: 460px;
-        line-height: 1.7;
-    }
-    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-    .btn-white {
-        background: white;
-        color: var(--primary);
-        padding: 0.5rem 1.2rem;
-        border-radius: 50px;
-        font-weight: 600;
-        text-decoration: none;
-    }
-    .btn-ghost {
-        border: 1.5px solid rgba(255,255,255,0.3);
-        color: white;
-        background: transparent;
-        padding: 0.5rem 1.2rem;
-        border-radius: 50px;
-        font-weight: 600;
-        text-decoration: none;
-    }
-    .hero-stats { display: flex; gap: 2.5rem; margin-top: 2rem; }
-    .hero-stat-value { font-size: 2rem; font-weight: 800; }
-    .hero-stat-label { font-size: 0.85rem; opacity: 0.7; }
-    .hero-card {
-        background: rgba(255,255,255,0.08);
-        border-radius: 16px;
-        padding: 2rem;
-        text-align: center;
-        backdrop-filter: blur(4px);
-        border: 1px solid rgba(255,255,255,0.1);
-    }
-    .hero-card-icon { font-size: 4rem; color: #FFE66D; margin-bottom: 1rem; display: block; }
-    .hero-card h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
-    .hero-card p { opacity: 0.7; font-size: 0.9rem; }
-    .hero-card-tags {
-        margin-top: 1rem;
-        display: flex;
-        gap: 0.5rem;
-        justify-content: center;
-        font-size: 0.7rem;
-        opacity: 0.7;
-        flex-wrap: wrap;
-    }
-
-    /* ===== SEARCH BAR ===== */
-    .search-wrapper {
-        max-width: 1280px;
-        margin: -1.5rem auto 0;
-        padding: 0 2rem;
-        position: relative;
-        z-index: 2;
-    }
-    .search-form {
-        background: white;
-        border-radius: 16px;
-        padding: 0.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        border: 1px solid rgba(255,255,255,0.2);
-        backdrop-filter: blur(4px);
-    }
-    .search-icon { padding: 0 0.5rem 0 1rem; color: var(--gray-400); }
-    .search-input {
-        flex: 1;
-        border: none;
-        padding: 0.8rem 0.5rem;
-        font-size: 1rem;
-        font-family: 'Inter', sans-serif;
-        outline: none;
-        color: var(--gray-800);
-        background: transparent;
-    }
-    .search-clear {
-        padding: 0.5rem 1rem;
-        background: transparent;
-        color: var(--gray-400);
-        border: none;
-        cursor: pointer;
-        font-size: 1.1rem;
-        text-decoration: none;
-    }
-    .search-submit {
-        padding: 0.7rem 1.8rem;
-        background: var(--primary);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        cursor: pointer;
-        font-family: 'Inter', sans-serif;
-        white-space: nowrap;
-        transition: background 0.2s;
-    }
-    .search-submit:hover { background: var(--primary-dark); }
-
-    /* ===== SECTIONS ===== */
-    .section { padding: 3rem 0; }
-    .section-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-    .section-title { font-size: 1.8rem; font-weight: 800; color: var(--gray-800); }
-    .section-title i { color: var(--primary); margin-right: 8px; }
-    .section-link { color: var(--primary); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
-
-    /* ===== EVENT CARDS ===== */
-    .card-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1.5rem;
-    }
-    .event-card {
-        text-decoration: none;
-        color: inherit;
-    }
-    .card-fallback {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-    .card-fallback i { font-size: 3rem; }
-    .card-fallback span { font-size: 0.8rem; opacity: 0.8; }
-    .card-badge {
-        position: absolute;
-        bottom: 12px;
-        right: 12px;
-        background: rgba(0,0,0,0.6);
-        backdrop-filter: blur(4px);
-        padding: 0.2rem 0.8rem;
-        border-radius: 50px;
-        font-size: 0.65rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        color: white;
-    }
-    .card-body { padding: 1rem 1.2rem; }
-    .card-title {
-        font-size: 1rem;
-        font-weight: 700;
-        margin-bottom: 0.3rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-    .card-meta {
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-        font-size: 0.8rem;
-        color: var(--gray-500);
-    }
-    .card-meta i { width: 16px; color: var(--primary); }
-    .card-footer {
-        padding: 0.8rem 1.2rem;
-        border-top: 1px solid var(--gray-100);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.8rem;
-        color: var(--gray-500);
-    }
-    .card-footer i { color: var(--primary); }
-
-    /* ===== CATEGORY CARDS ===== */
-    .category-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 1rem;
-    }
-    .category-card {
-        background: #FFFFFF;
-        border: 1px solid var(--gray-200);
-        border-radius: 16px;
-        padding: 1.2rem 0.8rem;
-        text-align: center;
-        transition: all 0.2s;
-        text-decoration: none;
-        color: var(--gray-700);
-    }
-    .category-card i { font-size: 1.8rem; margin-bottom: 0.3rem; display: block; }
-    .category-card-name { font-weight: 600; font-size: 0.85rem; }
-    .category-card-count { font-size: 0.7rem; color: var(--gray-400); }
-
-    /* ===== EMPTY STATE ===== */
-    .empty-state {
-        text-align: center;
-        padding: 4rem 2rem;
-        background: #FFFFFF;
-        border-radius: 16px;
-        border: 1px solid var(--gray-200);
-    }
-    .empty-state i { font-size: 3rem; color: var(--gray-300); margin-bottom: 1rem; }
-    .empty-state h3 { font-size: 1.2rem; color: var(--gray-500); }
-    .empty-state p { color: var(--gray-400); }
-    .empty-state a { color: var(--primary); text-decoration: none; font-weight: 500; }
-
-    /* ===== ANNOUNCEMENTS ===== */
-    .announcement-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1.2rem;
-    }
-    .announcement-card {
-        background: #FFFFFF;
-        border-radius: 16px;
-        padding: 1.5rem;
-        border: 1px solid var(--gray-200);
-        transition: all 0.2s;
-        display: flex;
-        flex-direction: column;
-    }
-    .announcement-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 15px 35px rgba(51,65,85,0.1);
-        border-color: #C7D2FE;
-    }
-    .announcement-header {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 0.8rem;
-    }
-    .announcement-icon {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, var(--primary), var(--primary-light));
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1rem;
-        flex-shrink: 0;
-    }
-    .announcement-title { font-weight: 700; font-size: 1.05rem; line-height: 1.3; }
-    .announcement-excerpt { color: var(--gray-500); font-size: 0.9rem; line-height: 1.7; flex: 1; }
-    .announcement-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 1rem;
-        padding-top: 0.8rem;
-        border-top: 1px solid var(--gray-100);
-    }
-    .announcement-date { font-size: 0.75rem; color: var(--gray-400); }
-    .announcement-more { color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.8rem; }
-    .announcement-full {
-        display: none;
-        color: var(--gray-500);
-        font-size: 0.9rem;
-        line-height: 1.7;
-        margin-top: 0.8rem;
-        padding-top: 0.8rem;
-        border-top: 1px solid var(--gray-100);
-    }
-
-    /* ===== ABOUT ===== */
-    .about-box {
-        background: var(--gray-50);
-        border-radius: 16px;
-        padding: 2.5rem;
-        text-align: center;
-    }
-    .about-box h2 { font-size: 1.8rem; font-weight: 800; }
-    .about-box h2 span { color: var(--primary); }
-    .about-desc {
-        color: var(--gray-500);
-        font-size: 1.05rem;
-        line-height: 1.8;
-        max-width: 700px;
-        margin: 0.5rem auto 0;
-    }
-    .about-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 1.5rem;
-        margin-top: 2rem;
-        text-align: left;
-    }
-    .about-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 16px;
-        border: 1px solid var(--gray-200);
-    }
-    .about-card i { color: var(--primary); font-size: 1.5rem; }
-    .about-card h4 { margin: 0.5rem 0 0.2rem; }
-    .about-card p { font-size: 0.85rem; color: var(--gray-500); }
-
-    /* ===== FOOTER ===== */
-    .footer {
-        background: var(--gray-900);
-        color: white;
-        padding: 3rem 2rem 1.5rem;
-        margin-top: 2rem;
-    }
-    .footer-grid {
-        max-width: 1280px;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr;
-        gap: 2rem;
-    }
-    .footer h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.8rem; }
-    .footer p { opacity: 0.7; font-size: 0.9rem; line-height: 1.7; }
-    .footer ul { list-style: none; }
-    .footer li { margin-bottom: 0.4rem; }
-    .footer a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
-    .footer a:hover { color: white; }
-    .footer-bottom {
-        max-width: 1280px;
-        margin: 2rem auto 0;
-        padding-top: 1.5rem;
-        border-top: 1px solid rgba(255,255,255,0.1);
-        text-align: center;
-        font-size: 0.85rem;
-        opacity: 0.6;
-    }
-
-    /* ===== GLOBAL LINK ===== */
-    a { text-decoration: none; }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 768px) {
-        .nav-links {
-            display: none;
-            flex-direction: column;
-            position: absolute;
-            top: 72px;
-            left: 0;
-            right: 0;
-            background: white;
-            padding: 1rem 2rem;
-            border-bottom: 1px solid var(--gray-200);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-        }
-        .nav-links.open { display: flex; }
-        .menu-toggle { display: block; }
-        .hero { padding: 3rem 1rem 2.5rem; }
-        .hero-grid { grid-template-columns: 1fr; gap: 2rem; }
-        .hero-title { font-size: 2.2rem; }
-        .hero-stats { gap: 1.5rem; }
-        .search-wrapper { padding: 0 1rem; }
-        .footer-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-    }
-</style>
 @endpush
 
 @section('content')
-<!-- ===== NAVBAR ===== -->
-<nav class="navbar">
-    <a href="{{ route('home') }}" class="navbar-brand">
-        <div class="navbar-logo">C</div>
-        <div><span class="navbar-title">Camp<span style="color:var(--primary);">ven</span></span></div>
-    </a>
-    <ul class="nav-links" id="navLinks">
-        <li><a href="#events" class="nav-link">Event</a></li>
-        <li><a href="#categories" class="nav-link">Kategori</a></li>
-        <li><a href="#about" class="nav-link">Tentang</a></li>
-        @if($is_logged_in && $user->role === 'admin')
-        <li><a href="{{ route('admin.dashboard') }}" class="nav-link">Dashboard</a></li>
-        @elseif($is_logged_in && $user->role === 'penyelenggara')
-        <li><a href="{{ route('organizer.dashboard') }}" class="nav-link">Dashboard</a></li>
-        @endif
-    </ul>
-    <div class="nav-actions">
-        @if($is_logged_in)
-            @if($user->role === 'mahasiswa')
-            <a href="{{ route('my.events') }}" class="btn btn-outline btn-sm"><i class="fas fa-star"></i> My Events</a>
-            @endif
-            <a href="{{ route('profile') }}" class="avatar" style="padding:0;overflow:hidden;">
-                @if($user->foto && Storage::disk('public')->exists($user->foto))
-                    <img src="{{ Storage::url($user->foto) }}" alt="Foto Profil" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
-                @else
-                    {{ strtoupper(substr($user->nama, 0, 1)) }}
-                @endif
+<!-- ===== TOP OFFICIAL SUB-HEADER ===== -->
+<div class="bg-slate-900 text-white text-[11px] font-semibold py-2 px-4 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div class="flex items-center gap-3">
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold text-[10px] uppercase tracking-wider border border-indigo-500/30">
+                <i class="fas fa-university text-[9px]"></i> PORTAL RESMI KEMAHASISWAAN
+            </span>
+            <span class="text-slate-300 hidden sm:inline">• Semester Genap 2025/2026</span>
+            <span class="text-slate-300 hidden md:inline">• <i class="fas fa-certificate text-emerald-400 mr-1"></i> SKPI Terintegrasi</span>
+        </div>
+        <div class="flex items-center gap-4 text-slate-300 text-[10px] sm:text-[11px]">
+            <span><i class="fas fa-clock text-indigo-400 mr-1"></i> Sinkronisasi: Baru saja</span>
+            <span class="text-slate-600">|</span>
+            <a href="#announcements" class="text-indigo-300 hover:text-white transition">Pemberitahuan Resmi</a>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MAIN NAVBAR ===== -->
+<nav class="sticky top-0 z-50 glass-nav transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-20">
+            <!-- Brand Logo -->
+            <a href="{{ route('home') }}" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-extrabold text-xl shadow-md shadow-indigo-600/20 group-hover:scale-105 transition-transform duration-300">
+                    <i class="fas fa-cubes text-sm"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold text-slate-900 tracking-tight">Camp<span class="text-indigo-600">ven</span></span>
+                    <span class="block text-[10px] font-semibold text-slate-400 tracking-wider -mt-1">Platform Kegiatan Kampus</span>
+                </div>
             </a>
-            <form method="POST" action="{{ route('logout') }}" style="display:inline;">
-                @csrf
-                <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
-            </form>
-        @else
-            <a href="{{ route('login') }}" class="btn btn-outline btn-sm">Masuk</a>
-            <a href="{{ route('register') }}" class="btn btn-primary btn-sm">Daftar</a>
-        @endif
-        <button class="menu-toggle" onclick="toggleMobileMenu()" aria-label="Menu">
-            <i class="fas fa-bars"></i>
-        </button>
+
+            <!-- Search Quick Trigger (⌘K) -->
+            <div class="hidden lg:flex items-center gap-2 bg-slate-100/80 border border-slate-200/80 rounded-full px-4 py-2 w-72 text-slate-400 text-xs">
+                <i class="fas fa-search text-slate-400"></i>
+                <input type="text" placeholder="Cari kegiatan kampus..." class="bg-transparent text-slate-700 w-full focus:outline-none placeholder-slate-400 text-xs" onfocus="document.getElementById('mainSearchInput').scrollIntoView({behavior: 'smooth'})">
+                <kbd class="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-bold text-slate-500 shadow-2xs">⌘K</kbd>
+            </div>
+
+            <!-- Desktop Nav Links -->
+            <div class="hidden md:flex items-center gap-1.5 bg-slate-100/70 p-1 rounded-full border border-slate-200/60">
+                <a href="{{ route('home') }}" class="px-4 py-1.5 rounded-full text-xs font-bold bg-indigo-600 text-white shadow-sm transition">
+                    Jelajahi Event
+                </a>
+                <a href="#categories" class="px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-600 hover:text-slate-900 transition">
+                    Kategori
+                </a>
+                <a href="#announcements" class="px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-600 hover:text-slate-900 transition">
+                    Pengumuman
+                </a>
+                @if($is_logged_in && $user->role === 'mahasiswa')
+                <a href="{{ route('my.events') }}" class="px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-600 hover:text-slate-900 transition">
+                    Tiket Saya
+                </a>
+                @endif
+                <a href="{{ $is_logged_in && $user->role === 'penyelenggara' ? route('organizer.dashboard') : ($is_logged_in && $user->role === 'admin' ? route('admin.dashboard') : route('login')) }}" class="px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-600 hover:text-indigo-600 transition">
+                    Portal Penyelenggara
+                </a>
+            </div>
+
+            <!-- Right Profile / Action -->
+            <div class="flex items-center gap-3">
+                <button type="button" class="relative w-9 h-9 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center text-sm transition" title="Notifikasi">
+                    <i class="far fa-bell"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white"></span>
+                </button>
+
+                @if($is_logged_in)
+                    <div class="relative group">
+                        <a href="{{ route('profile') }}" class="flex items-center gap-2.5 p-1 rounded-full border border-slate-200 bg-white hover:bg-slate-50 transition shadow-2xs">
+                            <div class="w-8 h-8 rounded-full overflow-hidden bg-slate-800 text-white flex items-center justify-center font-bold text-xs">
+                                @if($user->foto && Storage::disk('public')->exists($user->foto))
+                                    <img src="{{ Storage::url($user->foto) }}" alt="Foto" class="w-full h-full object-cover">
+                                @else
+                                    {{ strtoupper(substr($user->nama, 0, 1)) }}
+                                @endif
+                            </div>
+                            <div class="hidden sm:block text-left pr-2">
+                                <span class="block text-xs font-bold text-slate-900 leading-none truncate max-w-[100px]">{{ $user->nama }}</span>
+                                <span class="text-[10px] font-medium text-slate-400 capitalize">{{ $user->role }}</span>
+                            </div>
+                        </a>
+                    </div>
+                @else
+                    <a href="{{ route('login') }}" class="text-xs font-bold text-slate-700 hover:text-slate-900 px-3 py-2 transition">
+                        Masuk
+                    </a>
+                    <a href="{{ route('register') }}" class="text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2.5 rounded-full shadow-md shadow-indigo-600/20 transition btn-spring">
+                        Daftar Akun
+                    </a>
+                @endif
+            </div>
+        </div>
     </div>
 </nav>
 
-<!-- ===== HERO ===== -->
-<section class="hero">
-    <div class="hero-grid">
-        <div>
-            <h1 class="hero-title">Your Campus, <span>Organized.</span></h1>
-            <p class="hero-subtitle">Temukan, ikuti, dan kelola event kampus dalam satu platform. Dari seminar hingga lomba, semua ada di Campven.</p>
-            <div class="hero-actions">
-                @if($is_logged_in)
-                    <a href="#events" class="btn-white"><i class="fas fa-calendar-alt"></i> Lihat Event</a>
-                    @if($user->role === 'mahasiswa')
-                    <a href="{{ route('my.events') }}" class="btn-ghost"><i class="fas fa-star"></i> Event Saya</a>
+<!-- ===== HERO DISCOVERY SECTION ===== -->
+<section class="pt-12 pb-16 bg-gradient-to-b from-white via-slate-50 to-slate-100/70 border-b border-slate-200/70">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <!-- Floating Pill Badge -->
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-slate-200/80 text-slate-700 text-xs font-bold mb-6 shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Portal Resmi Kegiatan Mahasiswa Berbobot SKPI</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15] max-w-4xl mx-auto">
+            Temukan, Ikuti, dan Rasakan <span class="text-indigo-600">Kehidupan Kampus.</span>
+        </h1>
+        <p class="mt-4 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
+            Platform resmi manajemen dan registrasi kegiatan kampus, seminar nasional, kompetisi, dan workshop mahasiswa dengan validasi sertifikat instan.
+        </p>
+            Platform resmi manajemen dan registrasi kegiatan kampus, seminar nasional, kompetisi, dan workshop mahasiswa dengan validasi sertifikat instan.
+        </p>
+
+        <!-- 4-Segment Floating Search Bar -->
+        <div class="mt-8 max-w-4xl mx-auto">
+            <form method="GET" action="{{ route('home') }}" class="bg-white p-2 sm:p-2.5 rounded-3xl shadow-xl shadow-slate-200/80 border border-slate-200 flex flex-col md:flex-row items-center gap-2">
+                <!-- Segment 1: Keyword Search -->
+                <div class="flex items-center gap-3 px-4 py-2 w-full md:w-2/5">
+                    <i class="fas fa-search text-slate-400 text-sm"></i>
+                    <input type="text" 
+                           id="mainSearchInput"
+                           name="search" 
+                           value="{{ $search ?? '' }}" 
+                           placeholder="Cari nama event, pembicara, topik..." 
+                           class="w-full bg-transparent text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none">
+                    @if(!empty($search))
+                    <a href="{{ route('home') }}" class="text-slate-400 hover:text-slate-600 p-1" title="Hapus">
+                        <i class="fas fa-times-circle text-xs"></i>
+                    </a>
                     @endif
-                @else
-                    <a href="{{ route('register') }}" class="btn-white"><i class="fas fa-user-plus"></i> Daftar Gratis</a>
-                @endif
+                </div>
+
+                <!-- Segment 2: Time Range Filter -->
+                <div class="hidden sm:flex items-center gap-2 px-3 py-2 w-full md:w-1/4 border-t md:border-t-0 md:border-l border-slate-200 text-xs text-slate-600">
+                    <i class="far fa-calendar-alt text-slate-400"></i>
+                    <select name="rentang" class="bg-transparent w-full text-xs text-slate-700 font-semibold focus:outline-none cursor-pointer">
+                        <option value="">Pilih Rentang Waktu</option>
+                        <option value="minggu_ini" {{ ($rentang ?? '') === 'minggu_ini' ? 'selected' : '' }}>Minggu Ini</option>
+                        <option value="bulan_ini" {{ ($rentang ?? '') === 'bulan_ini' ? 'selected' : '' }}>Bulan Ini</option>
+                        <option value="semester" {{ ($rentang ?? '') === 'semester' ? 'selected' : '' }}>Semester Ini</option>
+                    </select>
+                </div>
+
+                <!-- Segment 3: Location / Building Filter -->
+                <div class="hidden sm:flex items-center gap-2 px-3 py-2 w-full md:w-1/4 border-t md:border-t-0 md:border-l border-slate-200 text-xs text-slate-600">
+                    <i class="fas fa-map-marker-alt text-slate-400"></i>
+                    <select name="lokasi_filter" class="bg-transparent w-full text-xs text-slate-700 font-semibold focus:outline-none cursor-pointer">
+                        <option value="">Lokasi & Gedung</option>
+                        <option value="Auditorium" {{ ($lokasi_filter ?? '') === 'Auditorium' ? 'selected' : '' }}>Auditorium Utama</option>
+                        <option value="GSC" {{ ($lokasi_filter ?? '') === 'GSC' ? 'selected' : '' }}>Gedung GSC Polindra</option>
+                        <option value="Lab" {{ ($lokasi_filter ?? '') === 'Lab' ? 'selected' : '' }}>Lab Komputer / Multimedia</option>
+                        <option value="Aula" {{ ($lokasi_filter ?? '') === 'Aula' ? 'selected' : '' }}>Aula Utama</option>
+                        <option value="Online" {{ ($lokasi_filter ?? '') === 'Online' ? 'selected' : '' }}>Online / Zoom</option>
+                    </select>
+                </div>
+
+                <!-- Segment 4: Search Submit Button -->
+                <div class="w-full md:w-auto">
+                    <button type="submit" class="w-full md:w-auto px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition-all btn-spring flex items-center justify-center gap-2">
+                        <span>Cari Event</span>
+                        <i class="fas fa-arrow-right text-[10px]"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Category Pills Bar -->
+        <div class="mt-6 flex items-center justify-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+            <a href="{{ route('home') }}" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all {{ empty($kategori) ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' }}">
+                Semua
+            </a>
+            @foreach($categories as $cat)
+            @php $isActive = ($kategori === $cat->nama); @endphp
+            <a href="{{ route('home', ['kategori' => $cat->nama]) }}" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 flex-shrink-0 {{ $isActive ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' }}">
+                <i class="fas {{ $cat->icon ?? 'fa-tag' }} text-[11px]"></i>
+                <span>{{ $cat->nama }}</span>
+            </a>
+            @endforeach
+        </div>
+
+        <!-- Quick Info Ticker Bar -->
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs font-semibold text-slate-500 pt-6 border-t border-slate-200/80">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span><strong>{{ $total_events }}+ Events Terdaftar</strong> (Bulan ini)</span>
             </div>
-            <div class="hero-stats">
-                <div>
-                    <div class="hero-stat-value counter" data-counter="{{ $total_events }}">0</div>
-                    <div class="hero-stat-label">Total Event</div>
-                </div>
-                <div>
-                    <div class="hero-stat-value counter" data-counter="{{ $total_users }}">0</div>
-                    <div class="hero-stat-label">Pengguna Aktif</div>
-                </div>
-                <div>
-                    <div class="hero-stat-value counter" data-counter="{{ $total_participants }}">0</div>
-                    <div class="hero-stat-label">Peserta Terdaftar</div>
-                </div>
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                <span><strong>{{ $total_users }}+ Peserta</strong> (Aktif terverifikasi)</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+                <span><strong>32 UKM & Himpunan</strong> (Terakreditasi)</span>
+            </div>
+            <div class="flex items-center gap-2 hidden md:flex">
+                <i class="fas fa-sync-alt text-slate-400 text-[10px]"></i>
+                <span>Sistem sinkronisasi jadwal kampus terbaik</span>
             </div>
         </div>
-        <div>
-            <div class="hero-card">
-                <i class="fas fa-calendar-check hero-card-icon"></i>
-                <h3>Event Kampus Terpusat</h3>
-                <p>Semua event kampus dalam satu platform yang mudah diakses</p>
-                <div class="hero-card-tags">
-                    <span><i class="fas fa-check-circle"></i> Seminar</span>
-                    <span><i class="fas fa-check-circle"></i> Workshop</span>
-                    <span><i class="fas fa-check-circle"></i> Lomba</span>
+    </div>
+</section>
+
+<!-- ===== SOROTAN UNGGULAN KAMPUS (WIDE FEATURED CARDS) ===== -->
+@if(count($featured_events) > 0 && empty($search) && empty($kategori))
+<section class="py-12 bg-white border-b border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
+                    <span class="w-1.5 h-6 rounded-full bg-indigo-600 inline-block"></span>
+                    <span>Sorotan Unggulan Kampus</span>
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Kegiatan bergengsi dengan kuota terbatas dan poin SKPI maksimal.</p>
+            </div>
+        </div>
+
+        <!-- 2 Wide Featured Cards Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            @foreach($featured_events->take(2) as $fe)
+            @php
+                $sisa = $fe->sisaKuota();
+                $percent = $fe->persentaseTerisi();
+                $price = $fe->formattedHarga();
+            @endphp
+            <div class="bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 p-6 sm:p-7 flex flex-col justify-between relative overflow-hidden group">
+                <!-- Badges Header -->
+                <div>
+                    <div class="flex items-center gap-2 flex-wrap mb-4">
+                        <span class="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200">
+                            {{ $fe->kategori }}
+                        </span>
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+                            <i class="fas fa-check-circle text-[9px]"></i> Verified by {{ $fe->creator->nama ?? 'Penyelenggara Resmi' }}
+                        </span>
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1">
+                            <i class="fas fa-hourglass-half text-[9px]"></i> Mendatang
+                        </span>
+                    </div>
+
+                    <a href="{{ route('event.detail', $fe->id) }}" class="block group-hover:text-indigo-600 transition-colors">
+                        <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 leading-tight mb-2">
+                            {{ $fe->nama_event }}
+                        </h3>
+                    </a>
+
+                    <p class="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed mb-6">
+                        {{ $fe->deskripsi }}
+                    </p>
+
+                    <!-- Meta Badges 3 Columns -->
+                    <div class="grid grid-cols-3 gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100 text-xs mb-6">
+                        <div>
+                            <span class="block text-[10px] font-bold text-slate-400 uppercase">Waktu & Tanggal</span>
+                            <span class="font-extrabold text-slate-800 block truncate">{{ \Carbon\Carbon::parse($fe->tanggal)->format('d M Y') }}</span>
+                            <span class="text-[10px] text-slate-500">{{ \Carbon\Carbon::parse($fe->waktu_mulai)->format('H:i') ?? '09:00' }} WIB</span>
+                        </div>
+                        <div class="border-l border-slate-200 pl-3">
+                            <span class="block text-[10px] font-bold text-slate-400 uppercase">Tempat</span>
+                            <span class="font-extrabold text-slate-800 block truncate">{{ $fe->lokasi }}</span>
+                            <span class="text-[10px] text-slate-500">Kampus Utama</span>
+                        </div>
+                        <div class="border-l border-slate-200 pl-3">
+                            <span class="block text-[10px] font-bold text-slate-400 uppercase">Nilai Kredit</span>
+                            <span class="font-extrabold text-indigo-600 block">+10 SKPI Poin</span>
+                            <span class="text-[10px] text-slate-500">Sertifikat Digital</span>
+                        </div>
+                    </div>
+
+                    <!-- Quota Progress -->
+                    @if($fe->kuota)
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between text-xs font-bold mb-1.5">
+                            <span class="text-slate-600">Sisa Kuota: <strong class="text-rose-600">{{ $sisa }} Kursi</strong></span>
+                            <span class="text-indigo-600 font-extrabold">{{ $percent }}% Terisi</span>
+                        </div>
+                        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-indigo-500 to-indigo-700 rounded-full" style="width: {{ $percent }}%;"></div>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+
+                <!-- Price and CTA -->
+                <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+                    <div class="text-lg font-black {{ $price === 'GRATIS' ? 'text-emerald-600' : 'text-slate-900' }}">
+                        {{ $price }}
+                    </div>
+                    <a href="{{ route('event.detail', $fe->id) }}" class="px-6 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition-all btn-spring flex items-center gap-2">
+                        <span>Daftar Sekarang</span>
+                        <i class="fas fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
+<!-- ===== 2-COLUMN MAIN EVENT DISCOVERY SECTION ===== -->
+<section id="events" class="py-14 bg-slate-50/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Section Title & Sorter -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                    @if(!empty($search))
+                        Hasil Pencarian: "{{ $search }}"
+                    @elseif(!empty($kategori))
+                        Agenda Kampus: {{ $kategori }}
+                    @else
+                        Jelajahi Agenda Kampus
+                    @endif
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Menampilkan kegiatan terverifikasi dan terakreditasi kampus.</p>
+            </div>
+
+            <div class="flex items-center gap-2 self-start sm:self-center">
+                <span class="text-xs text-slate-400 font-semibold">Urutkan:</span>
+                <select class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer">
+                    <option>Paling Mendekati</option>
+                    <option>Kuota Terbanyak</option>
+                    <option>Paling Populer</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 2-Column Split (Left: 68%, Right: 32%) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Left Column: Event Grid (8 Cols) -->
+            <div class="lg:col-span-8 space-y-8">
+                @if(count($events) > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    @foreach($events as $event)
+                        @include('mahasiswa.partials.event-card', ['event' => $event, 'animate' => false])
+                    @endforeach
+                </div>
+
+                <!-- Load More Button -->
+                <div class="text-center pt-4">
+                    <button type="button" class="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-sm transition btn-spring">
+                        <i class="fas fa-redo-alt text-xs text-slate-400"></i>
+                        <span>Muat Lebih Banyak Kegiatan Kampus</span>
+                    </button>
+                </div>
+                @else
+                <div class="bg-white rounded-3xl border border-slate-200 p-12 text-center shadow-sm">
+                    <div class="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-4 text-2xl">
+                        <i class="fas fa-calendar-times"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-1">Tidak Ada Event</h3>
+                    <p class="text-xs text-slate-500 mb-6">Belum ada kegiatan yang cocok dengan kriteria pencarian Anda.</p>
+                    <a href="{{ route('home') }}" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition btn-spring">
+                        <i class="fas fa-undo"></i> Reset Filter
+                    </a>
+                </div>
+                @endif
+            </div>
+
+            <!-- Right Column: Official Notices & Sidebars (4 Cols) -->
+            <div class="lg:col-span-4 space-y-6">
+                <!-- Pemberitahuan Resmi (Penting) -->
+                <div id="announcements" class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                            <i class="fas fa-bullhorn text-indigo-600"></i>
+                            <span>Pemberitahuan Resmi</span>
+                        </h3>
+                        <span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 font-extrabold text-[10px] uppercase">
+                            Penting
+                        </span>
+                    </div>
+
+                    <div class="space-y-3.5 text-xs">
+                        @forelse($announcements as $ann)
+                        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-indigo-200 transition">
+                            <div class="flex items-center justify-between text-[10px] text-slate-400 mb-1">
+                                <span class="font-bold text-indigo-600 uppercase tracking-wider">PENGUMUMAN RESMI</span>
+                                <span>{{ \Carbon\Carbon::parse($ann->created_at)->format('d M Y') }}</span>
+                            </div>
+                            <h4 class="font-bold text-slate-900 mb-1 leading-snug">{{ $ann->judul }}</h4>
+                            <p class="text-slate-500 text-[11px] leading-relaxed">{{ $ann->isi }}</p>
+                        </div>
+                        @empty
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-center text-slate-400 text-xs">
+                            <i class="fas fa-info-circle mb-1 block text-base text-indigo-400"></i>
+                            Belum ada pengumuman kampus saat ini.
+                        </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Purple Calendar Reminder Promo Card -->
+                <div class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-slate-900 rounded-3xl p-6 text-white shadow-xl shadow-indigo-600/20 space-y-4">
+                    <div class="w-10 h-10 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-lg">
+                        <i class="far fa-bell"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold leading-snug">Jangan Ketinggalan Tiket</h3>
+                        <p class="text-xs text-indigo-100 mt-1 leading-relaxed">
+                            Dapatkan notifikasi pembukaan tiket event gratis 1 jam sebelum kuota habis melalui broadcast resmi Campven.
+                        </p>
+                    </div>
+
+                    <form onsubmit="event.preventDefault(); const val = document.getElementById('reminderWaInput').value; if(val){ alert('Pengingat Berhasil Diaktifkan! Kami akan mengirim notifikasi pendaftaran ke nomor ' + val); document.getElementById('reminderWaInput').value=''; } else { alert('Mohon masukkan nomor WhatsApp Anda terlebih dahulu.'); }" class="space-y-2">
+                        <input type="text" id="reminderWaInput" placeholder="Ketik Nomor WhatsApp..." class="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-xs text-white placeholder-indigo-200 focus:outline-none focus:bg-white/20">
+                        <button type="submit" class="w-full py-2.5 rounded-xl bg-white text-indigo-700 font-bold text-xs hover:bg-indigo-50 shadow-sm transition btn-spring">
+                            Aktifkan Pengingat Kalender
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Organizer Callout Banner -->
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm flex items-start gap-3.5">
+                    <div class="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg flex-shrink-0">
+                        <i class="fas fa-calendar-plus"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-900">Punya Agenda UKM / Himpunan?</h4>
+                        <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                            Buat pendaftaran, verifikasi tiket QR code, dan unduh rekapan peserta secara otomatis.
+                        </p>
+                        <a href="{{ route('login') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition inline-flex items-center gap-1 mt-2">
+                            <span>Masuk Portal Penyelenggara</span>
+                            <i class="fas fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Helpdesk 24/7 Footer Link -->
+                <div class="text-center pt-2">
+                    <a href="mailto:support@campven.com" class="text-xs font-semibold text-slate-400 hover:text-slate-600 transition flex items-center justify-center gap-1.5">
+                        <i class="fas fa-headset text-indigo-500"></i>
+                        <span>Kendala Tiket / SKPI? Layanan Bantuan 24/7</span>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ===== SEARCH ===== -->
-<div class="search-wrapper">
-    <form method="GET" action="{{ route('home') }}" class="search-form">
-        <span class="search-icon"><i class="fas fa-search"></i></span>
-        <input type="text" name="search" placeholder="Cari event, kategori, atau lokasi..." value="{{ $search ?? '' }}" class="search-input">
-        @if(!empty($search))
-        <a href="{{ route('home') }}" class="search-clear" aria-label="Hapus pencarian">
-            <i class="fas fa-times"></i>
-        </a>
-        @endif
-        <button type="submit" class="search-submit"><i class="fas fa-search"></i> Cari</button>
-    </form>
-</div>
-
-<!-- ===== MAIN CONTENT ===== -->
-<div class="container">
-
-    @if(!empty($search) || !empty($kategori))
-        <!-- ===== SEARCH/FILTER RESULTS ===== -->
-        <div class="section">
-            <div class="section-header" style="justify-content:flex-start;">
-                <h2 class="section-title" style="font-size:1.5rem;">
-                    @if(!empty($search))
-                        <i class="fas fa-search"></i> Hasil Pencarian
-                    @else
-                        <i class="fas fa-tags"></i> Kategori: {{ $kategori }}
-                    @endif
-                </h2>
-                <span style="background:var(--gray-100);padding:0.2rem 0.8rem;border-radius:50px;font-size:0.85rem;color:var(--gray-500);">{{ count($events) }} hasil ditemukan</span>
-                <a href="{{ route('home') }}" class="section-link">kembali</a>
-            </div>
-
-            @if(count($events) > 0)
-            <div class="card-grid">
-                @foreach($events as $event)
-                    @include('mahasiswa.partials.event-card', ['event' => $event, 'animate' => true, 'delay' => $loop->index * 50])
-                @endforeach
-            </div>
-            @else
-            <div class="empty-state">
-                <i class="fas {{ !empty($search) ? 'fa-search' : 'fa-calendar-times' }}"></i>
-                <h3>
-                    @if(!empty($search))
-                        Tidak ada event ditemukan
-                    @else
-                        Belum ada event di kategori ini
-                    @endif
-                </h3>
-                <p>Coba cari kategori lain atau <a href="{{ route('home') }}">kembali ke beranda</a></p>
-            </div>
-            @endif
-        </div>
-    @else
-        <!-- ===== CATEGORIES ===== -->
-        <div class="section" id="categories">
-            <div class="section-header">
-                <h2 class="section-title"><i class="fas fa-tags"></i> Kategori Event</h2>
-                <a href="#events" class="section-link">Lihat Semua →</a>
-            </div>
-            <div class="category-grid">
-                @foreach($categories as $cat)
-                @php
-                    $count = \App\Models\Event::where('kategori', $cat->nama)->count();
-                @endphp
-                <a href="{{ route('home', ['kategori' => $cat->nama]) }}" class="category-card" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
-                    <i class="fas {{ $cat->icon }}" style="color:{{ $cat->color }};"></i>
-                    <div class="category-card-name">{{ $cat->nama }}</div>
-                    <div class="category-card-count">{{ $count }} event</div>
-                </a>
-                @endforeach
-            </div>
-        </div>
-
-        <!-- ===== FEATURED EVENTS ===== -->
-        <div class="section">
-            <div class="section-header">
-                <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Event Unggulan</h2>
-                <a href="#events" class="section-link">Lihat Semua →</a>
-            </div>
-            @if(count($featured_events) > 0)
-            <div class="swiper featured-swiper" data-aos="fade-up">
-                <div class="swiper-wrapper">
-                    @foreach($featured_events as $event)
-                    <div class="swiper-slide">
-                        @include('mahasiswa.partials.event-card', ['event' => $event, 'animate' => false, 'delay' => 0])
+<!-- ===== 4-COLUMN MODERN FOOTER (INDONESIAN) ===== -->
+<footer class="bg-white text-slate-600 py-16 border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 pb-12 border-b border-slate-100">
+            <!-- Col 1: Brand Info -->
+            <div class="space-y-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
+                        <i class="fas fa-cubes"></i>
                     </div>
-                    @endforeach
+                    <span class="text-lg font-extrabold text-slate-900 tracking-tight">Camp<span class="text-indigo-600">ven</span></span>
                 </div>
-                <div class="swiper-pagination"></div>
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
+                <p class="text-xs text-slate-500 leading-relaxed max-w-xs">
+                    Ekosistem terpadu manajemen kegiatan, pendaftaran tiket, dan sertifikasi kemahasiswaan kampus.
+                </p>
             </div>
-            @else
-            <div class="empty-state" style="padding:2rem;background:var(--gray-50);">
-                <p style="color:var(--gray-500);">Belum ada event unggulan saat ini.</p>
+
+            <!-- Col 2: Ekosistem -->
+            <div class="space-y-2.5 text-xs">
+                <h4 class="font-extrabold text-slate-900 text-xs tracking-wider uppercase">Ekosistem Kampus</h4>
+                <ul class="space-y-2 text-slate-500">
+                    <li><a href="#" class="hover:text-indigo-600 transition">Simposium Akademik</a></li>
+                    <li><a href="#" class="hover:text-indigo-600 transition">Festival Kampus</a></li>
+                    <li><a href="#" class="hover:text-indigo-600 transition">Orientasi UKM & Organisasi</a></li>
+                    <li><a href="#" class="hover:text-indigo-600 transition">Kompetisi & Olahraga</a></li>
+                </ul>
             </div>
-            @endif
+
+            <!-- Col 3: Bantuan & Layanan -->
+            <div class="space-y-2.5 text-xs">
+                <h4 class="font-extrabold text-slate-900 text-xs tracking-wider uppercase">Bantuan & Layanan</h4>
+                <ul class="space-y-2 text-slate-500">
+                    <li><a href="#" class="hover:text-indigo-600 transition">Pusat Bantuan Mahasiswa</a></li>
+                    <li><a href="#" class="hover:text-indigo-600 transition">Verifikasi Tiket & Barcode</a></li>
+                    <li><a href="#" class="hover:text-indigo-600 transition">Panduan Penyelenggara</a></li>
+                    <li><a href="#" class="hover:text-indigo-600 transition">Peminjaman Sarana Prasarana</a></li>
+                </ul>
+            </div>
+
+            <!-- Col 4: Akreditasi -->
+            <div class="space-y-2.5 text-xs">
+                <h4 class="font-extrabold text-slate-900 text-xs tracking-wider uppercase">Akreditasi & Regulasi</h4>
+                <p class="text-slate-500 leading-relaxed text-[11px]">
+                    Sesuai dengan Regulasi Dewan Tata Kelola & Direktorat Kemahasiswaan Kampus Tahun 2026.
+                </p>
+            </div>
         </div>
 
-        <!-- ===== ALL EVENTS ===== -->
-        <div class="section" id="events">
-            <div class="section-header">
-                <h2 class="section-title"><i class="fas fa-list"></i> Semua Event</h2>
-            </div>
-            @if(count($events) > 0)
-            <div class="card-grid">
-                @foreach($events as $event)
-                    @include('mahasiswa.partials.event-card', ['event' => $event, 'animate' => true, 'delay' => $loop->index * 50])
-                @endforeach
-            </div>
-            @else
-            <div class="empty-state">
-                <i class="fas fa-calendar-times"></i>
-                <h3>Belum ada event</h3>
-                <p>Mulai tambahkan event kampus pertamamu!</p>
-            </div>
-            @endif
-        </div>
-    @endif
-
-    <!-- ===== ANNOUNCEMENTS ===== -->
-    @if(count($announcements) > 0)
-    <div class="section">
-        <div class="section-header">
-            <h2 class="section-title"><i class="fas fa-bullhorn"></i> Pengumuman</h2>
-        </div>
-        <div class="announcement-grid">
-            @foreach($announcements as $ann)
-            <div class="announcement-card" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
-                <div class="announcement-header">
-                    <div class="announcement-icon"><i class="fas fa-bullhorn"></i></div>
-                    <div class="announcement-title">{{ $ann->title }}</div>
-                </div>
-                <div class="announcement-excerpt">{{ Str::limit($ann->content, 200) }}</div>
-                <div class="announcement-footer">
-                    <div class="announcement-date"><i class="far fa-clock"></i> {{ date('d M Y', strtotime($ann->created_at)) }}</div>
-                    @if(strlen($ann->content) > 200)
-                    <a href="#" class="announcement-more" onclick="event.preventDefault(); this.closest('.announcement-card').querySelector('.announcement-full').style.display = 'block'; this.style.display = 'none';">Baca Selengkapnya →</a>
-                    @endif
-                </div>
-                @if(strlen($ann->content) > 200)
-                <div class="announcement-full">{{ $ann->content }}</div>
-                @endif
-            </div>
-            @endforeach
-        </div>
-    </div>
-    @endif
-</div>
-
-<!-- ===== ABOUT ===== -->
-<div class="container" id="about">
-    <div class="section">
-        <div class="about-box">
-            <h2>Tentang <span>Campven</span></h2>
-            <p class="about-desc">Campven adalah platform event kampus yang menghubungkan mahasiswa dengan berbagai kegiatan kampus. Kami percaya bahwa setiap mahasiswa berhak untuk menemukan dan mengikuti event yang sesuai dengan minat dan bakat mereka.</p>
-            <div class="about-grid">
-                <div class="about-card">
-                    <i class="fas fa-bullseye"></i>
-                    <h4>Misi Kami</h4>
-                    <p>Menyediakan platform terpusat untuk event kampus.</p>
-                </div>
-                <div class="about-card">
-                    <i class="fas fa-users" style="color:var(--success);"></i>
-                    <h4>Komunitas</h4>
-                    <p>Bergabung dengan ribuan mahasiswa aktif.</p>
-                </div>
-                <div class="about-card">
-                    <i class="fas fa-certificate" style="color:var(--warning);"></i>
-                    <h4>Sertifikat</h4>
-                    <p>Dapatkan sertifikat dari event yang diikuti.</p>
-                </div>
+        <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+            <div>© {{ date('Y') }} Platform Manajemen Campven. Seluruh hak cipta dilindungi.</div>
+            <div class="flex items-center gap-6">
+                <a href="#" class="hover:text-slate-600 transition">Keamanan Kampus</a>
+                <a href="#" class="hover:text-slate-600 transition">Kebijakan Privasi</a>
+                <a href="#" class="hover:text-slate-600 transition">Syarat & Ketentuan</a>
             </div>
         </div>
-    </div>
-</div>
-
-<!-- ===== FOOTER ===== -->
-<footer class="footer">
-    <div class="footer-grid">
-        <div>
-            <h4>Campven</h4>
-            <p>Your Campus, Organized. Platform event kampus terpusat untuk mahasiswa Indonesia.</p>
-        </div>
-        <div>
-            <h4>Menu</h4>
-            <ul>
-                <li><a href="#events">Event</a></li>
-                <li><a href="#categories">Kategori</a></li>
-                <li><a href="#about">Tentang</a></li>
-            </ul>
-        </div>
-        <div>
-            <h4>Untuk Kamu</h4>
-            <ul>
-                <li><a href="{{ route('register') }}">Daftar</a></li>
-                <li><a href="{{ route('login') }}">Masuk</a></li>
-                @if($is_logged_in && $user->role === 'mahasiswa')
-                <li><a href="{{ route('my.events') }}">My Events</a></li>
-                @endif
-                @if($is_logged_in)
-                <li><a href="{{ route('profile') }}">Profil</a></li>
-                @endif
-            </ul>
-        </div>
-        <div>
-            <h4>Kontak</h4>
-            <ul>
-                <li><a href="#">support@campven.com</a></li>
-                <li><a href="#">@campven</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        &copy; {{ date('Y') }} Campven. All rights reserved.
     </div>
 </footer>
-
-<script>
-    function toggleMobileMenu() {
-        document.getElementById('navLinks').classList.toggle('open');
-    }
-</script>
 @endsection
-
-@push('scripts')
-<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // ===== AOS INIT =====
-        AOS.init({
-            duration: 800,
-            easing: 'ease-out-cubic',
-            once: true,
-            offset: 80
-        });
-
-        // ===== SWIPER INIT =====
-        const featuredSwiper = new Swiper('.featured-swiper', {
-            slidesPerView: 1,
-            spaceBetween: 20,
-            loop: true,
-            autoplay: {
-                delay: 4000,
-                disableOnInteraction: false,
-            },
-            pagination: {
-                el: '.featured-swiper .swiper-pagination',
-                clickable: true,
-            },
-            navigation: {
-                nextEl: '.featured-swiper .swiper-button-next',
-                prevEl: '.featured-swiper .swiper-button-prev',
-            },
-            breakpoints: {
-                640: { slidesPerView: 2 },
-                1024: { slidesPerView: 3 },
-            },
-        });
-
-        // ===== COUNTER ANIMATION =====
-        const counters = document.querySelectorAll('.counter');
-        const counterObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const el = entry.target;
-                    const target = parseInt(el.getAttribute('data-counter'), 10) || 0;
-                    const duration = 2000;
-                    const start = performance.now();
-
-                    function updateCounter(now) {
-                        const progress = Math.min((now - start) / duration, 1);
-                        const eased = 1 - Math.pow(1 - progress, 3);
-                        el.textContent = Math.floor(eased * target).toLocaleString('id-ID');
-                        if (progress < 1) {
-                            requestAnimationFrame(updateCounter);
-                        } else {
-                            el.textContent = target.toLocaleString('id-ID');
-                        }
-                    }
-                    requestAnimationFrame(updateCounter);
-                    counterObserver.unobserve(el);
-                }
-            });
-        }, { threshold: 0.5 });
-
-        counters.forEach(counter => counterObserver.observe(counter));
-    });
-</script>
-@endpush

@@ -19,7 +19,7 @@ class OrganizerController extends Controller
 
         $user = Auth::user();
         $events = Event::where('created_by', $user->id)
-            ->with('participants.user')
+            ->with(['participants.user'])
             ->orderBy('tanggal', 'DESC')
             ->get();
 
@@ -27,6 +27,24 @@ class OrganizerController extends Controller
         $total_participants = $events->sum(function ($event) {
             return $event->participants()->count();
         });
+        $attended_participants = $events->sum(function ($event) {
+            return $event->participants()->where('status', 'attended')->count();
+        });
+        $attendance_rate = $total_participants > 0 ? round(($attended_participants / $total_participants) * 100, 1) : 0;
+        
+        $total_quota = $events->sum('kuota');
+        $quota_rate = $total_quota > 0 ? min(100, round(($total_participants / $total_quota) * 100, 1)) : 0;
+
+        $active_event = $events->first();
+
+        $recent_attendances = \App\Models\Participant::with(['user', 'event'])
+            ->whereHas('event', function ($q) use ($user) {
+                $q->where('created_by', $user->id);
+            })
+            ->where('status', 'attended')
+            ->orderBy('updated_at', 'DESC')
+            ->limit(5)
+            ->get();
 
         $categories = Category::all();
 
@@ -34,6 +52,11 @@ class OrganizerController extends Controller
             'events',
             'total_events',
             'total_participants',
+            'attended_participants',
+            'attendance_rate',
+            'quota_rate',
+            'active_event',
+            'recent_attendances',
             'user',
             'categories'
         ));
@@ -61,13 +84,18 @@ class OrganizerController extends Controller
         $validated = $request->validate([
             'nama_event' => 'required|string|max:200',
             'kategori' => 'required|string|max:50',
-            'tanggal' => 'required|date',
+            'tanggal' => 'required|date|after_or_equal:today',
             'waktu_mulai' => 'nullable|date_format:H:i',
-            'waktu_selesai' => 'nullable|date_format:H:i',
+            'waktu_selesai' => 'nullable|date_format:H:i|after:waktu_mulai',
             'lokasi' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'kuota' => 'nullable|integer|min:1',
+            'harga' => 'nullable|integer|min:0',
+            'skpi_poin' => 'nullable|integer|min:0',
             'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'tanggal.after_or_equal' => 'Tanggal event tidak boleh di masa lalu.',
+            'waktu_selesai.after' => 'Waktu selesai harus setelah waktu mulai.',
         ]);
 
         $poster = null;
@@ -104,11 +132,15 @@ class OrganizerController extends Controller
             'kategori' => 'required|string|max:50',
             'tanggal' => 'required|date',
             'waktu_mulai' => 'nullable|date_format:H:i',
-            'waktu_selesai' => 'nullable|date_format:H:i',
+            'waktu_selesai' => 'nullable|date_format:H:i|after:waktu_mulai',
             'lokasi' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'kuota' => 'nullable|integer|min:1',
+            'harga' => 'nullable|integer|min:0',
+            'skpi_poin' => 'nullable|integer|min:0',
             'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'waktu_selesai.after' => 'Waktu selesai harus setelah waktu mulai.',
         ]);
 
         if ($request->hasFile('poster') && $request->file('poster')->isValid()) {
@@ -182,5 +214,112 @@ class OrganizerController extends Controller
         $participant->update(['status' => 'attended']);
 
         return redirect()->route('organizer.dashboard')->with('success', 'Kehadiran peserta berhasil dikonfirmasi!');
+    }
+
+    public function quickCheckIn(Request $request)
+    {
+        if (Auth::user()->role !== 'penyelenggara') {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $validated = $request->validate([
+            'query' => 'required|string',
+            'event_id' => 'nullable|exists:events,id',
+        ]);
+
+        $query = trim($validated['query']);
+        $myEventIds = Event::where('created_by', Auth::id())->pluck('id')->toArray();
+
+        if (empty($myEventIds)) {
+            return redirect()->route('organizer.dashboard')->with('error', "Anda belum memiliki event aktif untuk melakukan presensi.");
+        }
+
+        $participantQuery = \App\Models\Participant::with(['user', 'event'])
+            ->whereIn('event_id', $myEventIds)
+            ->where(function ($w) use ($query) {
+                if (is_numeric($query)) {
+                    $w->where('id', $query)->orWhere('user_id', $query);
+                }
+                $w->orWhereHas('user', function ($q) use ($query) {
+                    $q->where('nama', 'LIKE', "%{$query}%")
+                      ->orWhere('email', 'LIKE', "%{$query}%")
+                      ->orWhere('no_telp', 'LIKE', "%{$query}%");
+                });
+            });
+
+        if (!empty($validated['event_id']) && in_array($validated['event_id'], $myEventIds)) {
+            $participant = (clone $participantQuery)->where('event_id', $validated['event_id'])->first();
+            if (!$participant) {
+                $participant = $participantQuery->first();
+            }
+        } else {
+            $participant = $participantQuery->first();
+        }
+
+        if (!$participant) {
+            return redirect()->route('organizer.dashboard')->with('error', "Peserta dengan data '{$query}' tidak ditemukan pada event yang Anda kelola!");
+        }
+
+        if ($participant->status === 'attended') {
+            return redirect()->route('organizer.dashboard')->with('success', "Peserta {$participant->user->nama} ({$participant->event->nama_event}) SUDAH HADIR sebelumnya pada " . $participant->updated_at->format('H:i') . " WIB.");
+        }
+
+        $participant->update(['status' => 'attended']);
+
+        return redirect()->route('organizer.dashboard')->with('success', "Presensi Berhasil! {$participant->user->nama} resmi tercatat HADIR di {$participant->event->nama_event}.");
+    }
+
+    public function exportCsv(Request $request, $eventId = null)
+    {
+        if (Auth::user()->role !== 'penyelenggara') {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $myEventIds = Event::where('created_by', Auth::id())->pluck('id');
+
+        $query = \App\Models\Participant::with(['user', 'event'])
+            ->whereIn('event_id', $myEventIds);
+
+        if ($eventId) {
+            $query->where('event_id', $eventId);
+        }
+
+        $participants = $query->orderBy('created_at', 'DESC')->get();
+
+        $fileName = 'log_presensi_campven_' . date('Ymd_His') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        $callback = function () use ($participants) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            fputcsv($file, ['ID Tiket', 'Nama Mahasiswa', 'Email', 'No Telepon', 'Nama Acara', 'Kategori', 'Tanggal Pelaksanaan', 'Status Kehadiran', 'Waktu Registrasi', 'Waktu Verifikasi Presensi']);
+
+            foreach ($participants as $p) {
+                fputcsv($file, [
+                    $p->id,
+                    $p->user->nama ?? '-',
+                    $p->user->email ?? '-',
+                    $p->user->no_telp ?? '-',
+                    $p->event->nama_event ?? '-',
+                    $p->event->kategori ?? '-',
+                    $p->event->tanggal ?? '-',
+                    ucfirst($p->status),
+                    $p->created_at ? $p->created_at->format('Y-m-d H:i:s') : '-',
+                    $p->updated_at ? $p->updated_at->format('Y-m-d H:i:s') : '-',
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

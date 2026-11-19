@@ -29,6 +29,7 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $category = Category::findOrFail($id);
+        $oldName = $category->nama;
 
         $validated = $request->validate([
             'nama' => 'required|string|max:50|unique:categories,nama,' . $id,
@@ -38,6 +39,11 @@ class CategoryController extends Controller
         ]);
 
         $category->update($validated);
+
+        if ($oldName !== $validated['nama']) {
+            \App\Models\Event::where('kategori', $oldName)->update(['kategori' => $validated['nama']]);
+        }
+
         return redirect()->route('admin.categories')->with('success', 'Kategori berhasil diperbarui!');
     }
 

@@ -10,8 +10,9 @@ use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-// ===== GUEST ROUTES =====
+// ===== GUEST & PUBLIC ROUTES =====
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/event/{id}', [EventController::class, 'detail'])->name('event.detail');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
@@ -22,20 +23,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::get('/event/{id}', [EventController::class, 'detail'])->name('event.detail');
     Route::post('/event/{id}/register', [EventController::class, 'register'])->name('event.register');
 
     // ===== ADMIN ROUTES =====
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
         Route::get('/users', [AdminController::class, 'users'])->name('users');
         
         // Form Edit Event
         Route::get('/event/{id}/edit', [AdminController::class, 'editEvent'])->name('event.edit');
         
-        // Event CRUD - PERBAIKAN: Gunakan nama route yang konsisten
+        // Event CRUD
         Route::post('/event', [AdminController::class, 'storeEvent'])->name('event.store');
-        Route::put('/event/{id}', [AdminController::class, 'updateEvent'])->name('event.update');  // <-- ini yang dipanggil di form
+        Route::put('/event/{id}', [AdminController::class, 'updateEvent'])->name('event.update');
         Route::delete('/event/{id}', [AdminController::class, 'deleteEvent'])->name('event.delete');
         
         // User CRUD
@@ -51,33 +51,25 @@ Route::middleware('auth')->group(function () {
     });
 
     // ===== ORGANIZER ROUTES =====
-    Route::prefix('organizer')->name('organizer.')->group(function () {
+    Route::prefix('organizer')->name('organizer.')->middleware('role:penyelenggara')->group(function () {
         Route::get('/dashboard', [OrganizerController::class, 'dashboard'])->name('dashboard');
         
         // Form Edit Event
         Route::get('/event/{id}/edit', [OrganizerController::class, 'editEvent'])->name('event.edit');
         
-        // Event CRUD - PERBAIKAN: Gunakan nama route yang konsisten
+        // Event CRUD
         Route::post('/event', [OrganizerController::class, 'storeEvent'])->name('event.store');
-        Route::put('/event/{id}', [OrganizerController::class, 'updateEvent'])->name('event.update');  // <-- ini yang dipanggil di form
+        Route::put('/event/{id}', [OrganizerController::class, 'updateEvent'])->name('event.update');
         Route::delete('/event/{id}', [OrganizerController::class, 'deleteEvent'])->name('event.delete');
         
         // Participant Management
         Route::post('/participant/{id}/confirm', [OrganizerController::class, 'confirmParticipant'])->name('participant.confirm');
         Route::post('/participant/{id}/attend', [OrganizerController::class, 'attendParticipant'])->name('participant.attend');
+        Route::post('/quick-checkin', [OrganizerController::class, 'quickCheckIn'])->name('quickCheckin');
+        Route::get('/export-csv/{event_id?}', [OrganizerController::class, 'exportCsv'])->name('exportCsv');
     });
 
     // ===== MAHASISWA ROUTES =====
     Route::get('/my-events', [HomeController::class, 'myEvents'])->name('my.events');
-    Route::get('/my-events/cancel/{id}', [HomeController::class, 'cancelEvent'])->name('my.events.cancel');
-});
-
-// ===== TEST ROUTE =====
-Route::get('/force-login', function () {
-    $user = App\Models\User::where('email', 'admin@campven.com')->first();
-    if ($user) {
-        auth()->login($user);
-        return redirect('/admin/dashboard');
-    }
-    return 'User tidak ditemukan! Jalankan seeder dulu.';
+    Route::post('/my-events/cancel/{id}', [HomeController::class, 'cancelEvent'])->name('my.events.cancel');
 });

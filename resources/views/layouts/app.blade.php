@@ -1,230 +1,181 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Campven - Your Campus, Organized')</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>@yield('title', 'Campven - Platform Kegiatan Kampus Terpadu')</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     @stack('styles')
-    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <style>
-        /* ===== GLOBAL STYLES ===== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --primary: #334155;
-            --primary-dark: #1E293B;
-            --primary-light: #475569;
+            --primary: #1E293B;
+            --primary-light: #334155;
+            --accent: #4F46E5;
             --success: #10B981;
             --warning: #F59E0B;
             --danger: #EF4444;
-            --gray-50: #F8FAFC;
-            --gray-100: #F1F5F9;
-            --gray-200: #E2E8F0;
-            --gray-300: #CBD5E1;
-            --gray-400: #94A3B8;
-            --gray-500: #64748B;
-            --gray-600: #475569;
-            --gray-700: #334155;
-            --gray-800: #1E293B;
-            --gray-900: #0F172A;
-            --radius: 16px;
-            --radius-sm: 10px;
-            --shadow: 0 1px 3px rgba(0,0,0,0.06);
-            --shadow-md: 0 4px 20px rgba(0,0,0,0.06);
-            --shadow-lg: 0 10px 40px rgba(0,0,0,0.08);
-        }
-        body { font-family: 'Inter', sans-serif; background: #FFFFFF; color: var(--gray-800); min-height: 100vh; }
-
-        .btn {
-            padding: 0.5rem 1.2rem;
-            border-radius: 50px;
-            border: none;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'Inter', sans-serif;
-        }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(51,65,85,0.3); }
-        .btn-outline { background: transparent; color: var(--gray-700); border: 1.5px solid var(--gray-300); }
-        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-        .btn-sm { padding: 0.3rem 0.8rem; font-size: 0.75rem; }
-        .btn-success { background: var(--success); color: white; }
-        .btn-success:hover { opacity: 0.85; transform: translateY(-2px); }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-danger:hover { opacity: 0.85; transform: translateY(-2px); }
-        .btn-warning { background: var(--warning); color: white; }
-        .btn-warning:hover { opacity: 0.85; transform: translateY(-2px); }
-
-        .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
-
-        .notification {
-            padding: 0.8rem 1.2rem;
-            border-radius: var(--radius-sm);
-            margin-bottom: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 500;
-            font-size: 0.9rem;
-            animation: slideDown 0.3s ease;
-        }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .notification.success { background: #D1FAE5; color: #065F46; border-left: 4px solid var(--success); }
-        .notification.error { background: #FEE2E2; color: #991B1B; border-left: 4px solid var(--danger); }
-
-        @media (max-width: 768px) {
-            .container { padding: 0 1rem; }
         }
 
-        /* ===== LOGOUT MODAL STYLES ===== */
-        .logout-modal-open {
-            overflow: hidden;
-        }
-        #btnCancelLogout, #btnConfirmLogout {
-            transition: all 0.2s ease;
-        }
-        #btnCancelLogout:hover {
-            background-color: #F3F4F6 !important;
-            border-color: #9CA3AF !important;
-            color: #111827 !important;
-        }
-        #btnConfirmLogout:hover {
-            background-color: #1E293B !important;
-            transform: translateY(-1px);
-            box-shadow: 0 10px 15px -3px rgba(30, 41, 59, 0.3) !important;
+        body {
+            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #F8FAFC;
+            color: #1E293B;
+            overflow-x: hidden;
         }
 
-        /* ===== CARD HOVER EFFECTS ===== */
-        .event-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease !important;
-            will-change: transform;
-        }
-        .event-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 45px rgba(0,0,0,0.12) !important;
-            border-color: #94A3B8 !important;
-        }
-        .event-card .card-img-wrapper {
-            overflow: hidden;
-            height: 180px;
-            position: relative;
-        }
-        .event-card .card-img {
-            transition: transform 0.5s ease;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .event-card:hover .card-img {
-            transform: scale(1.05);
+        /* Modern Glassmorphism */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
         }
 
-        .category-card {
-            transition: all 0.3s ease !important;
-            will-change: transform;
-        }
-        .category-card:hover {
-            transform: translateY(-8px) !important;
-            box-shadow: 0 15px 35px rgba(51,65,85,0.15) !important;
-            border-color: #94A3B8 !important;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(241, 245, 249, 1);
         }
 
-        /* ===== SWIPER CUSTOM ===== */
-        .featured-swiper {
-            padding-bottom: 3.5rem !important;
-            padding-left: 0.25rem;
-            padding-right: 0.25rem;
+        /* Smooth Interactive Card Hover */
+        .interactive-card {
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform, box-shadow;
         }
-        .featured-swiper .swiper-pagination-bullet {
-            background: #334155;
-            opacity: 0.4;
+        .interactive-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 35px -10px rgba(30, 41, 59, 0.12), 0 10px 15px -8px rgba(30, 41, 59, 0.06);
         }
-        .featured-swiper .swiper-pagination-bullet-active {
-            opacity: 1;
+
+        /* Spring scale button */
+        .btn-spring {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .featured-swiper .swiper-button-next,
-        .featured-swiper .swiper-button-prev {
-            color: #334155;
-            width: 40px;
-            height: 40px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        .btn-spring:active {
+            transform: scale(0.96);
         }
-        .featured-swiper .swiper-button-next::after,
-        .featured-swiper .swiper-button-prev::after {
-            font-size: 1rem;
-            font-weight: 700;
+
+        /* Floating Toast Animations */
+        @keyframes toastSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        @keyframes toastProgress {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+        .toast-animate {
+            animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .toast-progress {
+            animation: toastProgress 4.5s linear forwards;
         }
     </style>
 </head>
-<body>
-    @yield('content')
+<body class="min-h-screen flex flex-col antialiased selection:bg-slate-900 selection:text-white">
 
-    @if(session('success'))
-    <script>
-        setTimeout(function() {
-            const notif = document.querySelector('.notification.success');
-            if (notif) {
-                notif.style.transition = 'opacity 0.5s';
-                notif.style.opacity = '0';
-                setTimeout(() => notif.remove(), 500);
-            }
-        }, 5000);
-    </script>
-    @endif
+    <!-- Main Content Yield -->
+    <main class="flex-grow">
+        @yield('content')
+    </main>
 
-    @if(session('error'))
-    <script>
-        setTimeout(function() {
-            const notif = document.querySelector('.notification.error');
-            if (notif) {
-                notif.style.transition = 'opacity 0.5s';
-                notif.style.opacity = '0';
-                setTimeout(() => notif.remove(), 500);
-            }
-        }, 5000);
-    </script>
-    @endif
+    <!-- Floating Toast Notification System -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-[99999] flex flex-col gap-3 max-w-md w-full px-4 sm:px-0 pointer-events-none">
+        @if(session('success'))
+        <div class="toast-item toast-animate pointer-events-auto relative overflow-hidden bg-white/95 backdrop-blur-xl border border-emerald-100 shadow-xl shadow-emerald-500/10 rounded-2xl p-4 flex items-start gap-3.5 transition-all duration-300">
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 text-base shadow-sm">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="flex-grow pr-2">
+                <h4 class="text-sm font-bold text-slate-900 leading-tight">Berhasil!</h4>
+                <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">{{ session('success') }}</p>
+            </div>
+            <button onclick="dismissToast(this.closest('.toast-item'))" class="text-slate-400 hover:text-slate-600 p-1 text-sm transition-colors" aria-label="Tutup">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="toast-progress absolute bottom-0 left-0 h-1 bg-emerald-500"></div>
+        </div>
+        @endif
 
-    <!-- Logout Confirmation Modal -->
-    <div id="logoutModal" style="display: none; position: fixed; inset: 0; z-index: 9999; align-items: center; justify-content: center; padding: 1.5rem; box-sizing: border-box;">
+        @if(session('error'))
+        <div class="toast-item toast-animate pointer-events-auto relative overflow-hidden bg-white/95 backdrop-blur-xl border border-rose-100 shadow-xl shadow-rose-500/10 rounded-2xl p-4 flex items-start gap-3.5 transition-all duration-300">
+            <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0 text-base shadow-sm">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="flex-grow pr-2">
+                <h4 class="text-sm font-bold text-slate-900 leading-tight">Perhatian</h4>
+                <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">{{ session('error') }}</p>
+            </div>
+            <button onclick="dismissToast(this.closest('.toast-item'))" class="text-slate-400 hover:text-slate-600 p-1 text-sm transition-colors" aria-label="Tutup">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="toast-progress absolute bottom-0 left-0 h-1 bg-rose-500"></div>
+        </div>
+        @endif
+    </div>
+
+    <!-- Modern Logout Confirmation Modal -->
+    <div id="logoutModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
         <!-- Backdrop -->
-        <div id="logoutModalBackdrop" style="position: absolute; inset: 0; background: rgba(17, 24, 39, 0.4); backdrop-filter: blur(8px); transition: opacity 0.3s ease; opacity: 0;"></div>
+        <div id="logoutModalBackdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity duration-300 opacity-0"></div>
         
         <!-- Modal Card -->
-        <div id="logoutModalCard" style="position: relative; background: #ffffff; width: 100%; max-width: 400px; border-radius: 20px; box-shadow: var(--shadow-lg); border: 1px solid var(--gray-200); padding: 2rem; text-align: center; transform: scale(0.95); opacity: 0; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); max-height: 90vh; overflow-y: auto;">
-            
-            <!-- Icon Container -->
-            <div style="width: 64px; height: 64px; background: #E2E8F0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; color: #334155; font-size: 1.75rem;">
+        <div id="logoutModalCard" class="relative bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-slate-100 p-6 sm:p-8 text-center transform scale-95 opacity-0 transition-all duration-300 ease-out">
+            <div class="w-16 h-16 bg-slate-100 text-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner">
                 <i class="fas fa-sign-out-alt"></i>
             </div>
             
-            <!-- Text -->
-            <h3 style="font-family: 'Inter', sans-serif; font-size: 1.25rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.5rem;">Konfirmasi Keluar</h3>
-            <p style="font-family: 'Inter', sans-serif; font-size: 0.9rem; color: var(--gray-500); line-height: 1.5; margin-bottom: 2rem;">Apakah Anda yakin ingin keluar dari akun Anda?</p>
+            <h3 class="text-lg font-extrabold text-slate-900 mb-1">Konfirmasi Keluar</h3>
+            <p class="text-xs sm:text-sm text-slate-500 mb-6 leading-relaxed">Apakah Anda yakin ingin keluar dari akun Anda sekarang?</p>
             
-            <!-- Action Buttons -->
-            <div style="display: flex; gap: 0.75rem; justify-content: center;">
-                <button id="btnCancelLogout" type="button" style="flex: 1; padding: 0.75rem 1.5rem; border-radius: 12px; border: 1px solid var(--gray-300); background: #FFFFFF; color: var(--gray-700); font-weight: 600; font-size: 0.9rem; cursor: pointer; font-family: 'Inter', sans-serif;">
+            <div class="flex items-center gap-3">
+                <button id="btnCancelLogout" type="button" class="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-slate-700 font-semibold text-xs sm:text-sm hover:bg-slate-50 transition btn-spring">
                     Batal
                 </button>
-                <button id="btnConfirmLogout" type="button" style="flex: 1; padding: 0.75rem 1.5rem; border-radius: 12px; border: none; background: #334155; color: #FFFFFF; font-weight: 600; font-size: 0.9rem; cursor: pointer; font-family: 'Inter', sans-serif; box-shadow: 0 4px 6px -1px rgba(51, 65, 85, 0.2);">
-                    Keluar
+                <button id="btnConfirmLogout" type="button" class="flex-1 py-3 px-4 rounded-xl bg-slate-900 text-white font-semibold text-xs sm:text-sm hover:bg-slate-800 shadow-lg shadow-slate-900/20 transition btn-spring">
+                    Ya, Keluar
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- Scripts -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        // Dismiss Toast Function
+        function dismissToast(element) {
+            if (!element) return;
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(15px) scale(0.95)';
+            setTimeout(() => element.remove(), 300);
+        }
+
+        // Auto dismiss existing toast after 4.5s
+        document.addEventListener('DOMContentLoaded', () => {
+            const toasts = document.querySelectorAll('.toast-item');
+            toasts.forEach(toast => {
+                setTimeout(() => {
+                    dismissToast(toast);
+                }, 4500);
+            });
+
+            // Modern Logout Modal Interceptor
             const logoutModal = document.getElementById('logoutModal');
             const backdrop = document.getElementById('logoutModalBackdrop');
             const card = document.getElementById('logoutModalCard');
@@ -232,60 +183,47 @@
             const btnConfirm = document.getElementById('btnConfirmLogout');
             let pendingLogoutForm = null;
 
-            // Intercept all forms posting to logout
             document.addEventListener('submit', function(e) {
                 const form = e.target;
                 if (form && form.action && form.action.includes('/logout')) {
                     e.preventDefault();
                     pendingLogoutForm = form;
-                    openModal();
+                    openLogoutModal();
                 }
             });
 
-            function openModal() {
-                document.body.classList.add('logout-modal-open');
-                logoutModal.style.display = 'flex';
-                
-                // Trigger reflow
-                void logoutModal.offsetWidth;
-                
-                backdrop.style.opacity = '1';
-                card.style.opacity = '1';
-                card.style.transform = 'scale(1)';
+            function openLogoutModal() {
+                logoutModal.classList.remove('hidden');
+                logoutModal.classList.add('flex');
+                setTimeout(() => {
+                    backdrop.classList.remove('opacity-0');
+                    card.classList.remove('opacity-0', 'scale-95');
+                    card.classList.add('opacity-100', 'scale-100');
+                }, 10);
             }
 
-            function closeModal() {
-                backdrop.style.opacity = '0';
-                card.style.opacity = '0';
-                card.style.transform = 'scale(0.95)';
-                
-                document.body.classList.remove('logout-modal-open');
-                
+            function closeLogoutModal() {
+                backdrop.classList.add('opacity-0');
+                card.classList.add('opacity-0', 'scale-95');
+                card.classList.remove('opacity-100', 'scale-100');
                 setTimeout(() => {
-                    if (backdrop.style.opacity === '0') {
-                        logoutModal.style.display = 'none';
-                        pendingLogoutForm = null;
-                    }
+                    logoutModal.classList.add('hidden');
+                    logoutModal.classList.remove('flex');
+                    pendingLogoutForm = null;
                 }, 300);
             }
 
-            btnCancel.addEventListener('click', closeModal);
-            backdrop.addEventListener('click', closeModal);
-            
-            btnConfirm.addEventListener('click', function() {
-                if (pendingLogoutForm) {
-                    pendingLogoutForm.submit();
-                }
-            });
-
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && logoutModal.style.display === 'flex') {
-                    closeModal();
-                }
-            });
+            if (btnCancel) btnCancel.addEventListener('click', closeLogoutModal);
+            if (backdrop) backdrop.addEventListener('click', closeLogoutModal);
+            if (btnConfirm) {
+                btnConfirm.addEventListener('click', () => {
+                    if (pendingLogoutForm) {
+                        pendingLogoutForm.submit();
+                    }
+                });
+            }
         });
     </script>
-
     @stack('scripts')
 </body>
 </html>

@@ -20,6 +20,8 @@ class Event extends Model
         'poster',
         'created_by',
         'kuota',
+        'harga',
+        'skpi_poin',
     ];
     protected $casts = [
         'tanggal'       => 'date:Y-m-d',
@@ -37,9 +39,14 @@ class Event extends Model
         return $this->hasMany(Participant::class);
     }
 
+    public function activeParticipants()
+    {
+        return $this->hasMany(Participant::class)->whereIn('status', ['registered', 'confirmed', 'attended']);
+    }
+
     public function participantCount()
     {
-        return $this->participants()->count();
+        return $this->activeParticipants()->count();
     }
 
     public function isFull()
@@ -56,5 +63,21 @@ class Event extends Model
             return null;
         }
         return max(0, $this->kuota - $this->participantCount());
+    }
+
+    public function formattedHarga()
+    {
+        if (empty($this->harga) || $this->harga == 0) {
+            return 'GRATIS';
+        }
+        return 'Rp ' . number_format($this->harga, 0, ',', '.');
+    }
+
+    public function persentaseTerisi()
+    {
+        if (!$this->kuota || $this->kuota == 0) {
+            return 0;
+        }
+        return min(100, round(($this->participantCount() / $this->kuota) * 100));
     }
 }

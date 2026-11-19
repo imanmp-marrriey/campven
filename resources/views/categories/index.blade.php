@@ -1,357 +1,306 @@
 @extends('layouts.app')
 
-@section('title', 'Manajemen Kategori - Campven')
+@section('title', 'Manajemen Kategori - Admin Campven')
 
 @section('content')
-<style>
-    .sidebar {
-        width: 260px;
-        background: #FFFFFF;
-        border-right: 1px solid #E5E7EB;
-        padding: 1.5rem 0;
-        position: fixed;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        z-index: 50;
-        overflow-y: auto;
-        transition: transform 0.3s ease;
-    }
-    .sidebar .nav-menu { list-style: none; padding: 1rem 0.8rem; }
-    .sidebar .nav-menu li { margin-bottom: 2px; }
-    .sidebar .nav-menu li a {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 0.7rem 1rem;
-        border-radius: 10px;
-        color: #6B7280;
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 0.9rem;
-        transition: all 0.2s;
-    }
-    .sidebar .nav-menu li a:hover { background: #F3F4F6; color: #334155; }
-    .sidebar .nav-menu li a.active { background: #334155; color: white; }
-    .sidebar .nav-menu li a i { width: 20px; text-align: center; font-size: 1rem; }
-    .sidebar .nav-menu .nav-label {
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: #9CA3AF;
-        padding: 0.5rem 1rem 0.2rem;
-        font-weight: 600;
-    }
-    .sidebar .sidebar-footer {
-        padding: 1rem 1.5rem;
-        border-top: 1px solid #E5E7EB;
-        margin-top: auto;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-    }
-    .main { margin-left: 260px; flex: 1; padding: 1.5rem 2rem 2rem; min-height: 100vh; }
-    .topbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
+<div class="min-h-screen bg-slate-50/70 flex">
 
-    .category-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 1.2rem;
-    }
-    .category-card {
-        background: #FFFFFF;
-        border-radius: 16px;
-        padding: 1.5rem;
-        border: 1px solid #E5E7EB;
-        text-align: center;
-        transition: all 0.2s;
-        position: relative;
-    }
-    .category-card:hover { border-color: #334155; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transform: translateY(-3px); }
-    .category-card .category-icon { font-size: 2.5rem; margin-bottom: 0.5rem; display: block; }
-    .category-card .category-name { font-weight: 700; font-size: 1rem; margin-bottom: 0.2rem; }
-    .category-card .category-desc { font-size: 0.8rem; color: #6B7280; margin-bottom: 0.8rem; }
-    .category-card .category-actions {
-        display: flex;
-        justify-content: center;
-        gap: 6px;
-        border-top: 1px solid #F3F4F6;
-        padding-top: 0.8rem;
-    }
-
-    .modal-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.4);
-        backdrop-filter: blur(4px);
-        z-index: 1000;
-        align-items: center;
-        justify-content: center;
-        padding: 1rem;
-    }
-    .modal-overlay.show { display: flex; }
-    .modal {
-        background: #FFFFFF;
-        border-radius: 16px;
-        max-width: 500px;
-        width: 100%;
-        max-height: 90vh;
-        overflow-y: auto;
-        padding: 1.8rem;
-        animation: modalIn 0.25s ease;
-    }
-    @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-    .modal .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
-    .modal .modal-header h3 { font-size: 1.1rem; font-weight: 700; color: #1F2937; }
-    .modal .modal-header h3 i { color: #334155; margin-right: 8px; }
-    .modal .close-modal { background: none; border: none; font-size: 22px; cursor: pointer; color: #9CA3AF; transition: all 0.2s; }
-    .modal .close-modal:hover { color: #EF4444; transform: rotate(90deg); }
-
-    .form-group { margin-bottom: 1rem; }
-    .form-group label { display: block; font-weight: 600; font-size: 0.8rem; color: #374151; margin-bottom: 0.2rem; }
-    .form-group input, .form-group select, .form-group textarea {
-        width: 100%;
-        padding: 0.6rem 0.8rem;
-        border: 1.5px solid #E5E7EB;
-        border-radius: 10px;
-        font-family: 'Inter', sans-serif;
-        font-size: 0.9rem;
-        transition: all 0.2s;
-        background: #FFFFFF;
-        color: #1F2937;
-    }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-        outline: none;
-        border-color: #334155;
-        box-shadow: 0 0 0 3px rgba(51,65,85,0.1);
-    }
-    .form-group textarea { min-height: 70px; resize: vertical; }
-    .form-actions { display: flex; gap: 10px; margin-top: 1.2rem; justify-content: flex-end; }
-    input[type="color"] { width: 50px; height: 40px; padding: 2px; border-radius: 10px; border: 1.5px solid #E5E7EB; cursor: pointer; }
-
-    .mobile-toggle { display: none; font-size: 1.5rem; cursor: pointer; color: #6B7280; background: none; border: none; }
-
-    @media (max-width: 1024px) {
-        .sidebar { transform: translateX(-100%); }
-        .sidebar.open { transform: translateX(0); }
-        .main { margin-left: 0; padding: 1rem; }
-        .mobile-toggle { display: block; }
-    }
-    @media (max-width: 768px) {
-        .category-grid { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 480px) {
-        .category-grid { grid-template-columns: 1fr; }
-    }
-</style>
-
-<div style="display:flex;min-height:100vh;">
-
-    <!-- ===== SIDEBAR ===== -->
-    <aside class="sidebar" id="sidebar">
-        <div style="display:flex;align-items:center;gap:10px;padding:0 1.5rem 1.5rem;border-bottom:1px solid #E5E7EB;">
-            <div style="width:36px;height:36px;background:linear-gradient(135deg,#334155,#475569);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;">C</div>
-            <div><span style="font-size:20px;font-weight:800;color:#1F2937;">Camp<span style="color:#334155;">ven</span></span></div>
-        </div>
-
-        <ul class="nav-menu">
-            <li class="nav-label">Menu Utama</li>
-            <li><a href="{{ route('admin.dashboard') }}"><i class="fas fa-calendar-alt"></i> Event</a></li>
-            <li><a href="{{ route('admin.users') }}"><i class="fas fa-users"></i> User</a></li>
-            <li><a href="{{ route('admin.categories') }}" class="active"><i class="fas fa-tags"></i> Kategori</a></li>
-            <li class="nav-label" style="margin-top:1rem;">Akun</li>
-            <li><a href="{{ route('profile') }}"><i class="fas fa-user-circle"></i> Profil</a></li>
-            <li><a href="{{ route('home') }}"><i class="fas fa-home"></i> Beranda</a></li>
-            <li>
-                <form method="POST" action="{{ route('logout') }}" style="display:inline;width:100%;">
-                    @csrf
-                    <button type="submit" style="display:flex;align-items:center;gap:12px;padding:0.7rem 1rem;border-radius:10px;color:#6B7280;background:none;border:none;font-weight:500;font-size:0.9rem;width:100%;cursor:pointer;font-family:'Inter',sans-serif;">
-                        <i class="fas fa-sign-out-alt" style="width:20px;text-align:center;font-size:1rem;"></i> Keluar
-                    </button>
-                </form>
-            </li>
-        </ul>
-
-        <div class="sidebar-footer">
-            <div style="display:flex;align-items:center;gap:10px;">
-                    @if(Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
-                        <img src="{{ Storage::url(Auth::user()->foto) }}" alt="Foto Profil" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #E5E7EB;">
-                    @else
-                        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#334155,#475569);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;">{{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}</div>
-                    @endif
+    <!-- ===== LEFT SIDEBAR ===== -->
+    <aside class="w-64 bg-white border-r border-slate-200/90 flex flex-col justify-between fixed top-0 bottom-0 left-0 z-40 hidden md:flex">
+        <div>
+            <!-- Brand Logo -->
+            <div class="h-20 flex items-center gap-3 px-6 border-b border-slate-100">
+                <div class="w-9 h-9 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-indigo-600/20">
+                    <i class="fas fa-cubes text-sm"></i>
+                </div>
                 <div>
-                    <div style="font-weight:600;font-size:0.9rem;">{{ Auth::user()->nama }}</div>
-                    <div style="font-size:0.75rem;color:#6B7280;">Administrator</div>
+                    <span class="text-xl font-extrabold text-slate-900 tracking-tight">Camp<span class="text-indigo-600">ven</span></span>
+                    <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider -mt-1">Pusat Administrator</span>
                 </div>
             </div>
+
+            <!-- Nav Menu List -->
+            <div class="p-4 space-y-1.5 text-xs">
+                <div class="px-3 py-1.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Navigasi Utama</div>
+                
+                <a href="{{ route('admin.dashboard') }}" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-semibold transition">
+                    <i class="fas fa-calendar-alt text-sm w-4 text-slate-400"></i>
+                    <span>Manajemen Acara</span>
+                </a>
+
+                <a href="{{ route('admin.users') }}" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-semibold transition">
+                    <i class="fas fa-users text-sm w-4 text-slate-400"></i>
+                    <span>Manajemen Pengguna</span>
+                </a>
+
+                <a href="{{ route('admin.categories') }}" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-indigo-600 text-white font-bold shadow-md shadow-indigo-600/20 transition">
+                    <i class="fas fa-tags text-sm w-4"></i>
+                    <span>Kategori Acara</span>
+                </a>
+
+                <div class="px-3 pt-4 pb-1 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Akses Cepat</div>
+                
+                <a href="{{ route('profile') }}" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-semibold transition">
+                    <i class="fas fa-user-circle text-sm w-4 text-slate-400"></i>
+                    <span>Profil Saya</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Sidebar Bottom: Back to Campus View -->
+        <div class="p-4 border-t border-slate-100">
+            <a href="{{ route('home') }}" class="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 font-bold text-xs transition">
+                <i class="fas fa-arrow-left text-xs"></i>
+                <span>Kembali ke Beranda Kampus</span>
+            </a>
         </div>
     </aside>
 
-    <!-- ===== MAIN ===== -->
-    <main class="main">
-        <div class="topbar">
+    <!-- ===== MAIN CONTENT AREA ===== -->
+    <div class="flex-grow md:ml-64 flex flex-col min-h-screen">
+        
+        <!-- Top Operational Header -->
+        <header class="h-20 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-6 sm:px-8 flex items-center justify-between sticky top-0 z-30">
             <div>
-                <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
-                <div style="display:inline-block;margin-left:10px;">
-                    <h1 style="font-size:1.5rem;font-weight:800;"><i class="fas fa-tags" style="color:#334155;"></i> Manajemen Kategori</h1>
-                    <p style="color:#6B7280;font-size:0.9rem;">Kelola kategori event yang tersedia di Campven</p>
+                <h1 class="text-base font-extrabold text-slate-900">Kategori Kegiatan</h1>
+                <p class="text-xs text-slate-400">Taksonomi klasifikasi acara mahasiswa</p>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2.5 pl-2 border-l border-slate-200">
+                    <div class="w-9 h-9 rounded-full overflow-hidden bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
+                        @if(Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
+                            <img src="{{ Storage::url(Auth::user()->foto) }}" alt="Foto" class="w-full h-full object-cover">
+                        @else
+                            {{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}
+                        @endif
+                    </div>
+                    <div class="text-left hidden sm:block">
+                        <span class="block text-xs font-bold text-slate-900 leading-tight">{{ Auth::user()->nama }}</span>
+                        <span class="text-[10px] font-medium text-slate-400">Administrator</span>
+                    </div>
                 </div>
             </div>
-            <div>
-                <button onclick="document.getElementById('createCategoryModal').classList.add('show')" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#334155;color:white;">
-                    <i class="fas fa-plus"></i> Tambah Kategori
+        </header>
+
+        <!-- Body Container -->
+        <div class="p-6 sm:p-8 space-y-8 max-w-7xl w-full mx-auto">
+            
+            <!-- Hero Banner -->
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-bold text-slate-600 mb-2 shadow-2xs">
+                        <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+                        <span>Struktur Taksonomi Acara</span>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                        Kategori & Label Acara 🏷️
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl">
+                        Atur kategori kegiatan kampus untuk pengelompokan pendaftaran, filter pencarian, dan penerbitan sertifikat.
+                    </p>
+                </div>
+
+                <button type="button" onclick="openCreateCatModal()" class="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition btn-spring flex items-center gap-2 self-start lg:self-auto">
+                    <i class="fas fa-plus"></i>
+                    <span>Tambah Kategori Baru</span>
                 </button>
             </div>
-        </div>
 
-        @if(session('success'))
-        <div class="notification success" style="padding:0.8rem 1.2rem;border-radius:10px;margin-bottom:1.2rem;display:flex;align-items:center;gap:10px;font-weight:500;font-size:0.9rem;background:#D1FAE5;color:#065F46;border-left:4px solid #10B981;">
-            <i class="fas fa-check-circle"></i> {{ session('success') }}
-            <button onclick="this.parentElement.remove()" style="margin-left:auto;cursor:pointer;background:none;border:none;font-size:16px;opacity:0.5;">&times;</button>
-        </div>
-        @endif
-        @if(session('error'))
-        <div class="notification error" style="padding:0.8rem 1.2rem;border-radius:10px;margin-bottom:1.2rem;display:flex;align-items:center;gap:10px;font-weight:500;font-size:0.9rem;background:#FEE2E2;color:#991B1B;border-left:4px solid #EF4444;">
-            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-            <button onclick="this.parentElement.remove()" style="margin-left:auto;cursor:pointer;background:none;border:none;font-size:16px;opacity:0.5;">&times;</button>
-        </div>
-        @endif
+            <!-- Categories Grid -->
+            @if(count($categories) > 0)
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                @foreach($categories as $cat)
+                <div class="bg-white rounded-3xl border border-slate-200/90 shadow-2xs p-6 flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 space-y-4 group">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl shadow-xs transition-transform group-hover:scale-110" style="background-color: {{ $cat->color ?? '#4F46E5' }}15; color: {{ $cat->color ?? '#4F46E5' }};">
+                            <i class="fas {{ $cat->icon ?? 'fa-tag' }}"></i>
+                        </div>
 
-        @if(count($categories) > 0)
-        <div class="category-grid">
-            @foreach($categories as $cat)
-            <div class="category-card">
-                <span class="category-icon" style="color:{{ $cat->color }};">
-                    <i class="fas {{ $cat->icon }}"></i>
-                </span>
-                <div class="category-name">{{ $cat->nama }}</div>
-                <div class="category-desc">{{ $cat->description ?? '' }}</div>
-                <div class="category-actions">
-                    <a href="{{ route('admin.categories') }}?edit={{ $cat->id }}" class="btn btn-warning btn-xs" style="padding:0.15rem 0.6rem;font-size:0.65rem;border-radius:50px;border:none;font-weight:600;background:#F59E0B;color:white;text-decoration:none;cursor:pointer;">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    <form method="POST" action="{{ route('admin.category.delete', $cat->id) }}" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus kategori ini?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" style="padding:0.15rem 0.6rem;font-size:0.65rem;border-radius:50px;font-weight:600;background:#EF4444;color:white;border:none;cursor:pointer;">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </form>
+                        <div>
+                            <h3 class="text-base font-extrabold text-slate-900 group-hover:text-indigo-600 transition">{{ $cat->nama }}</h3>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed line-clamp-2">
+                                {{ $cat->description ?: 'Kategori kegiatan resmi mahasiswa' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+                        <span class="font-mono text-[10px] text-slate-400 px-2 py-0.5 rounded bg-slate-50 border border-slate-100">
+                            {{ $cat->icon }}
+                        </span>
+
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('admin.categories') }}?edit={{ $cat->id }}" class="p-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-600 transition" title="Edit Kategori">
+                                <i class="fas fa-edit text-xs"></i>
+                            </a>
+                            <form method="POST" action="{{ route('admin.category.delete', $cat->id) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori {{ $cat->nama }}?')" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="p-2 rounded-xl bg-slate-100 text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition" title="Hapus Kategori">
+                                    <i class="fas fa-trash-alt text-xs"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
+                @endforeach
             </div>
-            @endforeach
+            @else
+            <div class="text-center py-16 bg-white rounded-3xl border border-slate-200/90 p-8 space-y-3">
+                <div class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto text-2xl">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <h3 class="text-base font-extrabold text-slate-900">Belum Ada Kategori</h3>
+                <p class="text-xs text-slate-500">Klik tombol "Tambah Kategori Baru" untuk membuat klasifikasi pertama.</p>
+            </div>
+            @endif
+
         </div>
-        @else
-        <div style="text-align:center;padding:3rem 2rem;background:#FFFFFF;border-radius:16px;border:1px solid #E5E7EB;">
-            <i class="fas fa-tags" style="font-size:2.5rem;color:#D1D5DB;margin-bottom:0.5rem;"></i>
-            <h3 style="font-size:1rem;color:#6B7280;">Belum ada kategori</h3>
-            <p style="color:#9CA3AF;font-size:0.85rem;">Tambahkan kategori event pertama Anda</p>
-        </div>
-        @endif
-    </main>
+    </div>
 </div>
 
-<!-- ===== MODAL CREATE CATEGORY ===== -->
-<div class="modal-overlay" id="createCategoryModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h3><i class="fas fa-tag"></i> Tambah Kategori</h3>
-            <button class="close-modal" onclick="document.getElementById('createCategoryModal').classList.remove('show')">&times;</button>
+<!-- ===== MODAL TAMBAH KATEGORI ===== -->
+<div id="createCatModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
+    <div id="createCatBackdrop" onclick="closeCreateCatModal()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md opacity-0 transition-opacity duration-300"></div>
+
+    <div id="createCatCard" class="relative bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-100 p-6 sm:p-8 max-h-[90vh] overflow-y-auto transform scale-95 opacity-0 transition-all duration-300">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+            <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                <i class="fas fa-tag text-indigo-600"></i>
+                <span>Tambah Kategori Baru</span>
+            </h3>
+            <button onclick="closeCreateCatModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-sm hover:bg-slate-200 transition">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <form method="POST" action="{{ route('admin.category.store') }}">
+
+        <form method="POST" action="{{ route('admin.category.store') }}" class="space-y-4 text-xs">
             @csrf
-            <div class="form-group">
-                <label>Nama Kategori <span style="color:#EF4444;">*</span></label>
-                <input type="text" name="nama" placeholder="Contoh: Seminar" required>
+
+            <div class="space-y-1">
+                <label class="block font-bold text-slate-700">Nama Kategori <span class="text-rose-500">*</span></label>
+                <input type="text" name="nama" required placeholder="Contoh: Simposium, Hackathon" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
             </div>
-            <div class="form-group">
-                <label>Icon (FontAwesome) <span style="color:#EF4444;">*</span></label>
-                <input type="text" name="icon" placeholder="fa-graduation-cap" required>
-                <div style="font-size:0.7rem;color:#9CA3AF;margin-top:0.2rem;">
-                    <i class="fas fa-info-circle"></i>
-                    Contoh: fa-graduation-cap, fa-tools, fa-trophy, fa-video, fa-music, fa-running
+
+            <div class="space-y-1">
+                <label class="block font-bold text-slate-700">Icon FontAwesome <span class="text-rose-500">*</span></label>
+                <input type="text" name="icon" required placeholder="fa-graduation-cap" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
+                <span class="text-[10px] text-slate-400 block">Pilihan icon: fa-graduation-cap, fa-tools, fa-trophy, fa-video, fa-music, fa-running</span>
+            </div>
+
+            <div class="space-y-1">
+                <label class="block font-bold text-slate-700">Warna Identitas (Hex)</label>
+                <div class="flex items-center gap-3">
+                    <input type="color" name="color" value="#4F46E5" class="w-10 h-10 rounded-xl cursor-pointer border border-slate-200 p-0.5">
+                    <span class="text-slate-500 font-mono text-xs">Pilih palet warna badge</span>
                 </div>
             </div>
-            <div class="form-group">
-                <label>Warna</label>
-                <input type="color" name="color" value="#334155">
+
+            <div class="space-y-1">
+                <label class="block font-bold text-slate-700">Deskripsi Singkat</label>
+                <textarea name="description" rows="3" placeholder="Jelaskan jenis kegiatan dalam kategori ini..." class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition"></textarea>
             </div>
-            <div class="form-group">
-                <label>Deskripsi</label>
-                <textarea name="description" placeholder="Deskripsi singkat tentang kategori ini"></textarea>
-            </div>
-            <div class="form-actions">
-                <button type="button" class="btn btn-outline" onclick="document.getElementById('createCategoryModal').classList.remove('show')" style="padding:0.5rem 1.2rem;border-radius:50px;border:1.5px solid #D1D5DB;background:transparent;color:#6B7280;font-weight:600;font-size:0.85rem;cursor:pointer;">Batal</button>
-                <button type="submit" name="create_category" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#334155;color:white;"><i class="fas fa-save"></i> Simpan</button>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+                <button type="button" onclick="closeCreateCatModal()" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition">
+                    Batal
+                </button>
+                <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md shadow-indigo-600/20 transition btn-spring">
+                    Simpan Kategori
+                </button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- ===== MODAL EDIT CATEGORY ===== -->
+<!-- ===== MODAL EDIT KATEGORI ===== -->
 @if(request('edit'))
 @php
 $editCategory = \App\Models\Category::find(request('edit'));
 @endphp
 @if($editCategory)
-<div class="modal-overlay show" id="editCategoryModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h3><i class="fas fa-edit"></i> Edit Kategori</h3>
-            <a href="{{ route('admin.categories') }}" style="text-decoration:none;font-size:22px;color:#9CA3AF;">&times;</a>
+<div class="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+    <a href="{{ route('admin.categories') }}" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md"></a>
+
+    <div class="relative bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-100 p-6 sm:p-8 max-h-[90vh] overflow-y-auto z-10">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+            <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                <i class="fas fa-edit text-indigo-600"></i>
+                <span>Perbarui Kategori</span>
+            </h3>
+            <a href="{{ route('admin.categories') }}" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-sm hover:bg-slate-200 transition">
+                <i class="fas fa-times"></i>
+            </a>
         </div>
-        <form method="POST" action="{{ route('admin.category.update', $editCategory->id) }}">
+
+        <form method="POST" action="{{ route('admin.category.update', $editCategory->id) }}" class="space-y-4 text-xs">
             @csrf
             @method('PUT')
             <input type="hidden" name="category_id" value="{{ $editCategory->id }}">
-            <div class="form-group">
-                <label>Nama Kategori <span style="color:#EF4444;">*</span></label>
-                <input type="text" name="nama" value="{{ $editCategory->nama }}" required>
+
+            <div class="space-y-1">
+                <label class="block font-bold text-slate-700">Nama Kategori <span class="text-rose-500">*</span></label>
+                <input type="text" name="nama" value="{{ $editCategory->nama }}" required class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
             </div>
-            <div class="form-group">
-                <label>Icon (FontAwesome) <span style="color:#EF4444;">*</span></label>
-                <input type="text" name="icon" value="{{ $editCategory->icon }}" required>
+
+            <div class="space-y-1">
+                <label class="block font-bold text-slate-700">Icon FontAwesome <span class="text-rose-500">*</span></label>
+                <input type="text" name="icon" value="{{ $editCategory->icon }}" required class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
             </div>
-            <div class="form-group">
-                <label>Warna</label>
-                <input type="color" name="color" value="{{ $editCategory->color }}">
+
+            <div class="space-y-1">
+                <label class="block font-bold text-slate-700">Warna Identitas</label>
+                <div class="flex items-center gap-3">
+                    <input type="color" name="color" value="{{ $editCategory->color ?? '#4F46E5' }}" class="w-10 h-10 rounded-xl cursor-pointer border border-slate-200 p-0.5">
+                    <span class="text-slate-500 font-mono text-xs">{{ $editCategory->color ?? '#4F46E5' }}</span>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Deskripsi</label>
-                <textarea name="description">{{ $editCategory->description ?? '' }}</textarea>
+
+            <div class="space-y-1">
+                <label class="block font-bold text-slate-700">Deskripsi</label>
+                <textarea name="description" rows="3" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">{{ $editCategory->description }}</textarea>
             </div>
-            <div class="form-actions">
-                <a href="{{ route('admin.categories') }}" class="btn btn-outline" style="padding:0.5rem 1.2rem;border-radius:50px;border:1.5px solid #D1D5DB;background:transparent;color:#6B7280;font-weight:600;font-size:0.85rem;text-decoration:none;">Batal</a>
-                <button type="submit" name="update_category" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#334155;color:white;"><i class="fas fa-save"></i> Update</button>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+                <a href="{{ route('admin.categories') }}" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition">
+                    Batal
+                </a>
+                <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md shadow-indigo-600/20 transition btn-spring">
+                    Perbarui Kategori
+                </button>
             </div>
         </form>
     </div>
 </div>
 @endif
 @endif
-
-<script>
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('modal-overlay')) {
-            e.target.classList.remove('show');
-        }
-    });
-    setTimeout(function() {
-        const notif = document.querySelector('.notification');
-        if (notif) {
-            notif.style.transition = 'opacity 0.5s';
-            notif.style.opacity = '0';
-            setTimeout(() => notif.remove(), 500);
-        }
-    }, 5000);
-</script>
 @endsection
+
+@push('scripts')
+<script>
+    const catModal = document.getElementById('createCatModal');
+    const catBackdrop = document.getElementById('createCatBackdrop');
+    const catCard = document.getElementById('createCatCard');
+
+    function openCreateCatModal() {
+        catModal.classList.remove('hidden');
+        catModal.classList.add('flex');
+        setTimeout(() => {
+            catBackdrop.classList.remove('opacity-0');
+            catCard.classList.remove('opacity-0', 'scale-95');
+            catCard.classList.add('opacity-100', 'scale-100');
+        }, 10);
+    }
+
+    function closeCreateCatModal() {
+        catBackdrop.classList.add('opacity-0');
+        catCard.classList.add('opacity-0', 'scale-95');
+        catCard.classList.remove('opacity-100', 'scale-100');
+        setTimeout(() => {
+            catModal.classList.add('hidden');
+            catModal.classList.remove('flex');
+        }, 300);
+    }
+</script>
+@endpush

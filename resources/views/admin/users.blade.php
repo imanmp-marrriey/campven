@@ -1,374 +1,421 @@
 @extends('layouts.app')
 
-@section('title', 'Manajemen User - Admin')
+@section('title', 'Manajemen Pengguna - Admin Campven')
 
 @section('content')
-<style>
-    .sidebar {
-        width: 260px;
-        background: #FFFFFF;
-        border-right: 1px solid #E5E7EB;
-        padding: 1.5rem 0;
-        position: fixed;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        z-index: 50;
-        overflow-y: auto;
-        transition: transform 0.3s ease;
-    }
-    .sidebar .nav-menu { list-style: none; padding: 1rem 0.8rem; }
-    .sidebar .nav-menu li { margin-bottom: 2px; }
-    .sidebar .nav-menu li a {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 0.7rem 1rem;
-        border-radius: 10px;
-        color: #6B7280;
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 0.9rem;
-        transition: all 0.2s;
-    }
-    .sidebar .nav-menu li a:hover { background: #F1F5F9; color: #334155; }
-    .sidebar .nav-menu li a.active { background: #334155; color: white; }
-    .sidebar .nav-menu li a i { width: 20px; text-align: center; font-size: 1rem; }
-    .sidebar .nav-menu .nav-label {
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: #9CA3AF;
-        padding: 0.5rem 1rem 0.2rem;
-        font-weight: 600;
-    }
-    .sidebar .sidebar-footer {
-        padding: 1rem 1.5rem;
-        border-top: 1px solid #E5E7EB;
-        margin-top: auto;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-    }
-    .main { margin-left: 260px; flex: 1; padding: 1.5rem 2rem 2rem; min-height: 100vh; }
-    .topbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-    .stat-card {
-        background: #FFFFFF;
-        border-radius: 16px;
-        padding: 1.2rem 1.5rem;
-        border: 1px solid #E5E7EB;
-        transition: all 0.2s;
-    }
-    .stat-card:hover { border-color: #334155; box-shadow: 0 4px 20px rgba(51,65,85,0.08); }
-    .stat-card .stat-label { font-size: 0.75rem; font-weight: 500; color: #6B7280; text-transform: uppercase; letter-spacing: 0.3px; }
-    .stat-card .stat-number { font-size: 1.8rem; font-weight: 700; color: #1F2937; margin-top: 0.2rem; }
-    .stat-card .stat-icon { float: right; font-size: 1.5rem; color: #D1D5DB; }
+<div class="min-h-screen bg-slate-50/70 flex">
 
-    .table-wrapper {
-        background: #FFFFFF;
-        border-radius: 16px;
-        border: 1px solid #E5E7EB;
-        overflow: hidden;
-    }
-    .table-wrapper table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    .table-wrapper th { background: #F8FAFC; color: #6B7280; font-weight: 600; padding: 0.7rem 1rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.3px; }
-    .table-wrapper td { padding: 0.6rem 1rem; border-bottom: 1px solid #F1F5F9; }
-    .table-wrapper tr:hover td { background: #F8FAFC; }
-
-    .modal-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.4);
-        backdrop-filter: blur(4px);
-        z-index: 1000;
-        align-items: center;
-        justify-content: center;
-        padding: 1rem;
-    }
-    .modal-overlay.show { display: flex; }
-    .modal {
-        background: #FFFFFF;
-        border-radius: 16px;
-        max-width: 560px;
-        width: 100%;
-        max-height: 90vh;
-        overflow-y: auto;
-        padding: 1.8rem;
-        animation: modalIn 0.25s ease;
-    }
-    @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-    .modal .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
-    .modal .modal-header h3 { font-size: 1.1rem; font-weight: 700; color: #1F2937; }
-    .modal .modal-header h3 i { color: #334155; margin-right: 8px; }
-    .modal .close-modal { background: none; border: none; font-size: 22px; cursor: pointer; color: #9CA3AF; transition: all 0.2s; }
-    .modal .close-modal:hover { color: #EF4444; transform: rotate(90deg); }
-
-    .form-group { margin-bottom: 1rem; }
-    .form-group label { display: block; font-weight: 600; font-size: 0.8rem; color: #374151; margin-bottom: 0.2rem; }
-    .form-group input, .form-group select, .form-group textarea {
-        width: 100%;
-        padding: 0.6rem 0.8rem;
-        border: 1.5px solid #E5E7EB;
-        border-radius: 10px;
-        font-family: 'Inter', sans-serif;
-        font-size: 0.9rem;
-        transition: all 0.2s;
-        background: #FFFFFF;
-        color: #1F2937;
-    }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-        outline: none;
-        border-color: #334155;
-        box-shadow: 0 0 0 3px rgba(51,65,85,0.1);
-    }
-    .form-actions { display: flex; gap: 10px; margin-top: 1.2rem; justify-content: flex-end; }
-
-    .mobile-toggle { display: none; font-size: 1.5rem; cursor: pointer; color: #6B7280; background: none; border: none; }
-    .btn-edit { padding: 0.15rem 0.6rem; font-size: 0.65rem; border-radius: 50px; border: none; font-weight: 600; background: #F59E0B; color: white; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 3px; line-height: 1.4; }
-    .btn-edit:hover { background: #D97706; }
-    .btn-delete { padding: 0.15rem 0.6rem; font-size: 0.65rem; border-radius: 50px; font-weight: 600; background: #EF4444; color: white; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 3px; line-height: 1.4; }
-    .btn-delete:hover { background: #DC2626; }
-    .btn-delete:disabled { opacity: 0.5; cursor: not-allowed; }
-    
-    @media (max-width: 1024px) {
-        .sidebar { transform: translateX(-100%); }
-        .sidebar.open { transform: translateX(0); }
-        .main { margin-left: 0; padding: 1rem; }
-        .mobile-toggle { display: block; }
-        .stats-grid { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 768px) {
-        .stats-grid { grid-template-columns: 1fr; }
-        .table-wrapper { overflow-x: auto; }
-        .table-wrapper table { min-width: 600px; }
-        .topbar { flex-direction: column; align-items: stretch; }
-    }
-</style>
-
-<div style="display:flex;min-height:100vh;">
-
-    <!-- ===== SIDEBAR ===== -->
-    <aside class="sidebar" id="sidebar">
-        <div style="display:flex;align-items:center;gap:10px;padding:0 1.5rem 1.5rem;border-bottom:1px solid #E5E7EB;">
-            <div style="width:36px;height:36px;background:linear-gradient(135deg,#334155,#475569);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;">C</div>
-            <div><span style="font-size:20px;font-weight:800;color:#1E293B;">Camp<span style="color:#334155;">ven</span></span></div>
-        </div>
-
-        <ul class="nav-menu">
-            <li class="nav-label">Menu Utama</li>
-            <li><a href="{{ route('admin.dashboard') }}"><i class="fas fa-calendar-alt"></i> Event</a></li>
-            <li><a href="{{ route('admin.users') }}" class="active"><i class="fas fa-users"></i> User</a></li>
-            <li><a href="{{ route('admin.categories') }}"><i class="fas fa-tags"></i> Kategori</a></li>
-            <li class="nav-label" style="margin-top:1rem;">Akun</li>
-            <li><a href="{{ route('profile') }}"><i class="fas fa-user-circle"></i> Profil</a></li>
-            <li><a href="{{ route('home') }}"><i class="fas fa-home"></i> Beranda</a></li>
-            <li>
-                <form method="POST" action="{{ route('logout') }}" style="display:inline;width:100%;">
-                    @csrf
-                    <button type="submit" style="display:flex;align-items:center;gap:12px;padding:0.7rem 1rem;border-radius:10px;color:#6B7280;background:none;border:none;font-weight:500;font-size:0.9rem;width:100%;cursor:pointer;font-family:'Inter',sans-serif;">
-                        <i class="fas fa-sign-out-alt" style="width:20px;text-align:center;font-size:1rem;"></i> Keluar
-                    </button>
-                </form>
-            </li>
-        </ul>
-
-        <div class="sidebar-footer">
-            <a href="{{ route('profile') }}" style="text-decoration:none;color:inherit;display:block;">
-                <div style="display:flex;align-items:center;gap:10px;">
-                    @if(Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
-                        <img src="{{ Storage::url(Auth::user()->foto) }}" alt="Foto Profil" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #E5E7EB;">
-                    @else
-                        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#334155,#475569);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;">{{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}</div>
-                    @endif
-                    <div>
-                        <div style="font-weight:600;font-size:0.9rem;">{{ Auth::user()->nama }}</div>
-                        <div style="font-size:0.75rem;color:#6B7280;">Administrator</div>
-                    </div>
+    <!-- ===== LEFT SIDEBAR ===== -->
+    <aside class="w-64 bg-white border-r border-slate-200/90 flex flex-col justify-between fixed top-0 bottom-0 left-0 z-40 hidden md:flex">
+        <div>
+            <!-- Brand Logo -->
+            <div class="h-20 flex items-center gap-3 px-6 border-b border-slate-100">
+                <div class="w-9 h-9 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-indigo-600/20">
+                    <i class="fas fa-cubes text-sm"></i>
                 </div>
-            </a>
-        </div>
-    </aside>
-
-    <!-- ===== MAIN ===== -->
-    <main class="main">
-        <div class="topbar">
-            <div>
-                <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
-                <div style="display:inline-block;margin-left:10px;">
-                    <h1 style="font-size:1.5rem;font-weight:800;">Manajemen User</h1>
-                    <p style="color:#6B7280;font-size:0.9rem;">Kelola semua pengguna Campven</p>
+                <div>
+                    <span class="text-xl font-extrabold text-slate-900 tracking-tight">Camp<span class="text-indigo-600">ven</span></span>
+                    <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider -mt-1">Pusat Administrator</span>
                 </div>
             </div>
-            <div style="display:flex;align-items:center;gap:10px;">
-                <button onclick="document.getElementById('createUserModal').classList.add('show')" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#334155;color:white;">
-                    <i class="fas fa-user-plus"></i> Tambah User
-                </button>
-                <a href="{{ route('profile') }}" style="text-decoration:none;">
-                    @if(Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
-                        <img src="{{ Storage::url(Auth::user()->foto) }}" alt="Foto Profil" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #E5E7EB;">
-                    @else
-                        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#334155,#475569);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;">{{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}</div>
-                    @endif
+
+            <!-- Nav Menu List -->
+            <div class="p-4 space-y-1.5 text-xs">
+                <div class="px-3 py-1.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Navigasi Utama</div>
+                
+                <a href="{{ route('admin.dashboard') }}" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-semibold transition">
+                    <i class="fas fa-calendar-alt text-sm w-4 text-slate-400"></i>
+                    <span>Manajemen Acara</span>
+                </a>
+
+                <a href="{{ route('admin.users') }}" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-indigo-600 text-white font-bold shadow-md shadow-indigo-600/20 transition">
+                    <i class="fas fa-users text-sm w-4"></i>
+                    <span>Manajemen Pengguna</span>
+                </a>
+
+                <a href="{{ route('admin.categories') }}" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-semibold transition">
+                    <i class="fas fa-tags text-sm w-4 text-slate-400"></i>
+                    <span>Kategori Acara</span>
+                </a>
+
+                <div class="px-3 pt-4 pb-1 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Akses Cepat</div>
+                
+                <a href="{{ route('profile') }}" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-semibold transition">
+                    <i class="fas fa-user-circle text-sm w-4 text-slate-400"></i>
+                    <span>Profil Saya</span>
                 </a>
             </div>
         </div>
 
-        <!-- ===== STATS ===== -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <i class="fas fa-users stat-icon"></i>
-                <div class="stat-label">Total User</div>
-                <div class="stat-number">{{ $total_users }}</div>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-user-shield stat-icon"></i>
-                <div class="stat-label">Admin</div>
-                <div class="stat-number">{{ $total_admin }}</div>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-user-tie stat-icon"></i>
-                <div class="stat-label">Penyelenggara</div>
-                <div class="stat-number">{{ $total_penyelenggara }}</div>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-user-graduate stat-icon"></i>
-                <div class="stat-label">Mahasiswa</div>
-                <div class="stat-number">{{ $total_mahasiswa }}</div>
-            </div>
+        <!-- Sidebar Bottom: Back to Campus View -->
+        <div class="p-4 border-t border-slate-100">
+            <a href="{{ route('home') }}" class="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 font-bold text-xs transition">
+                <i class="fas fa-arrow-left text-xs"></i>
+                <span>Kembali ke Beranda Kampus</span>
+            </a>
         </div>
+    </aside>
 
-        @if(session('success'))
-        <div class="notification success" style="padding:0.8rem 1.2rem;border-radius:10px;margin-bottom:1.2rem;display:flex;align-items:center;gap:10px;font-weight:500;font-size:0.9rem;background:#D1FAE5;color:#065F46;border-left:4px solid #10B981;">
-            <i class="fas fa-check-circle"></i> {{ session('success') }}
-            <button onclick="this.parentElement.remove()" style="margin-left:auto;cursor:pointer;background:none;border:none;font-size:16px;opacity:0.5;">&times;</button>
-        </div>
-        @endif
-        @if(session('error'))
-        <div class="notification error" style="padding:0.8rem 1.2rem;border-radius:10px;margin-bottom:1.2rem;display:flex;align-items:center;gap:10px;font-weight:500;font-size:0.9rem;background:#FEE2E2;color:#991B1B;border-left:4px solid #EF4444;">
-            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-            <button onclick="this.parentElement.remove()" style="margin-left:auto;cursor:pointer;background:none;border:none;font-size:16px;opacity:0.5;">&times;</button>
-        </div>
-        @endif
+    <!-- ===== MAIN CONTENT AREA ===== -->
+    <div class="flex-grow md:ml-64 flex flex-col min-h-screen">
+        
+        <!-- Top Operational Header -->
+        <header class="h-20 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-6 sm:px-8 flex items-center justify-between sticky top-0 z-30">
+            <!-- Search bar -->
+            <div class="relative w-72 sm:w-96">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" id="userSearchInput" onkeyup="filterUsersTable()" placeholder="Cari nama, email, role..." class="w-full pl-10 pr-12 py-2 rounded-full bg-slate-100 border border-transparent focus:border-slate-300 focus:bg-white text-xs text-slate-800 placeholder-slate-400 focus:outline-none transition">
+                <kbd class="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-bold text-slate-400">⌘K</kbd>
+            </div>
 
-        <!-- ===== USERS TABLE ===== -->
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:10px;">
-            <h2 style="font-size:1.2rem;font-weight:700;color:#1F2937;"><i class="fas fa-users" style="color:#334155;margin-right:8px;"></i> Semua User</h2>
-        </div>
+            <!-- Right Header Actions -->
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2.5 pl-2 border-l border-slate-200">
+                    <div class="w-9 h-9 rounded-full overflow-hidden bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
+                        @if(Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
+                            <img src="{{ Storage::url(Auth::user()->foto) }}" alt="Foto" class="w-full h-full object-cover">
+                        @else
+                            {{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}
+                        @endif
+                    </div>
+                    <div class="text-left hidden sm:block">
+                        <span class="block text-xs font-bold text-slate-900 leading-tight">{{ Auth::user()->nama }}</span>
+                        <span class="text-[10px] font-medium text-slate-400">Administrator</span>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nama</th>
-                        <th>Email</th>
-                        <th>No. Telp</th>
-                        <th>Role</th>
-                        <th style="text-align:center;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($users as $user)
-                    <tr>
-                        <td>#{{ $user->id }}</td>
-                        <td><strong>{{ $user->nama }}</strong></td>
-                        <td>{{ $user->email }}</td>
-                        <td>{{ $user->no_telp ?? '-' }}</td>
-                        <td>
-                            <span style="display:inline-block;padding:0.1rem 0.5rem;border-radius:50px;font-size:0.65rem;font-weight:600;{{ $user->role == 'admin' ? 'background:#FEF3C7;color:#92400E;' : ($user->role == 'penyelenggara' ? 'background:#D1FAE5;color:#065F46;' : 'background:#DBEAFE;color:#1E40AF;') }}">
-                                {{ ucfirst($user->role) }}
-                            </span>
-                        </td>
-                        <td style="text-align:center;">
-                            @if($user->role !== 'admin')
-                            <form method="POST" action="{{ route('admin.user.delete', $user->id) }}" style="display:inline-flex;margin:0;padding:0;" onsubmit="return confirm('Yakin ingin menghapus user ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn-delete">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
-                            @else
-                            <span style="font-size:0.7rem;color:#9CA3AF;">Protected</span>
-                            @endif
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <!-- Dashboard Body Container -->
+        <div class="p-6 sm:p-8 space-y-8 max-w-7xl w-full mx-auto">
+            
+            <!-- Welcome Header -->
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-bold text-slate-600 mb-2 shadow-2xs">
+                        <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+                        <span>Otoritas Pengguna Kampus</span>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                        Manajemen Akun & Hak Akses 👥
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl">
+                        Daftar pengguna terdaftar, organisasi penyelenggara kegiatan, dan mahasiswa.
+                    </p>
+                </div>
+
+                <!-- Action Button -->
+                <button type="button" onclick="openCreateUserModal()" class="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition btn-spring flex items-center gap-2 self-start lg:self-auto">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Tambah Pengguna Baru</span>
+                </button>
+            </div>
+
+            <!-- 4 KPI Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-2">
+                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">TOTAL PENGGUNA</span>
+                    <div class="text-3xl font-black text-slate-900 tracking-tight">{{ $total_users }} <span class="text-xs font-semibold text-slate-400">Akun</span></div>
+                    <div class="text-[11px] text-slate-500 pt-1 border-t border-slate-100">Keseluruhan akun sistem</div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-2">
+                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">ADMINISTRATOR</span>
+                    <div class="text-3xl font-black text-amber-700 tracking-tight">{{ $total_admin }} <span class="text-xs font-semibold text-slate-400">Admin</span></div>
+                    <div class="text-[11px] text-slate-500 pt-1 border-t border-slate-100">Hak akses super user</div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-2">
+                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">PENYELENGGARA</span>
+                    <div class="text-3xl font-black text-emerald-700 tracking-tight">{{ $total_penyelenggara }} <span class="text-xs font-semibold text-slate-400">Ormawa</span></div>
+                    <div class="text-[11px] text-slate-500 pt-1 border-t border-slate-100">BEM, Himpunan & UKM</div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-2">
+                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">MAHASISWA</span>
+                    <div class="text-3xl font-black text-indigo-700 tracking-tight">{{ $total_mahasiswa }} <span class="text-xs font-semibold text-slate-400">Peserta</span></div>
+                    <div class="text-[11px] text-slate-500 pt-1 border-t border-slate-100">Peserta aktif kegiatan</div>
+                </div>
+            </div>
+
+            <!-- Users Table Container -->
+            <div class="bg-white rounded-3xl border border-slate-200/90 shadow-2xs overflow-hidden">
+                <div class="p-6 pb-4 border-b border-slate-100 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-lg font-extrabold text-slate-900">Daftar Seluruh Pengguna</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Kelola identitas, role akses, dan informasi kontak pengguna</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold text-xs">
+                        {{ count($users) }} Akun
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600" id="usersTable">
+                        <thead class="bg-slate-50/70 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 border-b border-slate-100">
+                            <tr>
+                                <th class="px-6 py-3.5">ID & PENGGUNA</th>
+                                <th class="px-4 py-3.5">EMAIL</th>
+                                <th class="px-4 py-3.5">NO. TELEPON</th>
+                                <th class="px-4 py-3.5">ROLE AKSES</th>
+                                <th class="px-6 py-3.5 text-right">AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            @foreach($users as $u)
+                            @php
+                                $roleBadge = [
+                                    'admin' => 'bg-amber-50 text-amber-800 border-amber-200',
+                                    'penyelenggara' => 'bg-emerald-50 text-emerald-800 border-emerald-200',
+                                    'mahasiswa' => 'bg-indigo-50 text-indigo-800 border-indigo-200',
+                                ];
+                            @endphp
+                            <tr class="hover:bg-slate-50/50 transition user-row">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-9 h-9 rounded-2xl bg-slate-900 text-white font-bold flex items-center justify-center text-xs flex-shrink-0">
+                                            @if($u->foto && Storage::disk('public')->exists($u->foto))
+                                                <img src="{{ Storage::url($u->foto) }}" alt="Foto" class="w-full h-full object-cover rounded-2xl">
+                                            @else
+                                                {{ strtoupper(substr($u->nama, 0, 1)) }}
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <span class="font-bold text-slate-900 block text-xs">{{ $u->nama }}</span>
+                                            <span class="text-[10px] text-slate-400 font-mono">#ID-{{ $u->id }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-4 font-semibold text-slate-700">
+                                    {{ $u->email }}
+                                </td>
+                                <td class="px-4 py-4 text-slate-500">
+                                    {{ $u->no_telp ?? '-' }}
+                                </td>
+                                <td class="px-4 py-4">
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase border {{ $roleBadge[$u->role] ?? 'bg-slate-100 text-slate-700 border-slate-200' }}">
+                                        {{ $u->role }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <button type="button" onclick="openEditUserModal({{ $u->id }}, '{{ addslashes($u->nama) }}', '{{ addslashes($u->email) }}', '{{ addslashes($u->no_telp ?? '') }}', '{{ $u->role }}')" class="p-2 rounded-xl bg-slate-100 text-slate-700 hover:text-indigo-600 hover:bg-indigo-50 transition" title="Edit Pengguna">
+                                            <i class="fas fa-edit text-xs"></i>
+                                        </button>
+
+                                        @if($u->role !== 'admin')
+                                        <form method="POST" action="{{ route('admin.user.delete', $u->id) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun {{ $u->nama }}?')" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="p-2 rounded-xl bg-slate-100 text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition" title="Hapus Pengguna">
+                                                <i class="fas fa-trash-alt text-xs"></i>
+                                            </button>
+                                        </form>
+                                        @else
+                                        <span class="text-[10px] font-bold text-slate-400 px-2 py-1 rounded bg-slate-100">
+                                            Dilindungi
+                                        </span>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
-    </main>
+    </div>
 </div>
 
-<!-- ===== MODAL CREATE USER ===== -->
-<div class="modal-overlay" id="createUserModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h3><i class="fas fa-user-plus"></i> Tambah User</h3>
-            <button class="close-modal" onclick="document.getElementById('createUserModal').classList.remove('show')">&times;</button>
+<!-- ===== MODAL TAMBAH USER ===== -->
+<div id="createUserModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
+    <div id="createUserBackdrop" onclick="closeCreateUserModal()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md opacity-0 transition-opacity duration-300"></div>
+
+    <div id="createUserCard" class="relative bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-100 p-6 sm:p-8 max-h-[90vh] overflow-y-auto transform scale-95 opacity-0 transition-all duration-300">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+            <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                <i class="fas fa-user-plus text-indigo-600"></i>
+                <span>Tambah Pengguna Baru</span>
+            </h3>
+            <button onclick="closeCreateUserModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-sm hover:bg-slate-200 transition">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <form method="POST" action="{{ route('admin.user.store') }}">
+
+        <form method="POST" action="{{ route('admin.user.store') }}" class="space-y-4 text-xs">
             @csrf
-            <div class="form-group">
-                <label>Nama <span style="color:#EF4444;">*</span></label>
-                <input type="text" name="nama" placeholder="Nama lengkap" required>
+
+            <div class="space-y-1">
+                <label class="block font-bold text-slate-700">Nama Lengkap <span class="text-rose-500">*</span></label>
+                <input type="text" name="nama" required placeholder="Contoh: BEM Polindra atau Nama Mahasiswa" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
             </div>
-            <div class="form-group">
-                <label>Email <span style="color:#EF4444;">*</span></label>
-                <input type="email" name="email" placeholder="email@example.com" required>
+
+            <div class="space-y-1">
+                <label class="block font-bold text-slate-700">Alamat Email <span class="text-rose-500">*</span></label>
+                <input type="email" name="email" required placeholder="email@campven.com" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
             </div>
-            <div class="form-group">
-                <label>Password <span style="color:#EF4444;">*</span></label>
-                <input type="password" name="password" placeholder="Minimal 6 karakter" required>
+
+            <div class="space-y-1">
+                <label class="block font-bold text-slate-700">Kata Sandi Akun <span class="text-rose-500">*</span></label>
+                <input type="password" name="password" required placeholder="Minimal 6 karakter" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
             </div>
-            <div class="form-group">
-                <label>No. Telepon</label>
-                <input type="text" name="no_telp" placeholder="08123456789">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <label class="block font-bold text-slate-700">Nomor Telepon / WA</label>
+                    <input type="text" name="no_telp" placeholder="08123456789" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="block font-bold text-slate-700">Role Hak Akses <span class="text-rose-500">*</span></label>
+                    <select name="role" required class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
+                        <option value="mahasiswa">Mahasiswa / Peserta</option>
+                        <option value="penyelenggara">Penyelenggara / Ormawa</option>
+                        <option value="admin">Administrator</option>
+                    </select>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Role <span style="color:#EF4444;">*</span></label>
-                <select name="role" required>
-                    <option value="admin">Admin</option>
-                    <option value="penyelenggara">Penyelenggara</option>
-                    <option value="mahasiswa">Mahasiswa</option>
-                </select>
-            </div>
-            <div class="form-actions">
-                <button type="button" class="btn btn-outline" onclick="document.getElementById('createUserModal').classList.remove('show')" style="padding:0.5rem 1.2rem;border-radius:50px;border:1.5px solid #D1D5DB;background:transparent;color:#6B7280;font-weight:600;font-size:0.85rem;cursor:pointer;">Batal</button>
-                <button type="submit" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#334155;color:white;"><i class="fas fa-save"></i> Simpan</button>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+                <button type="button" onclick="closeCreateUserModal()" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition">
+                    Batal
+                </button>
+                <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md shadow-indigo-600/20 transition btn-spring">
+                    Simpan Akun
+                </button>
             </div>
         </form>
     </div>
 </div>
 
-<script>
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('modal-overlay')) {
-            e.target.classList.remove('show');
-        }
-    });
-    setTimeout(function() {
-        const notif = document.querySelector('.notification');
-        if (notif) {
-            notif.style.transition = 'opacity 0.5s';
-            notif.style.opacity = '0';
-            setTimeout(() => notif.remove(), 500);
-        }
-    }, 5000);
-</script>
+<!-- ===== MODAL EDIT USER ===== -->
+<div id="editUserModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
+    <div id="editUserBackdrop" onclick="closeEditUserModal()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md opacity-0 transition-opacity duration-300"></div>
+
+    <div id="editUserCard" class="relative bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-100 p-6 sm:p-8 max-h-[90vh] overflow-y-auto transform scale-95 opacity-0 transition-all duration-300">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+            <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                <i class="fas fa-user-edit text-indigo-600"></i>
+                <span>Edit Pengguna</span>
+            </h3>
+            <button onclick="closeEditUserModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-sm hover:bg-slate-200 transition">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <form id="editUserForm" method="POST" action="" class="space-y-4 text-xs">
+            @csrf
+            @method('PUT')
+
+            <div class="space-y-1">
+                <label class="block font-bold text-slate-700">Nama Lengkap <span class="text-rose-500">*</span></label>
+                <input type="text" id="editNama" name="nama" required class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
+            </div>
+
+            <div class="space-y-1">
+                <label class="block font-bold text-slate-700">Alamat Email <span class="text-rose-500">*</span></label>
+                <input type="email" id="editEmail" name="email" required class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
+            </div>
+
+            <div class="space-y-1">
+                <label class="block font-bold text-slate-700">Kata Sandi Baru (Opsional)</label>
+                <input type="password" name="password" placeholder="Kosongkan jika tidak ingin mengubah password" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <label class="block font-bold text-slate-700">Nomor Telepon / WA</label>
+                    <input type="text" id="editTelp" name="no_telp" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="block font-bold text-slate-700">Role Hak Akses <span class="text-rose-500">*</span></label>
+                    <select id="editRole" name="role" required class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
+                        <option value="mahasiswa">Mahasiswa / Peserta</option>
+                        <option value="penyelenggara">Penyelenggara / Ormawa</option>
+                        <option value="admin">Administrator</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+                <button type="button" onclick="closeEditUserModal()" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition">
+                    Batal
+                </button>
+                <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md shadow-indigo-600/20 transition btn-spring">
+                    Perbarui Akun
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+<script>
+    const userModal = document.getElementById('createUserModal');
+    const userBackdrop = document.getElementById('createUserBackdrop');
+    const userCard = document.getElementById('createUserCard');
+
+    function openCreateUserModal() {
+        userModal.classList.remove('hidden');
+        userModal.classList.add('flex');
+        setTimeout(() => {
+            userBackdrop.classList.remove('opacity-0');
+            userCard.classList.remove('opacity-0', 'scale-95');
+            userCard.classList.add('opacity-100', 'scale-100');
+        }, 10);
+    }
+
+    function closeCreateUserModal() {
+        userBackdrop.classList.add('opacity-0');
+        userCard.classList.add('opacity-0', 'scale-95');
+        userCard.classList.remove('opacity-100', 'scale-100');
+        setTimeout(() => {
+            userModal.classList.add('hidden');
+            userModal.classList.remove('flex');
+        }, 300);
+    }
+
+    const editUserModal = document.getElementById('editUserModal');
+    const editUserBackdrop = document.getElementById('editUserBackdrop');
+    const editUserCard = document.getElementById('editUserCard');
+
+    function openEditUserModal(id, nama, email, telp, role) {
+        document.getElementById('editUserForm').action = '/admin/user/' + id;
+        document.getElementById('editNama').value = nama;
+        document.getElementById('editEmail').value = email;
+        document.getElementById('editTelp').value = telp;
+        document.getElementById('editRole').value = role;
+
+        editUserModal.classList.remove('hidden');
+        editUserModal.classList.add('flex');
+        setTimeout(() => {
+            editUserBackdrop.classList.remove('opacity-0');
+            editUserCard.classList.remove('opacity-0', 'scale-95');
+            editUserCard.classList.add('opacity-100', 'scale-100');
+        }, 10);
+    }
+
+    function closeEditUserModal() {
+        editUserBackdrop.classList.add('opacity-0');
+        editUserCard.classList.add('opacity-0', 'scale-95');
+        editUserCard.classList.remove('opacity-100', 'scale-100');
+        setTimeout(() => {
+            editUserModal.classList.add('hidden');
+            editUserModal.classList.remove('flex');
+        }, 300);
+    }
+
+    function filterUsersTable() {
+        const query = document.getElementById('userSearchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#usersTable tbody tr');
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(query) ? '' : 'none';
+        });
+    }
+</script>
+@endpush
