@@ -22,7 +22,7 @@
         width: 100px;
         height: 100px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #6C63FF, #8B83FF);
+        background: linear-gradient(135deg, #334155, #475569);
         color: white;
         display: flex;
         align-items: center;
@@ -68,7 +68,7 @@
         padding: 2rem;
     }
     .profile-form h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 1.2rem; }
-    .profile-form h3 i { color: #6C63FF; margin-right: 8px; }
+    .profile-form h3 i { color: #334155; margin-right: 8px; }
 
     .form-group { margin-bottom: 1rem; }
     .form-group label { display: block; font-weight: 600; font-size: 0.85rem; color: #374151; margin-bottom: 0.2rem; }
@@ -92,8 +92,8 @@
     }
     .form-group input:focus, .form-group textarea:focus {
         outline: none;
-        border-color: #6C63FF;
-        box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+        border-color: #334155;
+        box-shadow: 0 0 0 3px rgba(51,65,85,0.1);
     }
     .form-group input:disabled {
         background: #F9FAFB;
@@ -117,8 +117,8 @@
 <!-- ===== NAVBAR ===== -->
 <nav style="background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #E5E7EB;position:sticky;top:0;z-index:100;">
     <a href="{{ $back_url ?? route('home') }}" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
-        <div style="width:36px;height:36px;background:linear-gradient(135deg,#6C63FF,#8B83FF);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;">C</div>
-        <div><span style="font-size:20px;font-weight:800;color:#1F2937;">Camp<span style="color:#6C63FF;">ven</span></span></div>
+        <div style="width:36px;height:36px;background:linear-gradient(135deg,#334155,#475569);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;">C</div>
+        <div><span style="font-size:20px;font-weight:800;color:#1F2937;">Camp<span style="color:#334155;">ven</span></span></div>
     </a>
     <div style="display:flex;align-items:center;gap:12px;">
         <a href="{{ $back_url ?? route('home') }}" class="btn btn-outline btn-sm" style="padding:0.3rem 0.8rem;border-radius:50px;border:1.5px solid #D1D5DB;background:transparent;color:#6B7280;font-weight:600;font-size:0.75rem;text-decoration:none;">
@@ -233,7 +233,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" name="update_profile" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#6C63FF;color:white;display:inline-flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;">
+                    <button type="submit" name="update_profile" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#334155;color:white;display:inline-flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;">
                         <i class="fas fa-save"></i> Simpan Perubahan
                     </button>
                     <a href="{{ $back_url ?? route('home') }}" class="btn btn-outline" style="padding:0.5rem 1.2rem;border-radius:50px;border:1.5px solid #D1D5DB;background:transparent;color:#6B7280;font-weight:600;font-size:0.85rem;text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;">

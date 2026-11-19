@@ -19,6 +19,7 @@ class Event extends Model
         'deskripsi',
         'poster',
         'created_by',
+        'kuota',
     ];
     protected $casts = [
         'tanggal'       => 'date:Y-m-d',
@@ -39,5 +40,21 @@ class Event extends Model
     public function participantCount()
     {
         return $this->participants()->count();
+    }
+
+    public function isFull()
+    {
+        if (!$this->kuota) {
+            return false;
+        }
+        return $this->participantCount() >= $this->kuota;
+    }
+
+    public function sisaKuota()
+    {
+        if (!$this->kuota) {
+            return null;
+        }
+        return max(0, $this->kuota - $this->participantCount());
     }
 }

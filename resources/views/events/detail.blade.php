@@ -22,7 +22,7 @@
     .poster-hero .poster-placeholder {
         width: 100%;
         height: 200px;
-        background: linear-gradient(135deg, #6C63FF, #8B83FF);
+        background: linear-gradient(135deg, #334155, #475569);
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -49,7 +49,7 @@
     .event-main .event-header h1 { font-size: 1.8rem; font-weight: 800; }
     .event-main .event-header .category-badge {
         display: inline-block;
-        background: #6C63FF;
+        background: #334155;
         color: white;
         padding: 0.2rem 0.8rem;
         border-radius: 50px;
@@ -59,7 +59,7 @@
     }
     .event-main .event-meta { display: flex; flex-direction: column; gap: 8px; margin: 1rem 0; }
     .event-main .event-meta .meta-item { display: flex; align-items: center; gap: 10px; color: #6B7280; font-size: 0.95rem; }
-    .event-main .event-meta .meta-item i { width: 20px; color: #6C63FF; }
+    .event-main .event-meta .meta-item i { width: 20px; color: #334155; }
     .event-main .event-description { margin: 1.5rem 0; line-height: 1.8; color: #6B7280; }
     .event-main .event-description h3 { color: #1F2937; margin-bottom: 0.3rem; }
 
@@ -78,7 +78,7 @@
         align-items: center;
         gap: 8px;
     }
-    .sidebar-card h4 i { color: #6C63FF; }
+    .sidebar-card h4 i { color: #334155; }
 
     .stat-list { display: flex; flex-direction: column; gap: 0; }
     .stat-item {
@@ -91,7 +91,7 @@
     .stat-item:last-child { border-bottom: none; }
     .stat-item .stat-label { color: #6B7280; font-size: 0.85rem; font-weight: 500; }
     .stat-item .stat-value { color: #1F2937; font-size: 0.85rem; font-weight: 600; text-align: right; max-width: 55%; word-break: break-word; }
-    .stat-item .stat-value .highlight { color: #6C63FF; }
+    .stat-item .stat-value .highlight { color: #334155; }
 
     .registration-form { margin-top: 1rem; }
     .registration-form .form-group { margin-bottom: 0.8rem; }
@@ -107,8 +107,8 @@
     }
     .registration-form .form-group input:focus, .registration-form .form-group textarea:focus {
         outline: none;
-        border-color: #6C63FF;
-        box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+        border-color: #334155;
+        box-shadow: 0 0 0 3px rgba(51,65,85,0.1);
     }
     .registration-form .form-group textarea { min-height: 60px; resize: vertical; }
 
@@ -124,7 +124,7 @@
         width: 28px;
         height: 28px;
         border-radius: 50%;
-        background: #6C63FF;
+        background: #334155;
         color: white;
         display: flex;
         align-items: center;
@@ -149,7 +149,7 @@
         color: inherit;
         transition: all 0.2s;
     }
-    .related-event-card:hover { border-color: #6C63FF; transform: translateY(-2px); }
+    .related-event-card:hover { border-color: #334155; transform: translateY(-2px); }
     .related-event-card h5 { font-size: 0.9rem; font-weight: 600; }
     .related-event-card p { font-size: 0.8rem; color: #6B7280; }
 
@@ -181,13 +181,17 @@
 <!-- ===== NAVBAR ===== -->
 <nav style="background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #E5E7EB;position:sticky;top:0;z-index:100;">
     <a href="{{ route('home') }}" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
-        <div style="width:36px;height:36px;background:linear-gradient(135deg,#6C63FF,#8B83FF);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;">C</div>
-        <div><span style="font-size:20px;font-weight:800;color:#1F2937;">Camp<span style="color:#6C63FF;">ven</span></span></div>
+        <div style="width:36px;height:36px;background:linear-gradient(135deg,#334155,#475569);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;">C</div>
+        <div><span style="font-size:20px;font-weight:800;color:#1F2937;">Camp<span style="color:#334155;">ven</span></span></div>
     </a>
     <div style="display:flex;align-items:center;gap:12px;">
         @if(Auth::check())
-            <a href="{{ route('profile') }}" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#6C63FF,#8B83FF);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;text-decoration:none;transition:all 0.2s;">
-                {{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}
+            <a href="{{ route('profile') }}" style="width:36px;height:36px;border-radius:50%;overflow:hidden;text-decoration:none;transition:all 0.2s;display:block;">
+                @if(Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
+                    <img src="{{ Storage::url(Auth::user()->foto) }}" alt="Foto Profil" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
+                @else
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#334155,#475569);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;">{{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}</div>
+                @endif
             </a>
             <form method="POST" action="{{ route('logout') }}" style="display:inline;">
                 @csrf
@@ -268,7 +272,14 @@
                 </div>
                 @endif
 
-                @if(Auth::check() && !$is_joined)
+                @if($event->kuota)
+                <div style="padding:0.6rem 1rem;border-radius:10px;margin-bottom:1rem;background:{{ $event->isFull() ? '#FEE2E2' : '#EFF6FF' }};color:{{ $event->isFull() ? '#991B1B' : '#1E40AF' }};font-size:0.85rem;font-weight:500;display:flex;align-items:center;gap:8px;">
+                    <i class="fas {{ $event->isFull() ? 'fa-exclamation-circle' : 'fa-users' }}"></i>
+                    {{ $event->isFull() ? 'Kuota sudah penuh!' : 'Sisa kuota: ' . $event->sisaKuota() . ' dari ' . $event->kuota }}
+                </div>
+                @endif
+
+                @if(Auth::check() && !$is_joined && !$event->isFull())
                 <form method="POST" action="{{ route('event.register', $event->id) }}" class="registration-form">
                     @csrf
                     <div class="form-group">
@@ -279,15 +290,7 @@
                         <label>Email <span style="color:#EF4444;">*</span></label>
                         <input type="email" value="{{ Auth::user()->email }}" readonly style="background:#F9FAFB;color:#6B7280;cursor:not-allowed;">
                     </div>
-                    <div class="form-group">
-                        <label>No. Telepon</label>
-                        <input type="text" name="no_telp" value="{{ Auth::user()->no_telp ?? '' }}" placeholder="08123456789">
-                    </div>
-                    <div class="form-group">
-                        <label>Alasan Mengikuti</label>
-                        <textarea name="alasan" placeholder="Ceritakan alasan Anda mengikuti event ini..."></textarea>
-                    </div>
-                    <button type="submit" name="register" class="btn btn-primary" style="width:100%;justify-content:center;padding:0.6rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#6C63FF;color:white;">
+                    <button type="submit" name="register" class="btn btn-primary" style="width:100%;justify-content:center;padding:0.6rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#334155;color:white;">
                         <i class="fas fa-check"></i> Daftar Event
                     </button>
                 </form>
@@ -296,14 +299,18 @@
                     <span class="joined-badge"><i class="fas fa-check-circle"></i> Terdaftar</span>
                     <p style="font-size:0.8rem;color:#6B7280;margin-top:0.5rem;">Anda sudah terdaftar di event ini</p>
                 </div>
+                @elseif(Auth::check() && $event->isFull())
+                <div style="text-align:center;padding:0.5rem 0;">
+                    <span style="display:inline-block;background:#EF4444;color:white;padding:0.5rem 1.5rem;border-radius:50px;font-weight:600;font-size:0.9rem;">
+                        <i class="fas fa-times-circle"></i> Kuota Penuh
+                    </span>
+                    <p style="font-size:0.8rem;color:#6B7280;margin-top:0.5rem;">Maaf, event ini sudah mencapai batas peserta</p>
+                </div>
                 @else
                 <div style="text-align:center;padding:0.5rem 0;">
                     <p style="color:#6B7280;margin-bottom:1rem;">Silakan login terlebih dahulu untuk mendaftar</p>
-                    <a href="{{ route('login') }}" class="btn btn-primary" style="width:100%;justify-content:center;padding:0.6rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#6C63FF;color:white;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+                    <a href="{{ route('login') }}" class="btn btn-primary" style="width:100%;justify-content:center;padding:0.6rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#334155;color:white;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
                         <i class="fas fa-sign-in-alt"></i> Login
-                    </a>
-                    <a href="{{ route('register') }}" class="btn btn-outline" style="width:100%;justify-content:center;margin-top:0.5rem;padding:0.6rem 1.2rem;border-radius:50px;border:1.5px solid #D1D5DB;background:transparent;color:#6B7280;font-weight:600;font-size:0.85rem;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
-                        <i class="fas fa-user-plus"></i> Daftar Akun
                     </a>
                 </div>
                 @endif
@@ -315,7 +322,7 @@
                 <div class="stat-list">
                     <div class="stat-item">
                         <span class="stat-label">Total Peserta</span>
-                        <span class="stat-value"><span class="highlight">{{ $event->participantCount() }}</span> orang</span>
+                        <span class="stat-value"><span class="highlight">{{ $event->participantCount() }}</span> orang{{ $event->kuota ? ' / ' . $event->kuota : '' }}</span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-label">Kategori</span>
@@ -377,7 +384,7 @@
     <!-- ===== RELATED EVENTS ===== -->
     @if(count($related_events) > 0)
     <div class="related-events">
-        <h4 style="font-size:1.1rem;font-weight:700;"><i class="fas fa-link" style="color:#6C63FF;"></i> Event Serupa</h4>
+        <h4 style="font-size:1.1rem;font-weight:700;"><i class="fas fa-link" style="color:#334155;"></i> Event Serupa</h4>
         <div class="related-events-grid">
             @foreach($related_events as $re)
             <a href="{{ route('event.detail', $re->id) }}" class="related-event-card">

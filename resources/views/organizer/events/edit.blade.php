@@ -30,7 +30,7 @@
         margin: 0;
     }
     .card-header h3 i {
-        color: #10B981;
+        color: #1E40AF;
         margin-right: 8px;
     }
     .card-body {
@@ -62,8 +62,8 @@
     .form-group select:focus,
     .form-group textarea:focus {
         outline: none;
-        border-color: #10B981;
-        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        border-color: #1E40AF;
+        box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
     }
     .form-group textarea {
         min-height: 80px;
@@ -94,7 +94,7 @@
         font-weight: 600;
         font-size: 0.9rem;
         cursor: pointer;
-        background: #10B981;
+        background: #1E40AF;
         color: white;
         text-decoration: none;
     }
@@ -228,6 +228,12 @@
                 <div class="form-group">
                     <label>Deskripsi</label>
                     <textarea name="deskripsi">{{ old('deskripsi', $event->deskripsi) }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Kuota Peserta</label>
+                    <input type="number" name="kuota" value="{{ old('kuota', $event->kuota) }}" placeholder="Kosongkan untuk tidak terbatas" min="1">
+                    <div class="text-muted">Kosongkan jika tidak ada batas peserta</div>
                 </div>
 
                 @if($event->poster && Storage::disk('public')->exists($event->poster))

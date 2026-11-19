@@ -31,8 +31,8 @@
         font-size: 0.9rem;
         transition: all 0.2s;
     }
-    .sidebar .nav-menu li a:hover { background: #F3F4F6; color: #6C63FF; }
-    .sidebar .nav-menu li a.active { background: #6C63FF; color: white; }
+    .sidebar .nav-menu li a:hover { background: #F3F4F6; color: #334155; }
+    .sidebar .nav-menu li a.active { background: #334155; color: white; }
     .sidebar .nav-menu li a i { width: 20px; text-align: center; font-size: 1rem; }
     .sidebar .nav-menu .nav-label {
         font-size: 0.7rem;
@@ -75,7 +75,7 @@
         transition: all 0.2s;
         position: relative;
     }
-    .category-card:hover { border-color: #6C63FF; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transform: translateY(-3px); }
+    .category-card:hover { border-color: #334155; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transform: translateY(-3px); }
     .category-card .category-icon { font-size: 2.5rem; margin-bottom: 0.5rem; display: block; }
     .category-card .category-name { font-weight: 700; font-size: 1rem; margin-bottom: 0.2rem; }
     .category-card .category-desc { font-size: 0.8rem; color: #6B7280; margin-bottom: 0.8rem; }
@@ -112,7 +112,7 @@
     @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     .modal .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
     .modal .modal-header h3 { font-size: 1.1rem; font-weight: 700; color: #1F2937; }
-    .modal .modal-header h3 i { color: #6C63FF; margin-right: 8px; }
+    .modal .modal-header h3 i { color: #334155; margin-right: 8px; }
     .modal .close-modal { background: none; border: none; font-size: 22px; cursor: pointer; color: #9CA3AF; transition: all 0.2s; }
     .modal .close-modal:hover { color: #EF4444; transform: rotate(90deg); }
 
@@ -131,8 +131,8 @@
     }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
         outline: none;
-        border-color: #6C63FF;
-        box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+        border-color: #334155;
+        box-shadow: 0 0 0 3px rgba(51,65,85,0.1);
     }
     .form-group textarea { min-height: 70px; resize: vertical; }
     .form-actions { display: flex; gap: 10px; margin-top: 1.2rem; justify-content: flex-end; }
@@ -159,14 +159,14 @@
     <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar" id="sidebar">
         <div style="display:flex;align-items:center;gap:10px;padding:0 1.5rem 1.5rem;border-bottom:1px solid #E5E7EB;">
-            <div style="width:36px;height:36px;background:linear-gradient(135deg,#6C63FF,#8B83FF);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;">C</div>
-            <div><span style="font-size:20px;font-weight:800;color:#1F2937;">Camp<span style="color:#6C63FF;">ven</span></span></div>
+            <div style="width:36px;height:36px;background:linear-gradient(135deg,#334155,#475569);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;">C</div>
+            <div><span style="font-size:20px;font-weight:800;color:#1F2937;">Camp<span style="color:#334155;">ven</span></span></div>
         </div>
 
         <ul class="nav-menu">
             <li class="nav-label">Menu Utama</li>
             <li><a href="{{ route('admin.dashboard') }}"><i class="fas fa-calendar-alt"></i> Event</a></li>
-            <li><a href="{{ route('admin.dashboard') }}#users"><i class="fas fa-users"></i> User</a></li>
+            <li><a href="{{ route('admin.users') }}"><i class="fas fa-users"></i> User</a></li>
             <li><a href="{{ route('admin.categories') }}" class="active"><i class="fas fa-tags"></i> Kategori</a></li>
             <li class="nav-label" style="margin-top:1rem;">Akun</li>
             <li><a href="{{ route('profile') }}"><i class="fas fa-user-circle"></i> Profil</a></li>
@@ -183,7 +183,11 @@
 
         <div class="sidebar-footer">
             <div style="display:flex;align-items:center;gap:10px;">
-                <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#6C63FF,#8B83FF);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;">A</div>
+                    @if(Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
+                        <img src="{{ Storage::url(Auth::user()->foto) }}" alt="Foto Profil" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #E5E7EB;">
+                    @else
+                        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#334155,#475569);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;">{{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}</div>
+                    @endif
                 <div>
                     <div style="font-weight:600;font-size:0.9rem;">{{ Auth::user()->nama }}</div>
                     <div style="font-size:0.75rem;color:#6B7280;">Administrator</div>
@@ -198,12 +202,12 @@
             <div>
                 <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
                 <div style="display:inline-block;margin-left:10px;">
-                    <h1 style="font-size:1.5rem;font-weight:800;"><i class="fas fa-tags" style="color:#6C63FF;"></i> Manajemen Kategori</h1>
+                    <h1 style="font-size:1.5rem;font-weight:800;"><i class="fas fa-tags" style="color:#334155;"></i> Manajemen Kategori</h1>
                     <p style="color:#6B7280;font-size:0.9rem;">Kelola kategori event yang tersedia di Campven</p>
                 </div>
             </div>
             <div>
-                <button onclick="document.getElementById('createCategoryModal').classList.add('show')" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#6C63FF;color:white;">
+                <button onclick="document.getElementById('createCategoryModal').classList.add('show')" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#334155;color:white;">
                     <i class="fas fa-plus"></i> Tambah Kategori
                 </button>
             </div>
@@ -279,7 +283,7 @@
             </div>
             <div class="form-group">
                 <label>Warna</label>
-                <input type="color" name="color" value="#6C63FF">
+                <input type="color" name="color" value="#334155">
             </div>
             <div class="form-group">
                 <label>Deskripsi</label>
@@ -287,7 +291,7 @@
             </div>
             <div class="form-actions">
                 <button type="button" class="btn btn-outline" onclick="document.getElementById('createCategoryModal').classList.remove('show')" style="padding:0.5rem 1.2rem;border-radius:50px;border:1.5px solid #D1D5DB;background:transparent;color:#6B7280;font-weight:600;font-size:0.85rem;cursor:pointer;">Batal</button>
-                <button type="submit" name="create_category" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#6C63FF;color:white;"><i class="fas fa-save"></i> Simpan</button>
+                <button type="submit" name="create_category" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#334155;color:white;"><i class="fas fa-save"></i> Simpan</button>
             </div>
         </form>
     </div>
@@ -327,7 +331,7 @@ $editCategory = \App\Models\Category::find(request('edit'));
             </div>
             <div class="form-actions">
                 <a href="{{ route('admin.categories') }}" class="btn btn-outline" style="padding:0.5rem 1.2rem;border-radius:50px;border:1.5px solid #D1D5DB;background:transparent;color:#6B7280;font-weight:600;font-size:0.85rem;text-decoration:none;">Batal</a>
-                <button type="submit" name="update_category" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#6C63FF;color:white;"><i class="fas fa-save"></i> Update</button>
+                <button type="submit" name="update_category" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#334155;color:white;"><i class="fas fa-save"></i> Update</button>
             </div>
         </form>
     </div>

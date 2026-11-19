@@ -39,6 +39,18 @@ class OrganizerController extends Controller
         ));
     }
 
+    public function editEvent($id)
+    {
+        if (Auth::user()->role !== 'penyelenggara') {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $event = Event::where('created_by', Auth::id())->findOrFail($id);
+        $categories = Category::all();
+
+        return view('organizer.events.edit', compact('event', 'categories'));
+    }
+
     public function storeEvent(Request $request)
     {
         // Cek role - jika bukan penyelenggara, redirect
@@ -54,6 +66,7 @@ class OrganizerController extends Controller
             'waktu_selesai' => 'nullable|date_format:H:i',
             'lokasi' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
+            'kuota' => 'nullable|integer|min:1',
             'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -94,6 +107,7 @@ class OrganizerController extends Controller
             'waktu_selesai' => 'nullable|date_format:H:i',
             'lokasi' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
+            'kuota' => 'nullable|integer|min:1',
             'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 

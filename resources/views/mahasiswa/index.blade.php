@@ -102,7 +102,7 @@
     /* ===== HERO ===== */
     .hero {
         padding: 4rem 2rem 3rem;
-        background: linear-gradient(135deg, var(--primary), #4A42B8);
+        background: linear-gradient(135deg, var(--primary), #1E293B);
         color: white;
         position: relative;
         overflow: hidden;
@@ -356,7 +356,7 @@
     }
     .announcement-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 15px 35px rgba(108,99,255,0.1);
+        box-shadow: 0 15px 35px rgba(51,65,85,0.1);
         border-color: #C7D2FE;
     }
     .announcement-header {
@@ -513,7 +513,13 @@
             @if($user->role === 'mahasiswa')
             <a href="{{ route('my.events') }}" class="btn btn-outline btn-sm"><i class="fas fa-star"></i> My Events</a>
             @endif
-            <a href="{{ route('profile') }}" class="avatar">{{ strtoupper(substr($user->nama, 0, 1)) }}</a>
+            <a href="{{ route('profile') }}" class="avatar" style="padding:0;overflow:hidden;">
+                @if($user->foto && Storage::disk('public')->exists($user->foto))
+                    <img src="{{ Storage::url($user->foto) }}" alt="Foto Profil" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                @else
+                    {{ strtoupper(substr($user->nama, 0, 1)) }}
+                @endif
+            </a>
             <form method="POST" action="{{ route('logout') }}" style="display:inline;">
                 @csrf
                 <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>

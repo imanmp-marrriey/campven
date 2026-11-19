@@ -31,8 +31,8 @@
         font-size: 0.9rem;
         transition: all 0.2s;
     }
-    .sidebar .nav-menu li a:hover { background: #F3F4F6; color: #6C63FF; }
-    .sidebar .nav-menu li a.active { background: #6C63FF; color: white; }
+    .sidebar .nav-menu li a:hover { background: #F3F4F6; color: #334155; }
+    .sidebar .nav-menu li a.active { background: #334155; color: white; }
     .sidebar .nav-menu li a i { width: 20px; text-align: center; font-size: 1rem; }
     .sidebar .nav-menu .nav-label {
         font-size: 0.7rem;
@@ -73,7 +73,7 @@
         border: 1px solid #E5E7EB;
         transition: all 0.2s;
     }
-    .stat-card:hover { border-color: #6C63FF; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .stat-card:hover { border-color: #334155; box-shadow: 0 4px 20px rgba(51,65,85,0.08); }
     .stat-card .stat-label { font-size: 0.75rem; font-weight: 500; color: #6B7280; text-transform: uppercase; letter-spacing: 0.3px; }
     .stat-card .stat-number { font-size: 1.8rem; font-weight: 700; color: #1F2937; margin-top: 0.2rem; }
     .stat-card .stat-icon { float: right; font-size: 1.5rem; color: #D1D5DB; }
@@ -90,7 +90,7 @@
         border: 1px solid #E5E7EB;
         transition: all 0.2s;
     }
-    .event-card:hover { border-color: #6C63FF; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transform: translateY(-3px); }
+    .event-card:hover { border-color: #334155; box-shadow: 0 4px 20px rgba(51,65,85,0.08); transform: translateY(-3px); }
     .event-card .card-image {
         height: 180px;
         background: linear-gradient(135deg, #D1D5DB, #9CA3AF);
@@ -128,7 +128,7 @@
     .event-card .card-body { padding: 0 1.2rem 0.5rem; }
     .event-card .card-body .event-meta { display: flex; flex-direction: column; gap: 4px; margin-bottom: 0.3rem; }
     .event-card .card-body .event-meta .meta-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #6B7280; }
-    .event-card .card-body .event-meta .meta-item i { width: 16px; font-size: 0.75rem; color: #6C63FF; }
+    .event-card .card-body .event-meta .meta-item i { width: 16px; font-size: 0.75rem; color: #334155; }
     .event-card .card-footer {
         padding: 0.8rem 1.2rem;
         border-top: 1px solid #E5E7EB;
@@ -175,7 +175,7 @@
     @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     .modal .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
     .modal .modal-header h3 { font-size: 1.1rem; font-weight: 700; color: #1F2937; }
-    .modal .modal-header h3 i { color: #6C63FF; margin-right: 8px; }
+    .modal .modal-header h3 i { color: #334155; margin-right: 8px; }
     .modal .close-modal { background: none; border: none; font-size: 22px; cursor: pointer; color: #9CA3AF; transition: all 0.2s; }
     .modal .close-modal:hover { color: #EF4444; transform: rotate(90deg); }
 
@@ -194,8 +194,8 @@
     }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
         outline: none;
-        border-color: #6C63FF;
-        box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+        border-color: #334155;
+        box-shadow: 0 0 0 3px rgba(51,65,85,0.1);
     }
     .form-group textarea { min-height: 70px; resize: vertical; }
     .form-group input[type="file"] { padding: 0.4rem; border: 1px dashed #D1D5DB; background: #F9FAFB; border-radius: 10px; cursor: pointer; }
@@ -203,9 +203,9 @@
     .form-actions { display: flex; gap: 10px; margin-top: 1.2rem; justify-content: flex-end; }
 
     .mobile-toggle { display: none; font-size: 1.5rem; cursor: pointer; color: #6B7280; background: none; border: none; }
-    .btn-edit { padding: 0.15rem 0.6rem; font-size: 0.65rem; border-radius: 50px; border: none; font-weight: 600; background: #F59E0B; color: white; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; }
+    .btn-edit { padding: 0.15rem 0.6rem; font-size: 0.65rem; border-radius: 50px; border: none; font-weight: 600; background: #F59E0B; color: white; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 3px; line-height: 1.4; }
     .btn-edit:hover { background: #D97706; }
-    .btn-delete { padding: 0.15rem 0.6rem; font-size: 0.65rem; border-radius: 50px; font-weight: 600; background: #EF4444; color: white; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; }
+    .btn-delete { padding: 0.15rem 0.6rem; font-size: 0.65rem; border-radius: 50px; font-weight: 600; background: #EF4444; color: white; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 3px; line-height: 1.4; }
     .btn-delete:hover { background: #DC2626; }
     .btn-delete:disabled { opacity: 0.5; cursor: not-allowed; }
     
@@ -231,14 +231,14 @@
     <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar" id="sidebar">
         <div style="display:flex;align-items:center;gap:10px;padding:0 1.5rem 1.5rem;border-bottom:1px solid #E5E7EB;">
-            <div style="width:36px;height:36px;background:linear-gradient(135deg,#6C63FF,#8B83FF);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;">C</div>
-            <div><span style="font-size:20px;font-weight:800;color:#1F2937;">Camp<span style="color:#6C63FF;">ven</span></span></div>
+            <div style="width:36px;height:36px;background:linear-gradient(135deg,#334155,#475569);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;">C</div>
+            <div>                    <span style="font-size:20px;font-weight:800;color:#1E293B;">Camp<span style="color:#334155;">ven</span></span></div>
         </div>
 
         <ul class="nav-menu">
             <li class="nav-label">Menu Utama</li>
             <li><a href="{{ route('admin.dashboard') }}" class="active"><i class="fas fa-calendar-alt"></i> Event</a></li>
-            <li><a href="#users"><i class="fas fa-users"></i> User</a></li>
+            <li><a href="{{ route('admin.users') }}"><i class="fas fa-users"></i> User</a></li>
             <li><a href="{{ route('admin.categories') }}"><i class="fas fa-tags"></i> Kategori</a></li>
             <li class="nav-label" style="margin-top:1rem;">Akun</li>
             <li><a href="{{ route('profile') }}"><i class="fas fa-user-circle"></i> Profil</a></li>
@@ -256,7 +256,11 @@
         <div class="sidebar-footer">
             <a href="{{ route('profile') }}" style="text-decoration:none;color:inherit;display:block;">
                 <div style="display:flex;align-items:center;gap:10px;">
-                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#6C63FF,#8B83FF);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;">{{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}</div>
+                    @if(Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
+                        <img src="{{ Storage::url(Auth::user()->foto) }}" alt="Foto Profil" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #E5E7EB;">
+                    @else
+                        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#334155,#475569);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;">{{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}</div>
+                    @endif
                     <div>
                         <div style="font-weight:600;font-size:0.9rem;">{{ Auth::user()->nama }}</div>
                         <div style="font-size:0.75rem;color:#6B7280;">Administrator</div>
@@ -273,16 +277,20 @@
                 <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
                 <div style="display:inline-block;margin-left:10px;">
                     <h1 style="font-size:1.5rem;font-weight:800;">Dashboard Admin</h1>
-                    <p style="color:#6B7280;font-size:0.9rem;">Kelola semua event dan user Campven</p>
+                    <p style="color:#6B7280;font-size:0.9rem;">Kelola semua event Campven</p>
                 </div>
             </div>
             <div style="display:flex;align-items:center;gap:10px;">
-                <button onclick="document.getElementById('createEventModal').classList.add('show')" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#6C63FF;color:white;">
+                <button onclick="document.getElementById('createEventModal').classList.add('show')" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#334155;color:white;">
                     <i class="fas fa-plus"></i> Tambah Event
                 </button>
-                <button onclick="document.getElementById('createUserModal').classList.add('show')" class="btn btn-success" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#10B981;color:white;">
-                    <i class="fas fa-user-plus"></i> Tambah User
-                </button>
+                <a href="{{ route('profile') }}" style="text-decoration:none;">
+                    @if(Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
+                        <img src="{{ Storage::url(Auth::user()->foto) }}" alt="Foto Profil" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #E5E7EB;">
+                    @else
+                        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#334155,#475569);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;">{{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}</div>
+                    @endif
+                </a>
             </div>
         </div>
 
@@ -326,7 +334,7 @@
         <!-- ===== EVENTS ===== -->
         <div id="events">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:10px;">
-                <h2 style="font-size:1.2rem;font-weight:700;color:#1F2937;"><i class="fas fa-calendar-alt" style="color:#6C63FF;margin-right:8px;"></i> Manajemen Event</h2>
+                <h2 style="font-size:1.2rem;font-weight:700;color:#1F2937;"><i class="fas fa-calendar-alt" style="color:#334155;margin-right:8px;"></i> Manajemen Event</h2>
             </div>
 
             @if(count($events) > 0)
@@ -360,9 +368,8 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <span style="font-size:0.75rem;color:#6B7280;"><i class="fas fa-users" style="color:#6C63FF;"></i> {{ $event->participants()->count() }} peserta</span>
-                        <div style="display:flex;gap:4px;">
-                            <!-- PERBAIKAN: Gunakan route name yang benar -->
+                        <span style="font-size:0.75rem;color:#6B7280;display:inline-flex;align-items:center;gap:4px;padding:0.2rem 0.5rem;"><i class="fas fa-users" style="color:#334155;"></i> {{ $event->participants()->count() }}{{ $event->kuota ? ' / ' . $event->kuota : '' }} peserta</span>
+                        <div style="display:flex;gap:4px;align-items:center;">
                             <a href="{{ route('admin.event.edit', $event->id) }}" class="btn-edit">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
@@ -371,7 +378,7 @@
                                 <i class="fas fa-trash"></i> Hapus
                             </button>
                             @else
-                            <form method="POST" action="{{ route('admin.event.delete', $event->id) }}" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus event ini?')">
+                            <form method="POST" action="{{ route('admin.event.delete', $event->id) }}" style="display:inline-flex;margin:0;padding:0;" onsubmit="return confirm('Yakin ingin menghapus event ini?')">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn-delete">
@@ -391,56 +398,6 @@
                 <p style="color:#9CA3AF;font-size:0.85rem;">Tambahkan event pertama Anda</p>
             </div>
             @endif
-        </div>
-
-        <!-- ===== USERS ===== -->
-        <div id="users" style="margin-top:2.5rem;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:10px;">
-                <h2 style="font-size:1.2rem;font-weight:700;color:#1F2937;"><i class="fas fa-users" style="color:#6C63FF;margin-right:8px;"></i> Manajemen User</h2>
-            </div>
-
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nama</th>
-                            <th>Email</th>
-                            <th>No. Telp</th>
-                            <th>Role</th>
-                            <th style="text-align:center;">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($users as $user)
-                        <tr>
-                            <td>#{{ $user->id }}</td>
-                            <td><strong>{{ $user->nama }}</strong></td>
-                            <td>{{ $user->email }}</td>
-                            <td>{{ $user->no_telp ?? '-' }}</td>
-                            <td>
-                                <span style="display:inline-block;padding:0.1rem 0.5rem;border-radius:50px;font-size:0.65rem;font-weight:600;{{ $user->role == 'admin' ? 'background:#FEF3C7;color:#92400E;' : ($user->role == 'penyelenggara' ? 'background:#D1FAE5;color:#065F46;' : 'background:#DBEAFE;color:#1E40AF;') }}">
-                                    {{ ucfirst($user->role) }}
-                                </span>
-                            </td>
-                            <td style="text-align:center;">
-                                @if($user->role !== 'admin')
-                                <form method="POST" action="{{ route('admin.user.delete', $user->id) }}" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus user ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn-delete">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                                @else
-                                <span style="font-size:0.7rem;color:#9CA3AF;">Protected</span>
-                                @endif
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
         </div>
     </main>
 </div>
@@ -490,6 +447,11 @@
                 <textarea name="deskripsi" placeholder="Masukkan deskripsi event"></textarea>
             </div>
             <div class="form-group">
+                <label>Kuota Peserta</label>
+                <input type="number" name="kuota" placeholder="Kosongkan untuk tidak terbatas" min="1">
+                <div style="font-size:0.7rem;color:#9CA3AF;margin-top:0.2rem;">Kosongkan jika tidak ada batas peserta</div>
+            </div>
+            <div class="form-group">
                 <label>Poster / Foto Event</label>
                 <input type="file" name="poster" accept="image/*">
                 <div style="font-size:0.7rem;color:#9CA3AF;margin-top:0.2rem;">Upload poster event (opsional)</div>
@@ -500,48 +462,7 @@
             </div>
             <div class="form-actions">
                 <button type="button" class="btn btn-outline" onclick="document.getElementById('createEventModal').classList.remove('show')" style="padding:0.5rem 1.2rem;border-radius:50px;border:1.5px solid #D1D5DB;background:transparent;color:#6B7280;font-weight:600;font-size:0.85rem;cursor:pointer;">Batal</button>
-                <button type="submit" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#6C63FF;color:white;"><i class="fas fa-save"></i> Simpan</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- ===== MODAL CREATE USER ===== -->
-<div class="modal-overlay" id="createUserModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h3><i class="fas fa-user-plus"></i> Tambah User</h3>
-            <button class="close-modal" onclick="document.getElementById('createUserModal').classList.remove('show')">&times;</button>
-        </div>
-        <form method="POST" action="{{ route('admin.user.store') }}">
-            @csrf
-            <div class="form-group">
-                <label>Nama <span style="color:#EF4444;">*</span></label>
-                <input type="text" name="nama" placeholder="Nama lengkap" required>
-            </div>
-            <div class="form-group">
-                <label>Email <span style="color:#EF4444;">*</span></label>
-                <input type="email" name="email" placeholder="email@example.com" required>
-            </div>
-            <div class="form-group">
-                <label>Password <span style="color:#EF4444;">*</span></label>
-                <input type="password" name="password" placeholder="Minimal 6 karakter" required>
-            </div>
-            <div class="form-group">
-                <label>No. Telepon</label>
-                <input type="text" name="no_telp" placeholder="08123456789">
-            </div>
-            <div class="form-group">
-                <label>Role <span style="color:#EF4444;">*</span></label>
-                <select name="role" required>
-                    <option value="admin">Admin</option>
-                    <option value="penyelenggara">Penyelenggara</option>
-                    <option value="mahasiswa">Mahasiswa</option>
-                </select>
-            </div>
-            <div class="form-actions">
-                <button type="button" class="btn btn-outline" onclick="document.getElementById('createUserModal').classList.remove('show')" style="padding:0.5rem 1.2rem;border-radius:50px;border:1.5px solid #D1D5DB;background:transparent;color:#6B7280;font-weight:600;font-size:0.85rem;cursor:pointer;">Batal</button>
-                <button type="submit" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#6C63FF;color:white;"><i class="fas fa-save"></i> Simpan</button>
+                <button type="submit" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#334155;color:white;"><i class="fas fa-save"></i> Simpan</button>
             </div>
         </form>
     </div>

@@ -52,6 +52,11 @@ class EventController extends Controller
 
         $event = Event::findOrFail($id);
 
+        // Cek kuota penuh
+        if ($event->isFull()) {
+            return redirect()->route('event.detail', $id)->with('error', 'Maaf, kuota event ini sudah penuh!');
+        }
+
         // Cek sudah terdaftar
         $exists = Participant::where('event_id', $id)
             ->where('user_id', Auth::id())
@@ -64,9 +69,9 @@ class EventController extends Controller
         Participant::create([
             'event_id' => $id,
             'user_id' => Auth::id(),
-            'status' => 'registered',
+            'status' => 'confirmed',
         ]);
 
-        return redirect()->route('event.detail', $id)->with('success', 'Berhasil mendaftar ke event!');
+        return redirect()->route('event.detail', $id)->with('success', 'Berhasil mendaftar ke event! Status Anda sudah terkonfirmasi.');
     }
 }

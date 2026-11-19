@@ -31,8 +31,8 @@
         font-size: 0.9rem;
         transition: all 0.2s;
     }
-    .sidebar .nav-menu li a:hover { background: #F3F4F6; color: #10B981; }
-    .sidebar .nav-menu li a.active { background: #10B981; color: white; }
+    .sidebar .nav-menu li a:hover { background: #F3F4F6; color: #1E40AF; }
+    .sidebar .nav-menu li a.active { background: #1E40AF; color: white; }
     .sidebar .nav-menu li a i { width: 20px; text-align: center; font-size: 1rem; }
     .sidebar .nav-menu .nav-label {
         font-size: 0.7rem;
@@ -73,7 +73,7 @@
         border: 1px solid #E5E7EB;
         transition: all 0.2s;
     }
-    .stat-card:hover { border-color: #10B981; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .stat-card:hover { border-color: #1E40AF; box-shadow: 0 4px 20px rgba(30,64,175,0.08); }
     .stat-card .stat-label { font-size: 0.75rem; font-weight: 500; color: #6B7280; text-transform: uppercase; letter-spacing: 0.3px; }
     .stat-card .stat-number { font-size: 1.8rem; font-weight: 700; color: #1F2937; margin-top: 0.2rem; }
     .stat-card .stat-icon { float: right; font-size: 1.5rem; color: #D1D5DB; }
@@ -89,9 +89,9 @@
         overflow: hidden;
         border: 1px solid #E5E7EB;
         transition: all 0.2s;
-        border-left: 3px solid #10B981;
+        border-left: 3px solid #1E40AF;
     }
-    .event-card:hover { border-color: #10B981; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transform: translateY(-3px); border-left-width: 4px; }
+    .event-card:hover { border-color: #1E40AF; box-shadow: 0 4px 20px rgba(30,64,175,0.08); transform: translateY(-3px); border-left-width: 4px; }
     .event-card .card-image {
         height: 180px;
         background: linear-gradient(135deg, #D1D5DB, #9CA3AF);
@@ -129,7 +129,7 @@
     .event-card .card-body { padding: 0 1.2rem 0.5rem; }
     .event-card .card-body .event-meta { display: flex; flex-direction: column; gap: 4px; margin-bottom: 0.3rem; }
     .event-card .card-body .event-meta .meta-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #6B7280; }
-    .event-card .card-body .event-meta .meta-item i { width: 16px; font-size: 0.75rem; color: #10B981; }
+    .event-card .card-body .event-meta .meta-item i { width: 16px; font-size: 0.75rem; color: #1E40AF; }
     .event-card .card-footer {
         padding: 0.8rem 1.2rem;
         border-top: 1px solid #E5E7EB;
@@ -164,7 +164,7 @@
     @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     .modal .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
     .modal .modal-header h3 { font-size: 1.1rem; font-weight: 700; color: #1F2937; }
-    .modal .modal-header h3 i { color: #10B981; margin-right: 8px; }
+    .modal .modal-header h3 i { color: #1E40AF; margin-right: 8px; }
     .modal .close-modal { background: none; border: none; font-size: 22px; cursor: pointer; color: #9CA3AF; transition: all 0.2s; }
     .modal .close-modal:hover { color: #EF4444; transform: rotate(90deg); }
     .form-group { margin-bottom: 1rem; }
@@ -182,17 +182,17 @@
     }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
         outline: none;
-        border-color: #10B981;
-        box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
+        border-color: #1E40AF;
+        box-shadow: 0 0 0 3px rgba(30,64,175,0.1);
     }
     .form-group textarea { min-height: 70px; resize: vertical; }
     .form-group input[type="file"] { padding: 0.4rem; border: 1px dashed #D1D5DB; background: #F9FAFB; border-radius: 10px; cursor: pointer; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .form-actions { display: flex; gap: 10px; margin-top: 1.2rem; justify-content: flex-end; }
     .mobile-toggle { display: none; font-size: 1.5rem; cursor: pointer; color: #6B7280; background: none; border: none; }
-    .btn-edit { padding: 0.15rem 0.6rem; font-size: 0.65rem; border-radius: 50px; border: none; font-weight: 600; background: #F59E0B; color: white; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; }
+    .btn-edit { padding: 0.15rem 0.6rem; font-size: 0.65rem; border-radius: 50px; border: none; font-weight: 600; background: #F59E0B; color: white; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 3px; line-height: 1.4; }
     .btn-edit:hover { background: #D97706; }
-    .btn-delete { padding: 0.15rem 0.6rem; font-size: 0.65rem; border-radius: 50px; font-weight: 600; background: #EF4444; color: white; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; }
+    .btn-delete { padding: 0.15rem 0.6rem; font-size: 0.65rem; border-radius: 50px; font-weight: 600; background: #EF4444; color: white; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 3px; line-height: 1.4; }
     .btn-delete:hover { background: #DC2626; }
     .btn-delete:disabled { opacity: 0.5; cursor: not-allowed; }
     
@@ -216,8 +216,8 @@
     <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar" id="sidebar">
         <div style="display:flex;align-items:center;gap:10px;padding:0 1.5rem 1.5rem;border-bottom:1px solid #E5E7EB;">
-            <div style="width:36px;height:36px;background:linear-gradient(135deg,#10B981,#34D399);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;">C</div>
-            <div><span style="font-size:20px;font-weight:800;color:#1F2937;">Camp<span style="color:#10B981;">ven</span></span></div>
+            <div style="width:36px;height:36px;background:linear-gradient(135deg,#1E40AF,#2563EB);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;">C</div>
+            <div><span style="font-size:20px;font-weight:800;color:#1F2937;">Camp<span style="color:#1E40AF;">ven</span></span></div>
         </div>
 
         <ul class="nav-menu">
@@ -239,7 +239,11 @@
         <div class="sidebar-footer">
             <a href="{{ route('profile') }}" style="text-decoration:none;color:inherit;display:block;">
                 <div style="display:flex;align-items:center;gap:10px;">
-                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#10B981,#34D399);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;">{{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}</div>
+                    @if(Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
+                        <img src="{{ Storage::url(Auth::user()->foto) }}" alt="Foto Profil" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #BFDBFE;">
+                    @else
+                        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1E40AF,#2563EB);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;">{{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}</div>
+                    @endif
                     <div>
                         <div style="font-weight:600;font-size:0.9rem;">{{ Auth::user()->nama }}</div>
                         <div style="font-size:0.75rem;color:#6B7280;">Penyelenggara</div>
@@ -259,10 +263,17 @@
                     <p style="color:#6B7280;font-size:0.9rem;">Kelola event yang Anda buat</p>
                 </div>
             </div>
-            <div>
-                <button onclick="document.getElementById('createEventModal').classList.add('show')" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#10B981;color:white;">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <button onclick="document.getElementById('createEventModal').classList.add('show')" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#1E40AF;color:white;">
                     <i class="fas fa-plus"></i> Buat Event
                 </button>
+                <a href="{{ route('profile') }}" style="text-decoration:none;">
+                    @if(Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
+                        <img src="{{ Storage::url(Auth::user()->foto) }}" alt="Foto Profil" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #BFDBFE;">
+                    @else
+                        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1E40AF,#2563EB);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;">{{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}</div>
+                    @endif
+                </a>
             </div>
         </div>
 
@@ -286,7 +297,7 @@
         </div>
 
         @if(session('success'))
-        <div class="notification success" style="padding:0.8rem 1.2rem;border-radius:10px;margin-bottom:1.2rem;display:flex;align-items:center;gap:10px;font-weight:500;font-size:0.9rem;background:#D1FAE5;color:#065F46;border-left:4px solid #10B981;">
+        <div class="notification success" style="padding:0.8rem 1.2rem;border-radius:10px;margin-bottom:1.2rem;display:flex;align-items:center;gap:10px;font-weight:500;font-size:0.9rem;background:#D1FAE5;color:#065F46;border-left:4px solid #1E40AF;">
             <i class="fas fa-check-circle"></i> {{ session('success') }}
             <button onclick="this.parentElement.remove()" style="margin-left:auto;cursor:pointer;background:none;border:none;font-size:16px;opacity:0.5;">&times;</button>
         </div>
@@ -300,7 +311,7 @@
 
         <!-- ===== EVENTS ===== -->
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:10px;">
-            <h2 style="font-size:1.2rem;font-weight:700;color:#1F2937;"><i class="fas fa-calendar-alt" style="color:#10B981;margin-right:8px;"></i> Event Saya</h2>
+            <h2 style="font-size:1.2rem;font-weight:700;color:#1F2937;"><i class="fas fa-calendar-alt" style="color:#1E40AF;margin-right:8px;"></i> Event Saya</h2>
         </div>
 
         @if(count($events) > 0)
@@ -311,7 +322,7 @@
                     @if($event->poster && Storage::disk('public')->exists($event->poster))
                         <img src="{{ Storage::url($event->poster) }}" alt="{{ $event->nama_event }}">
                     @else
-                        <div class="no-poster" style="background:linear-gradient(135deg,#10B981,#34D399);">
+                        <div class="no-poster" style="background:linear-gradient(135deg,#1E40AF,#2563EB);">
                             <i class="fas fa-calendar-alt"></i>
                             <span>No Poster</span>
                         </div>
@@ -331,11 +342,10 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button onclick="openParticipantsModal({{ $event->id }}, '{{ addslashes($event->nama_event) }}', {{ json_encode($event->participants->map(function($p) { return [ 'id' => $p->id, 'nama' => $p->user ? $p->user->nama : 'User Terhapus', 'email' => $p->user ? $p->user->email : '-', 'status' => $p->status ]; })) }})" style="font-size:0.75rem;color:#10B981;background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;display:inline-flex;align-items:center;gap:4px;padding:0.2rem 0.5rem;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='#E8F5E9'" onmouseout="this.style.background='none'">
-                        <i class="fas fa-users"></i> {{ $event->participants->count() }} peserta
+                    <button onclick="openParticipantsModal({{ $event->id }}, '{{ addslashes($event->nama_event) }}', {{ json_encode($event->participants->map(function($p) { return [ 'id' => $p->id, 'nama' => $p->user ? $p->user->nama : 'User Terhapus', 'email' => $p->user ? $p->user->email : '-', 'status' => $p->status ]; })) }})" style="font-size:0.75rem;color:#1E40AF;background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;display:inline-flex;align-items:center;gap:4px;padding:0.2rem 0.5rem;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='#EFF6FF'" onmouseout="this.style.background='none'">
+                        <i class="fas fa-users"></i> {{ $event->participants->count() }}{{ $event->kuota ? ' / ' . $event->kuota : '' }} peserta
                     </button>
-                    <div style="display:flex;gap:4px;">
-                        <!-- PERBAIKAN: Gunakan route name yang benar -->
+                    <div style="display:flex;gap:4px;align-items:center;">
                         <a href="{{ route('organizer.event.edit', $event->id) }}" class="btn-edit">
                             <i class="fas fa-edit"></i> Edit
                         </a>
@@ -344,7 +354,7 @@
                             <i class="fas fa-trash"></i> Hapus
                         </button>
                         @else
-                        <form method="POST" action="{{ route('organizer.event.delete', $event->id) }}" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus event ini?')">
+                        <form method="POST" action="{{ route('organizer.event.delete', $event->id) }}" style="display:inline-flex;margin:0;padding:0;" onsubmit="return confirm('Yakin ingin menghapus event ini?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn-delete">
@@ -363,7 +373,7 @@
             <h3 style="font-size:1rem;color:#6B7280;">Belum ada event</h3>
             <p style="color:#9CA3AF;font-size:0.85rem;">Mulai buat event kampus pertamamu!</p>
             <br>
-            <button onclick="document.getElementById('createEventModal').classList.add('show')" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#10B981;color:white;">
+            <button onclick="document.getElementById('createEventModal').classList.add('show')" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#1E40AF;color:white;">
                 <i class="fas fa-plus"></i> Buat Event Sekarang
             </button>
         </div>
@@ -416,13 +426,18 @@
                 <textarea name="deskripsi" placeholder="Masukkan deskripsi event"></textarea>
             </div>
             <div class="form-group">
+                <label>Kuota Peserta</label>
+                <input type="number" name="kuota" placeholder="Kosongkan untuk tidak terbatas" min="1">
+                <div style="font-size:0.7rem;color:#9CA3AF;margin-top:0.2rem;">Kosongkan jika tidak ada batas peserta</div>
+            </div>
+            <div class="form-group">
                 <label>Poster / Foto Event</label>
                 <input type="file" name="poster" accept="image/*">
                 <div style="font-size:0.7rem;color:#9CA3AF;margin-top:0.2rem;">Format: JPG, PNG, GIF, WEBP (Max: 2MB)</div>
             </div>
             <div class="form-actions">
                 <button type="button" class="btn btn-outline" onclick="document.getElementById('createEventModal').classList.remove('show')" style="padding:0.5rem 1.2rem;border-radius:50px;border:1.5px solid #D1D5DB;background:transparent;color:#6B7280;font-weight:600;font-size:0.85rem;cursor:pointer;">Batal</button>
-                <button type="submit" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#10B981;color:white;"><i class="fas fa-save"></i> Simpan</button>
+                <button type="submit" class="btn btn-primary" style="padding:0.5rem 1.2rem;border-radius:50px;border:none;font-weight:600;font-size:0.85rem;cursor:pointer;background:#1E40AF;color:white;"><i class="fas fa-save"></i> Simpan</button>
             </div>
         </form>
     </div>
@@ -437,7 +452,7 @@
 <div class="modal-overlay" id="participantsModal">
     <div class="modal" style="max-width: 650px;">
         <div class="modal-header">
-            <h3><i class="fas fa-users" style="color:#10B981;"></i> Kelola Peserta: <span id="modalEventName" style="color:#10B981;"></span></h3>
+            <h3><i class="fas fa-users" style="color:#1E40AF;"></i> Kelola Peserta: <span id="modalEventName" style="color:#1E40AF;"></span></h3>
             <button class="close-modal" onclick="document.getElementById('participantsModal').classList.remove('show')">&times;</button>
         </div>
         
@@ -500,7 +515,7 @@
                     
                     const confirmUrl = `{{ url('/organizer/participant') }}/${p.id}/confirm`;
                     actionBtn = `
-                        <button type="button" onclick="submitParticipantAction('${confirmUrl}')" style="background:#10B981; color:white; border:none; padding:0.3rem 0.8rem; border-radius:50px; cursor:pointer; font-weight:600; font-size:0.7rem; display:inline-flex; align-items:center; gap:4px; transition:all 0.2s;">
+                        <button type="button" onclick="submitParticipantAction('${confirmUrl}')" style="background:#1E40AF; color:white; border:none; padding:0.3rem 0.8rem; border-radius:50px; cursor:pointer; font-weight:600; font-size:0.7rem; display:inline-flex; align-items:center; gap:4px; transition:all 0.2s;">
                             <i class="fas fa-check"></i> Konfirmasi
                         </button>
                     `;
@@ -518,7 +533,7 @@
                     statusText = 'Sudah Hadir';
                     statusStyle = 'background:#DBEAFE; color:#1E40AF; padding:0.2rem 0.6rem; border-radius:50px; font-weight:600; font-size:0.65rem;';
                     actionBtn = `
-                        <span style="color:#10B981; font-weight:600; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px;">
+                        <span style="color:#1E40AF; font-weight:600; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px;">
                             <i class="fas fa-check-circle"></i> Selesai
                         </span>
                     `;

@@ -99,7 +99,7 @@ class HomeController extends Controller
             ->where('user_id', Auth::id())
             ->first();
 
-        if ($participant && $participant->status === 'registered') {
+        if ($participant && in_array($participant->status, ['registered', 'confirmed'])) {
             $participant->delete();
             return redirect()->route('my.events')->with('success', 'Berhasil membatalkan pendaftaran!');
         }

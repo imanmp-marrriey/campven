@@ -21,7 +21,6 @@ class AdminController extends Controller
         }
 
         $events = Event::with('creator')->orderBy('tanggal', 'DESC')->get();
-        $users = User::orderBy('role')->get();
         $categories = Category::all();
         $total_events = Event::count();
         $total_users = User::count();
@@ -29,12 +28,45 @@ class AdminController extends Controller
 
         return view('admin.dashboard', compact(
             'events',
-            'users',
             'categories',
             'total_events',
             'total_users',
             'total_participants'
         ));
+    }
+
+    public function users()
+    {
+        if (Auth::user()->role !== 'admin') {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $users = User::orderBy('role')->get();
+        $total_users = User::count();
+        $total_admin = User::where('role', 'admin')->count();
+        $total_penyelenggara = User::where('role', 'penyelenggara')->count();
+        $total_mahasiswa = User::where('role', 'mahasiswa')->count();
+
+        return view('admin.users', compact(
+            'users',
+            'total_users',
+            'total_admin',
+            'total_penyelenggara',
+            'total_mahasiswa'
+        ));
+    }
+
+    public function editEvent($id)
+    {
+        if (Auth::user()->role !== 'admin') {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $event = Event::findOrFail($id);
+        $categories = Category::all();
+        $users = User::all();
+
+        return view('admin.events.edit', compact('event', 'categories', 'users'));
     }
 
     public function storeEvent(Request $request)
@@ -52,6 +84,7 @@ class AdminController extends Controller
             'waktu_selesai' => 'nullable|date_format:H:i',
             'lokasi' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
+            'kuota' => 'nullable|integer|min:1',
             'created_by' => 'nullable|exists:users,id',
             'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -91,6 +124,7 @@ class AdminController extends Controller
         'waktu_selesai' => 'nullable|date_format:H:i',
         'lokasi' => 'required|string|max:255',
         'deskripsi' => 'nullable|string',
+        'kuota' => 'nullable|integer|min:1',
         'created_by' => 'nullable|exists:users,id',
         'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);

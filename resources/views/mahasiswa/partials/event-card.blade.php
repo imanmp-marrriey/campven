@@ -1,11 +1,11 @@
 {{-- $event, $animate, $delay --}}
 @php
     $colors = [
-        'Seminar'  => ['#6C63FF', '#8B83FF', 'fa-graduation-cap'],
-        'Workshop' => ['#10B981', '#34D399', 'fa-tools'],
-        'Lomba'    => ['#F59E0B', '#FBBF24', 'fa-trophy'],
+        'Seminar'  => ['#334155', '#475569', 'fa-graduation-cap'],
+        'Workshop' => ['#1E40AF', '#2563EB', 'fa-tools'],
+        'Lomba'    => ['#B45309', '#D97706', 'fa-trophy'],
     ];
-    [$from, $to, $icon] = $colors[$event->kategori] ?? ['#3B82F6', '#60A5FA', 'fa-calendar'];
+    [$from, $to, $icon] = $colors[$event->kategori] ?? ['#475569', '#64748B', 'fa-calendar'];
     $hasPoster = $event->poster && file_exists(public_path('storage/' . $event->poster));
 @endphp
 <a href="{{ route('event.detail', $event->id) }}"

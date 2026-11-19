@@ -7,8 +7,8 @@
     <div style="display:flex;max-width:1000px;width:100%;background:#FFFFFF;border-radius:24px;overflow:hidden;box-shadow:0 25px 80px rgba(0,0,0,0.08);">
         <div style="flex:1.2;padding:2.5rem 2.5rem;background:#FFFFFF;">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.2rem;">
-                <div style="width:40px;height:40px;background:linear-gradient(135deg,#6C63FF,#8B83FF);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:20px;font-weight:800;">C</div>
-                <div><h1 style="font-size:24px;font-weight:800;color:#1A1A2E;">Camp<span style="color:#6C63FF;">ven</span></h1></div>
+                <div style="width:40px;height:40px;background:linear-gradient(135deg,#334155,#475569);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:20px;font-weight:800;">C</div>
+                <div><h1 style="font-size:24px;font-weight:800;color:#1A1A2E;">Camp<span style="color:#334155;">ven</span></h1></div>
             </div>
 
             <h3 style="font-size:1.3rem;font-weight:700;color:#1A1A2E;">Buat Akun Baru</h3>
@@ -71,16 +71,16 @@
                         </div>
                     </div>
                 </div>
-                <button type="submit" style="width:100%;padding:0.8rem;background:#6C63FF;color:white;border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.3s;font-family:'Inter',sans-serif;margin-top:0.3rem;">
+                <button type="submit" style="width:100%;padding:0.8rem;background:#334155;color:white;border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.3s;font-family:'Inter',sans-serif;margin-top:0.3rem;">
                     <i class="fas fa-user-plus"></i> Daftar Sekarang
                 </button>
             </form>
 
             <div style="text-align:center;margin-top:0.8rem;font-size:0.85rem;color:#8A8A9E;">
-                Sudah punya akun? <a href="{{ route('login') }}" style="color:#6C63FF;text-decoration:none;font-weight:600;">Masuk di sini</a>
+                Sudah punya akun? <a href="{{ route('login') }}" style="color:#334155;text-decoration:none;font-weight:600;">Masuk di sini</a>
             </div>
         </div>
-        <div style="flex:0.8;background:linear-gradient(145deg,#6C63FF,#4A42B8);padding:3rem 2.5rem;display:flex;flex-direction:column;justify-content:center;color:white;position:relative;overflow:hidden;">
+        <div style="flex:0.8;background:linear-gradient(145deg,#334155,#1E293B);padding:3rem 2.5rem;display:flex;flex-direction:column;justify-content:center;color:white;position:relative;overflow:hidden;">
             <div style="position:absolute;top:-40%;right:-30%;width:400px;height:400px;background:rgba(255,255,255,0.05);border-radius:50%;"></div>
             <div style="position:absolute;bottom:-30%;left:-20%;width:300px;height:300px;background:rgba(255,255,255,0.04);border-radius:50%;"></div>
             <div style="position:relative;z-index:1;">

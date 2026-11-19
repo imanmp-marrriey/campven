@@ -12,22 +12,22 @@
         /* ===== GLOBAL STYLES ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --primary: #6C63FF;
-            --primary-dark: #5A52D5;
-            --primary-light: #8B83FF;
+            --primary: #334155;
+            --primary-dark: #1E293B;
+            --primary-light: #475569;
             --success: #10B981;
             --warning: #F59E0B;
             --danger: #EF4444;
-            --gray-50: #F9FAFB;
-            --gray-100: #F3F4F6;
-            --gray-200: #E5E7EB;
-            --gray-300: #D1D5DB;
-            --gray-400: #9CA3AF;
-            --gray-500: #6B7280;
-            --gray-600: #4B5563;
-            --gray-700: #374151;
-            --gray-800: #1F2937;
-            --gray-900: #111827;
+            --gray-50: #F8FAFC;
+            --gray-100: #F1F5F9;
+            --gray-200: #E2E8F0;
+            --gray-300: #CBD5E1;
+            --gray-400: #94A3B8;
+            --gray-500: #64748B;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1E293B;
+            --gray-900: #0F172A;
             --radius: 16px;
             --radius-sm: 10px;
             --shadow: 0 1px 3px rgba(0,0,0,0.06);
@@ -51,7 +51,7 @@
             font-family: 'Inter', sans-serif;
         }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(108,99,255,0.3); }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(51,65,85,0.3); }
         .btn-outline { background: transparent; color: var(--gray-700); border: 1.5px solid var(--gray-300); }
         .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
         .btn-sm { padding: 0.3rem 0.8rem; font-size: 0.75rem; }
@@ -96,9 +96,9 @@
             color: #111827 !important;
         }
         #btnConfirmLogout:hover {
-            background-color: #1D4ED8 !important;
+            background-color: #1E293B !important;
             transform: translateY(-1px);
-            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3) !important;
+            box-shadow: 0 10px 15px -3px rgba(30, 41, 59, 0.3) !important;
         }
 
         /* ===== CARD HOVER EFFECTS ===== */
@@ -109,7 +109,7 @@
         .event-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 20px 45px rgba(0,0,0,0.12) !important;
-            border-color: #C7D2FE !important;
+            border-color: #94A3B8 !important;
         }
         .event-card .card-img-wrapper {
             overflow: hidden;
@@ -132,8 +132,8 @@
         }
         .category-card:hover {
             transform: translateY(-8px) !important;
-            box-shadow: 0 15px 35px rgba(108,99,255,0.15) !important;
-            border-color: #C7D2FE !important;
+            box-shadow: 0 15px 35px rgba(51,65,85,0.15) !important;
+            border-color: #94A3B8 !important;
         }
 
         /* ===== SWIPER CUSTOM ===== */
@@ -143,7 +143,7 @@
             padding-right: 0.25rem;
         }
         .featured-swiper .swiper-pagination-bullet {
-            background: #6C63FF;
+            background: #334155;
             opacity: 0.4;
         }
         .featured-swiper .swiper-pagination-bullet-active {
@@ -151,7 +151,7 @@
         }
         .featured-swiper .swiper-button-next,
         .featured-swiper .swiper-button-prev {
-            color: #6C63FF;
+            color: #334155;
             width: 40px;
             height: 40px;
             background: white;
@@ -203,7 +203,7 @@
         <div id="logoutModalCard" style="position: relative; background: #ffffff; width: 100%; max-width: 400px; border-radius: 20px; box-shadow: var(--shadow-lg); border: 1px solid var(--gray-200); padding: 2rem; text-align: center; transform: scale(0.95); opacity: 0; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); max-height: 90vh; overflow-y: auto;">
             
             <!-- Icon Container -->
-            <div style="width: 64px; height: 64px; background: #DBEAFE; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; color: #2563EB; font-size: 1.75rem;">
+            <div style="width: 64px; height: 64px; background: #E2E8F0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; color: #334155; font-size: 1.75rem;">
                 <i class="fas fa-sign-out-alt"></i>
             </div>
             
@@ -216,7 +216,7 @@
                 <button id="btnCancelLogout" type="button" style="flex: 1; padding: 0.75rem 1.5rem; border-radius: 12px; border: 1px solid var(--gray-300); background: #FFFFFF; color: var(--gray-700); font-weight: 600; font-size: 0.9rem; cursor: pointer; font-family: 'Inter', sans-serif;">
                     Batal
                 </button>
-                <button id="btnConfirmLogout" type="button" style="flex: 1; padding: 0.75rem 1.5rem; border-radius: 12px; border: none; background: #2563EB; color: #FFFFFF; font-weight: 600; font-size: 0.9rem; cursor: pointer; font-family: 'Inter', sans-serif; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);">
+                <button id="btnConfirmLogout" type="button" style="flex: 1; padding: 0.75rem 1.5rem; border-radius: 12px; border: none; background: #334155; color: #FFFFFF; font-weight: 600; font-size: 0.9rem; cursor: pointer; font-family: 'Inter', sans-serif; box-shadow: 0 4px 6px -1px rgba(51, 65, 85, 0.2);">
                     Keluar
                 </button>
             </div>

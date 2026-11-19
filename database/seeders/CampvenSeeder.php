@@ -42,10 +42,10 @@ class CampvenSeeder extends Seeder
 
         // Events
         $events = [
-            ['nama_event' => 'Seminar AI 2026', 'kategori' => 'Seminar', 'tanggal' => '2026-07-20', 'waktu_mulai' => '09:00', 'waktu_selesai' => '12:00', 'lokasi' => 'GSC Lantai 7, Politeknik Negeri Indramayu', 'deskripsi' => 'Seminar tentang perkembangan Artificial Intelligence', 'created_by' => 2],
-            ['nama_event' => 'Workshop Flutter', 'kategori' => 'Workshop', 'tanggal' => '2026-07-25', 'waktu_mulai' => '13:00', 'waktu_selesai' => '17:00', 'lokasi' => 'Lab Komputer, Politeknik Negeri Indramayu', 'deskripsi' => 'Workshop praktis pengembangan aplikasi mobile dengan Flutter', 'created_by' => 2],
-            ['nama_event' => 'Lomba Inovasi', 'kategori' => 'Lomba', 'tanggal' => '2026-08-01', 'waktu_mulai' => '08:00', 'waktu_selesai' => '16:00', 'lokasi' => 'Aula Utama, Politeknik Negeri Indramayu', 'deskripsi' => 'Lomba inovasi antar mahasiswa', 'created_by' => 3],
-            ['nama_event' => 'Webinar Karir', 'kategori' => 'Webinar', 'tanggal' => '2026-08-05', 'waktu_mulai' => '19:00', 'waktu_selesai' => '21:00', 'lokasi' => 'Online (Zoom)', 'deskripsi' => 'Webinar membahas peluang karir di bidang digital', 'created_by' => 2],
+            ['nama_event' => 'Seminar AI 2026', 'kategori' => 'Seminar', 'tanggal' => '2026-07-20', 'waktu_mulai' => '09:00', 'waktu_selesai' => '12:00', 'lokasi' => 'GSC Lantai 7, Politeknik Negeri Indramayu', 'deskripsi' => 'Seminar tentang perkembangan Artificial Intelligence', 'created_by' => 2, 'kuota' => 100],
+            ['nama_event' => 'Workshop Flutter', 'kategori' => 'Workshop', 'tanggal' => '2026-07-25', 'waktu_mulai' => '13:00', 'waktu_selesai' => '17:00', 'lokasi' => 'Lab Komputer, Politeknik Negeri Indramayu', 'deskripsi' => 'Workshop praktis pengembangan aplikasi mobile dengan Flutter', 'created_by' => 2, 'kuota' => 30],
+            ['nama_event' => 'Lomba Inovasi', 'kategori' => 'Lomba', 'tanggal' => '2026-08-01', 'waktu_mulai' => '08:00', 'waktu_selesai' => '16:00', 'lokasi' => 'Aula Utama, Politeknik Negeri Indramayu', 'deskripsi' => 'Lomba inovasi antar mahasiswa', 'created_by' => 3, 'kuota' => 50],
+            ['nama_event' => 'Webinar Karir', 'kategori' => 'Webinar', 'tanggal' => '2026-08-05', 'waktu_mulai' => '19:00', 'waktu_selesai' => '21:00', 'lokasi' => 'Online (Zoom)', 'deskripsi' => 'Webinar membahas peluang karir di bidang digital', 'created_by' => 2, 'kuota' => null],
         ];
 
         foreach ($events as $event) {

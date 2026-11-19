@@ -28,14 +28,10 @@ Route::middleware('auth')->group(function () {
     // ===== ADMIN ROUTES =====
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+        Route::get('/users', [AdminController::class, 'users'])->name('users');
         
-        // TAMBAHKAN ROUTE UNTUK FORM EDIT (GET)
-        Route::get('/event/{id}/edit', function ($id) {
-            $event = \App\Models\Event::findOrFail($id);
-            $categories = \App\Models\Category::all();
-            $users = \App\Models\User::all();
-            return view('admin.events.edit', compact('event', 'categories', 'users'));
-        })->name('event.edit');
+        // Form Edit Event
+        Route::get('/event/{id}/edit', [AdminController::class, 'editEvent'])->name('event.edit');
         
         // Event CRUD - PERBAIKAN: Gunakan nama route yang konsisten
         Route::post('/event', [AdminController::class, 'storeEvent'])->name('event.store');
@@ -58,12 +54,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('organizer')->name('organizer.')->group(function () {
         Route::get('/dashboard', [OrganizerController::class, 'dashboard'])->name('dashboard');
         
-        // TAMBAHKAN ROUTE UNTUK FORM EDIT (GET)
-        Route::get('/event/{id}/edit', function ($id) {
-            $event = \App\Models\Event::where('created_by', Auth::id())->findOrFail($id);
-            $categories = \App\Models\Category::all();
-            return view('organizer.events.edit', compact('event', 'categories'));
-        })->name('event.edit');
+        // Form Edit Event
+        Route::get('/event/{id}/edit', [OrganizerController::class, 'editEvent'])->name('event.edit');
         
         // Event CRUD - PERBAIKAN: Gunakan nama route yang konsisten
         Route::post('/event', [OrganizerController::class, 'storeEvent'])->name('event.store');
