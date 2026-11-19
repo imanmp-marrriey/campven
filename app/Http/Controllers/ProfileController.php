@@ -38,27 +38,34 @@ class ProfileController extends Controller
             'bio' => 'nullable|string',
             'no_telp' => 'nullable|string|max:20',
             'password' => 'nullable|min:6',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ], [
+            'foto.image' => 'File foto profil harus berupa gambar yang valid.',
+            'foto.mimes' => 'Format foto profil yang didukung: JPG, JPEG, PNG, atau WEBP.',
+            'foto.max' => 'Ukuran foto profil maksimal 2 MB.',
         ]);
 
         $data = [
             'nama' => $validated['nama'],
-            'bio' => $validated['bio'],
-            'no_telp' => $validated['no_telp'],
+            'bio' => $validated['bio'] ?? null,
+            'no_telp' => $validated['no_telp'] ?? null,
         ];
 
         // Upload / ganti foto profil
         if ($request->hasFile('foto') && $request->file('foto')->isValid()) {
-            // Hapus foto lama jika ada
-            if ($user->foto && Storage::disk('public')->exists($user->foto)) {
-                Storage::disk('public')->delete($user->foto);
-            }
+            $oldPhoto = $user->foto;
 
             try {
                 $file = $request->file('foto');
-                $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $file->getClientOriginalName());
+                $ext = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+                $fileName = 'avatar_' . $user->id . '_' . time() . '.' . $ext;
                 $path = $file->storeAs('avatars', $fileName, 'public');
                 $data['foto'] = $path;
+
+                // Hapus foto lama setelah upload baru berhasil
+                if ($oldPhoto && $oldPhoto !== $path && Storage::disk('public')->exists($oldPhoto)) {
+                    Storage::disk('public')->delete($oldPhoto);
+                }
             } catch (\Exception $e) {
                 return redirect()->back()->with('error', 'Gagal upload foto: ' . $e->getMessage())->withInput();
             }

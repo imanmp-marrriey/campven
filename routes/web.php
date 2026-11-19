@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 // ===== GUEST & PUBLIC ROUTES =====
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/event/{id}', [EventController::class, 'detail'])->name('event.detail');
+Route::get('/ticket/{code}', [EventController::class, 'verifyTicket'])->name('ticket.verify');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1');
 Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
@@ -34,6 +35,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/event/{id}/edit', [AdminController::class, 'editEvent'])->name('event.edit');
         Route::get('/event/{id}/participants', [AdminController::class, 'eventParticipants'])->name('event.participants');
         Route::get('/event/{id}/export-csv', [AdminController::class, 'exportEventCsv'])->name('event.exportCsv');
+        Route::get('/event/{id}/export-report/{format}', [AdminController::class, 'exportEventReport'])->name('event.exportReport');
 
         // Event CRUD
         Route::post('/event', [AdminController::class, 'storeEvent'])->name('event.store');
@@ -77,10 +79,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/participant/{id}/cancel', [OrganizerController::class, 'cancelParticipant'])->name('participant.cancel');
         Route::post('/quick-checkin', [OrganizerController::class, 'quickCheckIn'])->name('quickCheckin');
         Route::get('/export-csv/{event_id?}', [OrganizerController::class, 'exportCsv'])->name('exportCsv');
+        Route::get('/export-report/{format}/{event_id?}', [OrganizerController::class, 'exportReport'])->name('exportReport');
     });
 
     // ===== MAHASISWA ROUTES =====
     Route::get('/my-events', [HomeController::class, 'myEvents'])->name('my.events');
     Route::post('/my-events/cancel/{id}', [HomeController::class, 'cancelEvent'])->name('my.events.cancel');
+    Route::post('/my-events/{id}/payment-proof', [HomeController::class, 'uploadPaymentProof'])->name('my.events.paymentProof');
     Route::get('/my-events/{id}/certificate', [HomeController::class, 'certificate'])->name('my.events.certificate');
 });

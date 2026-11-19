@@ -25,7 +25,7 @@
             <a href="{{ route('profile') }}" class="flex items-center gap-2.5 pl-2">
                 <div class="w-9 h-9 rounded-full overflow-hidden bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
                     @if(Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
-                        <img src="{{ Storage::url(Auth::user()->foto) }}" alt="Foto" class="w-full h-full object-cover">
+                        <img src="{{ asset('storage/' . Auth::user()->foto) }}?v={{ optional(Auth::user()->updated_at)->timestamp }}" alt="Foto" class="w-full h-full object-cover">
                     @else
                         {{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}
                     @endif
@@ -38,24 +38,20 @@
         </header>
 
         <!-- Body Container -->
-        <div class="p-4 sm:p-8 space-y-8 max-w-7xl w-full mx-auto">
+        <div class="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl w-full mx-auto">
 
             <!-- Hero Banner -->
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-bold text-slate-600 mb-2 shadow-sm">
-                        <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
-                        <span>Struktur Taksonomi Acara</span>
-                    </div>
-                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">
                         Kategori &amp; Label Acara
                     </h1>
                     <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl">
-                        Atur kategori kegiatan kampus untuk pengelompokan pendaftaran dan filter pencarian.
+                        Atur kategori kegiatan kampus untuk pengelompokan pendaftaran dan filter pencarian. Total <strong class="text-slate-700">{{ count($categories) }}</strong> kategori aktif.
                     </p>
                 </div>
 
-                <button type="button" onclick="openCreateCatModal()" class="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition btn-spring flex items-center gap-2 self-start lg:self-auto">
+                <button type="button" onclick="openCreateCatModal()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm transition btn-spring flex items-center gap-2 self-start sm:self-auto">
                     <i class="fas fa-plus"></i>
                     <span>Tambah Kategori Baru</span>
                 </button>
@@ -63,12 +59,20 @@
 
             <!-- Categories Grid -->
             @if(count($categories) > 0)
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 @foreach($categories as $cat)
-                <div class="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 space-y-4 group">
+                @php
+                    $catEventCount = (int) ($eventCounts[$cat->nama] ?? 0);
+                @endphp
+                <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 flex flex-col justify-between hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 space-y-4 group">
                     <div class="space-y-3">
-                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl shadow-sm transition-transform group-hover:scale-110" style="background-color: {{ $cat->color ?? '#4F46E5' }}15; color: {{ $cat->color ?? '#4F46E5' }};">
-                            <i class="fas {{ $cat->icon ?? 'fa-tag' }}"></i>
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="w-11 h-11 rounded-xl flex items-center justify-center text-lg shadow-xs transition-transform group-hover:scale-105" style="background-color: {{ $cat->color ?? '#4F46E5' }}15; color: {{ $cat->color ?? '#4F46E5' }};">
+                                <i class="fas {{ $cat->icon ?? 'fa-tag' }}"></i>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full text-[11px] font-bold {{ $catEventCount > 0 ? 'bg-teal-50 text-teal-700 border border-teal-100' : 'bg-slate-100 text-slate-500' }}">
+                                {{ $catEventCount }} Event
+                            </span>
                         </div>
 
                         <div>
@@ -79,16 +83,19 @@
                         </div>
                     </div>
 
-                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+                    <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs">
                         <span class="font-mono text-[10px] text-slate-400 px-2 py-0.5 rounded bg-slate-50 border border-slate-100">
-                            {{ $cat->icon }}
+                            {{ $cat->icon ?? 'fa-tag' }}
                         </span>
 
                         <div class="flex items-center gap-2">
-                            <a href="{{ route('admin.categories') }}?edit={{ $cat->id }}" class="p-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-600 transition" title="Edit Kategori">
+                            <a href="{{ route('home', ['kategori' => $cat->nama, 'status' => 'semua']) }}#events" class="p-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition" title="Lihat Event di Beranda">
+                                <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                            <a href="{{ route('admin.categories') }}?edit={{ $cat->id }}" class="p-2 rounded-lg bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-600 transition" title="Edit Kategori">
                                 <i class="fas fa-edit text-xs"></i>
                             </a>
-                            <button type="button" onclick="openDeleteModal('{{ route('admin.category.delete', $cat->id) }}', '{{ addslashes($cat->nama) }}')" class="p-2 rounded-xl bg-slate-100 text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition" title="Hapus Kategori">
+                            <button type="button" onclick="openDeleteModal('{{ route('admin.category.delete', $cat->id) }}', '{{ addslashes($cat->nama) }}')" class="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition" title="{{ $catEventCount > 0 ? 'Kategori masih dipakai oleh ' . $catEventCount . ' event' : 'Hapus Kategori' }}">
                                 <i class="fas fa-trash-alt text-xs"></i>
                             </button>
                         </div>

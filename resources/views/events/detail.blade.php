@@ -18,7 +18,7 @@
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
     <!-- Breadcrumbs -->
-    <nav class="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-6 flex-wrap">
+    <nav class="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-5 flex-wrap">
         <a href="{{ route('home') }}" class="hover:text-slate-700 transition">Beranda</a>
         <i class="fas fa-chevron-right text-[10px]"></i>
         <a href="{{ route('home', ['kategori' => $event->kategori]) }}" class="hover:text-slate-700 transition">{{ $event->kategori }}</a>
@@ -26,98 +26,99 @@
         <span class="text-slate-900 font-bold truncate max-w-sm">{{ $event->nama_event }}</span>
     </nav>
 
-    <!-- Poster Hero Banner -->
-    <div class="relative w-full h-72 sm:h-[400px] rounded-3xl overflow-hidden bg-slate-950 shadow-2xl mb-6 group">
-        @if($event->poster && file_exists(public_path('storage/' . $event->poster)))
-            <img src="{{ asset('storage/' . $event->poster) }}"
-                 alt="{{ $event->nama_event }}"
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out {{ $isPast ? 'grayscale-[30%]' : '' }}">
-        @else
-            <div class="w-full h-full bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-900 flex items-center justify-center p-8 relative overflow-hidden">
-                <div class="absolute -right-20 -top-20 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl"></div>
-                <div class="text-center text-white/90">
-                    <i class="fas fa-calendar-alt text-6xl text-indigo-400 mb-4 opacity-80"></i>
-                    <p class="text-xs uppercase font-extrabold tracking-widest text-indigo-300">{{ $event->kategori }}</p>
-                </div>
-            </div>
-        @endif
-
-        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/35 to-black/25"></div>
-
-        <!-- Top Floating Dynamic Badges -->
-        <div class="absolute top-5 left-5 right-5 flex items-center justify-between gap-3 flex-wrap">
-            @if($isPast)
-                <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-800/80 backdrop-blur-md text-slate-200 border border-white/20 flex items-center gap-1.5">
-                    <i class="fas fa-history text-slate-300"></i>
-                    Acara Telah Selesai
-                </span>
-            @elseif($event->isFull())
-                <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-rose-600/90 backdrop-blur-md text-white border border-rose-400/40 flex items-center gap-1.5">
-                    <i class="fas fa-ban"></i>
-                    Kuota Peserta Penuh
-                </span>
-            @else
-                <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/15 backdrop-blur-md text-white border border-white/20 flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    Pendaftaran Dibuka
-                </span>
-            @endif
-
-            @if($skpi > 0)
-            <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-indigo-600/90 backdrop-blur-md text-white border border-indigo-400/40 flex items-center gap-1.5">
-                <i class="fas fa-certificate text-amber-300"></i>
-                +{{ $skpi }} Poin SKPI
-            </span>
-            @endif
-        </div>
-
-        <!-- Bottom Title -->
-        <div class="absolute bottom-6 left-6 right-6 max-w-3xl">
-            <span class="text-[11px] font-extrabold uppercase tracking-wider text-indigo-300 block mb-2">
-                {{ $event->kategori }} • {{ \Carbon\Carbon::parse($event->tanggal)->locale('id')->isoFormat('D MMMM Y') }}
-            </span>
-            <h1 class="text-2xl sm:text-4xl font-black text-white leading-tight drop-shadow-lg">
-                {{ $event->nama_event }}
-            </h1>
-        </div>
-    </div>
-
-    <!-- Organizer Bar & Social Proof -->
-    <div class="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-10">
-        <div class="flex items-center gap-3.5">
-            <div class="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-700 text-lg font-bold flex-shrink-0">
-                <i class="fas fa-university"></i>
-            </div>
-            <div>
-                <div class="flex items-center gap-2 flex-wrap">
-                    <h3 class="text-sm font-extrabold text-slate-900">{{ $event->creator->nama ?? 'Penyelenggara Kampus' }}</h3>
-                    <span class="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-bold text-[10px]">Penyelenggara</span>
-                </div>
-                <p class="text-xs text-slate-500 mt-0.5">{{ $event->lokasi }}</p>
-            </div>
-        </div>
-
-        <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-            <div class="flex items-center gap-2 text-xs font-semibold text-slate-600">
-                <div class="w-7 h-7 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center text-xs font-bold">
-                    <i class="fas fa-users"></i>
-                </div>
-                <span><strong>{{ $event->participantCount() }}</strong> peserta terdaftar</span>
-            </div>
-
-            @if($event->creator && $event->creator->email)
-            <a href="mailto:{{ $event->creator->email }}" class="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs transition btn-spring">
-                Hubungi Panitia
-            </a>
-            @endif
-        </div>
-    </div>
-
-    <!-- Main 2-Column Content (Only Real Database Fields) -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+    <!-- Main 2-Column Content (Proportional 16:9 Poster + Sticky Ticket Card) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
 
         <!-- Left Content Column -->
-        <div class="lg:col-span-8 space-y-8">
+        <div class="lg:col-span-8 space-y-6">
+
+            <!-- Proportional 16:9 Event Poster Card -->
+            <div class="bg-white rounded-3xl overflow-hidden border border-slate-200/90 shadow-sm">
+                <div class="relative w-full aspect-[16/9] bg-slate-900 overflow-hidden group">
+                    @if($event->poster && file_exists(public_path('storage/' . $event->poster)))
+                        <img src="{{ asset('storage/' . $event->poster) }}"
+                             alt="{{ $event->nama_event }}"
+                             class="w-full h-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-500 ease-out {{ $isPast ? 'grayscale-[30%]' : '' }}">
+                    @else
+                        <div class="w-full h-full bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 flex items-center justify-center p-8">
+                            <div class="text-center text-white/90">
+                                <i class="fas fa-calendar-alt text-5xl text-teal-400 mb-3 opacity-85"></i>
+                                <p class="text-xs uppercase font-extrabold tracking-widest text-indigo-300">{{ $event->kategori }}</p>
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Top Floating Dynamic Badges -->
+                    <div class="absolute top-4 left-4 right-4 z-10 flex items-center justify-between gap-2 flex-wrap">
+                        @if($isPast)
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-slate-900/85 backdrop-blur-md text-slate-200 border border-white/15 flex items-center gap-1.5">
+                                <i class="fas fa-history text-slate-300"></i>
+                                Acara Telah Selesai
+                            </span>
+                        @elseif($event->isFull())
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-600/90 backdrop-blur-md text-white flex items-center gap-1.5">
+                                <i class="fas fa-ban"></i>
+                                Kuota Penuh
+                            </span>
+                        @else
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-slate-900/75 backdrop-blur-md text-white border border-white/15 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-teal-400"></span>
+                                Pendaftaran Dibuka
+                            </span>
+                        @endif
+
+                        @if($skpi > 0)
+                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-teal-600/95 backdrop-blur-md text-white shadow-sm flex items-center gap-1.5">
+                            <i class="fas fa-award text-amber-300"></i>
+                            +{{ $skpi }} Poin SKPI
+                        </span>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Event Title & Organizer Summary Strip -->
+                <div class="p-5 sm:p-6 space-y-4">
+                    <div>
+                        <span class="text-[11px] font-extrabold uppercase tracking-wider text-indigo-600 block mb-1">
+                            {{ $event->kategori }} • {{ \Carbon\Carbon::parse($event->tanggal)->locale('id')->isoFormat('D MMMM Y') }}
+                        </span>
+                        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
+                            {{ $event->nama_event }}
+                        </h1>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-700 text-base font-bold flex-shrink-0">
+                                <i class="fas fa-university"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <h3 class="text-sm font-extrabold text-slate-900">{{ $event->creator->nama ?? 'Penyelenggara Kampus' }}</h3>
+                                    <span class="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-bold text-[10px]">Penyelenggara</span>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-0.5">{{ $event->lokasi }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                            <div class="flex items-center gap-2 text-xs font-semibold text-slate-600">
+                                <div class="w-7 h-7 rounded-full bg-teal-50 text-teal-700 flex items-center justify-center text-xs font-bold">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <span><strong>{{ $event->participantCount() }}</strong> peserta</span>
+                            </div>
+
+                            @if($event->creator)
+                            <button type="button" onclick="openContactModal()" class="btn-tactile px-3.5 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 hover:border-indigo-200 text-slate-700 font-bold text-xs transition inline-flex items-center gap-1.5">
+                                <i class="fas fa-headset text-indigo-600 text-[11px]"></i>
+                                <span>Hubungi Panitia</span>
+                            </button>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Tentang Acara -->
             <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm space-y-4">
@@ -238,7 +239,7 @@
                         <span class="text-amber-900">{{ $sisa }} Kursi Tersedia</span>
                     </div>
                     <div class="w-full h-2 bg-amber-200/70 rounded-full overflow-hidden">
-                        <div class="h-full bg-amber-500 rounded-full" style="width: {{ $percent }}%;"></div>
+                        <div class="quota-progress-bar h-full bg-amber-500 rounded-full" style="width: 0%;" data-target-width="{{ $percent }}"></div>
                     </div>
                     <div class="flex items-center justify-between text-[11px] text-amber-700">
                         <span>{{ $percent }}% Terisi</span>
@@ -306,12 +307,12 @@
 
                 <!-- Share & Calendar -->
                 <div class="grid grid-cols-2 gap-2 text-xs">
-                    <button type="button" onclick="copyDetailLink()" class="py-2 px-3 rounded-xl border border-slate-200 hover:bg-slate-50 font-bold text-slate-700 flex items-center justify-center gap-1.5 transition">
-                        <i class="fas fa-share-alt text-slate-400"></i>
+                    <button type="button" id="detailShareBtn" onclick="openShareModal()" class="btn-tactile py-2.5 px-3 rounded-xl border border-slate-200 hover:bg-slate-50 hover:border-indigo-200 font-bold text-slate-700 flex items-center justify-center gap-1.5 transition">
+                        <i id="detailShareIcon" class="fas fa-share-alt text-indigo-600"></i>
                         <span id="detailShareText">Bagikan</span>
                     </button>
-                    <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text={{ urlencode($event->nama_event) }}&dates={{ date('Ymd', strtotime($event->tanggal)) }}/{{ date('Ymd', strtotime($event->tanggal)) }}&details={{ urlencode($event->deskripsi ?? '') }}&location={{ urlencode($event->lokasi) }}" target="_blank" rel="noopener noreferrer" class="py-2 px-3 rounded-xl border border-slate-200 hover:bg-slate-50 font-bold text-slate-700 flex items-center justify-center gap-1.5 transition">
-                        <i class="far fa-calendar-plus text-slate-400"></i>
+                    <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text={{ urlencode($event->nama_event) }}&dates={{ date('Ymd', strtotime($event->tanggal)) }}/{{ date('Ymd', strtotime($event->tanggal)) }}&details={{ urlencode($event->deskripsi ?? '') }}&location={{ urlencode($event->lokasi) }}" target="_blank" rel="noopener noreferrer" class="btn-tactile py-2.5 px-3 rounded-xl border border-slate-200 hover:bg-slate-50 hover:border-indigo-200 font-bold text-slate-700 flex items-center justify-center gap-1.5 transition">
+                        <i class="far fa-calendar-plus text-teal-600"></i>
                         <span>e-Kalender</span>
                     </a>
                 </div>
@@ -336,18 +337,241 @@
 </div>
 
 @include('partials.footer')
+
+@php
+    $shareUrl = route('event.detail', $event->id);
+    $shareMessage = "Yuk ikuti acara \"{$event->nama_event}\" di Campven!\nTanggal: " . \Carbon\Carbon::parse($event->tanggal)->locale('id')->isoFormat('D MMMM Y') . "\nLokasi: {$event->lokasi}\nDaftar di sini: {$shareUrl}";
+    $rawPhone = preg_replace('/[^0-9]/', '', (string) ($event->creator->no_telp ?? ''));
+    if (str_starts_with($rawPhone, '0')) {
+        $waPhone = '62' . substr($rawPhone, 1);
+    } elseif (str_starts_with($rawPhone, '62')) {
+        $waPhone = $rawPhone;
+    } else {
+        $waPhone = $rawPhone;
+    }
+    $waContactText = "Halo panitia {$event->creator->nama}, saya ingin bertanya mengenai acara \"{$event->nama_event}\" di Campven.";
+@endphp
+
+<!-- ===== MODAL BAGIKAN ACARA ===== -->
+<div id="shareEventModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
+    <div id="shareEventBackdrop" onclick="closeShareModal()" class="fixed inset-0 bg-slate-900/45 backdrop-blur-sm opacity-0 transition-opacity duration-200"></div>
+    <div id="shareEventCard" class="relative bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-200/90 p-6 transform scale-95 opacity-0 transition-all duration-200 space-y-5">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">
+                    <i class="fas fa-share-alt"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-extrabold text-slate-900">Bagikan Acara</h3>
+                    <p class="text-[11px] text-slate-500 truncate max-w-[230px]">{{ $event->nama_event }}</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeShareModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-xs transition" aria-label="Tutup">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Copy Link Box -->
+        <div class="space-y-1.5">
+            <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">Tautan Halaman Acara</label>
+            <div class="flex items-center gap-2">
+                <input type="text" id="shareEventUrlInput" value="{{ $shareUrl }}" readonly class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-mono focus:outline-none">
+                <button type="button" id="copyShareUrlBtn" onclick="copyTextWithFeedback('shareEventUrlInput', 'copyShareUrlBtn', 'Salin')" class="btn-tactile px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition whitespace-nowrap">
+                    Salin
+                </button>
+            </div>
+        </div>
+
+        <!-- Direct Share Channels -->
+        <div class="grid grid-cols-2 gap-2.5 text-xs">
+            <a href="https://wa.me/?text={{ urlencode($shareMessage) }}" target="_blank" rel="noopener noreferrer" class="btn-tactile py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-bold flex items-center justify-center gap-2 transition">
+                <i class="fab fa-whatsapp text-sm"></i>
+                <span>WhatsApp</span>
+            </a>
+            <a href="https://t.me/share/url?url={{ urlencode($shareUrl) }}&text={{ urlencode('Yuk ikuti acara ' . $event->nama_event . ' di Campven!') }}" target="_blank" rel="noopener noreferrer" class="btn-tactile py-2.5 px-3 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 font-bold flex items-center justify-center gap-2 transition">
+                <i class="fab fa-telegram-plane text-sm"></i>
+                <span>Telegram</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL HUBUNGI PANITIA ===== -->
+@if($event->creator)
+<div id="contactOrganizerModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
+    <div id="contactOrganizerBackdrop" onclick="closeContactModal()" class="fixed inset-0 bg-slate-900/45 backdrop-blur-sm opacity-0 transition-opacity duration-200"></div>
+    <div id="contactOrganizerCard" class="relative bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-200/90 p-6 transform scale-95 opacity-0 transition-all duration-200 space-y-5">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center text-sm">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-extrabold text-slate-900">Hubungi Panitia</h3>
+                    <p class="text-[11px] text-slate-500">Kontak resmi penyelenggara acara</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeContactModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-xs transition" aria-label="Tutup">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Organizer Contact Details -->
+        <div class="space-y-3 text-xs">
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-extrabold text-sm flex-shrink-0">
+                    {{ strtoupper(substr($event->creator->nama, 0, 1)) }}
+                </div>
+                <div class="min-w-0">
+                    <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Organisasi Penyelenggara</span>
+                    <span class="block text-sm font-extrabold text-slate-900 truncate">{{ $event->creator->nama }}</span>
+                </div>
+            </div>
+
+            @if($event->creator->email)
+            <div class="p-3 rounded-xl bg-white border border-slate-200 flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                    <span class="block text-[10px] font-bold uppercase text-slate-400">Email Panitia</span>
+                    <input type="text" id="organizerEmailInput" value="{{ $event->creator->email }}" readonly class="w-full bg-transparent text-xs font-semibold text-slate-800 focus:outline-none">
+                </div>
+                <button type="button" id="copyEmailBtn" onclick="copyTextWithFeedback('organizerEmailInput', 'copyEmailBtn', 'Salin')" class="btn-tactile px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition flex-shrink-0">
+                    Salin
+                </button>
+            </div>
+            @endif
+
+            @if(!empty($event->creator->no_telp))
+            <div class="p-3 rounded-xl bg-white border border-slate-200 flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                    <span class="block text-[10px] font-bold uppercase text-slate-400">Nomor Telepon / WhatsApp</span>
+                    <input type="text" id="organizerPhoneInput" value="{{ $event->creator->no_telp }}" readonly class="w-full bg-transparent text-xs font-semibold text-slate-800 focus:outline-none">
+                </div>
+                <button type="button" id="copyPhoneBtn" onclick="copyTextWithFeedback('organizerPhoneInput', 'copyPhoneBtn', 'Salin')" class="btn-tactile px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition flex-shrink-0">
+                    Salin
+                </button>
+            </div>
+            @endif
+        </div>
+
+        <!-- Direct Contact Action Buttons -->
+        <div class="grid {{ !empty($waPhone) && $event->creator->email ? 'grid-cols-2' : 'grid-cols-1' }} gap-2.5 text-xs pt-1">
+            @if(!empty($waPhone))
+            <a href="https://wa.me/{{ $waPhone }}?text={{ urlencode($waContactText) }}" target="_blank" rel="noopener noreferrer" class="btn-tactile py-2.5 px-3 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold flex items-center justify-center gap-2 transition">
+                <i class="fab fa-whatsapp text-sm"></i>
+                <span>Chat WhatsApp</span>
+            </a>
+            @endif
+
+            @if($event->creator->email)
+            <a href="mailto:{{ $event->creator->email }}?subject={{ rawurlencode('Pertanyaan Acara: ' . $event->nama_event) }}" class="btn-tactile py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold flex items-center justify-center gap-2 transition">
+                <i class="far fa-envelope text-sm"></i>
+                <span>Kirim Email</span>
+            </a>
+            @endif
+        </div>
+    </div>
+</div>
+@endif
 @endsection
 
 @push('scripts')
 <script>
-    function copyDetailLink() {
-        navigator.clipboard.writeText(window.location.href).then(() => {
-            const btn = document.getElementById('detailShareText');
-            btn.innerText = 'Link Disalin!';
+    function toggleDetailModal(modalId, backdropId, cardId, show) {
+        const modal = document.getElementById(modalId);
+        const backdrop = document.getElementById(backdropId);
+        const card = document.getElementById(cardId);
+        if (!modal || !backdrop || !card) return;
+
+        if (show) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            requestAnimationFrame(() => {
+                backdrop.classList.remove('opacity-0');
+                card.classList.remove('opacity-0', 'scale-95');
+                card.classList.add('opacity-100', 'scale-100');
+            });
+        } else {
+            backdrop.classList.add('opacity-0');
+            card.classList.add('opacity-0', 'scale-95');
+            card.classList.remove('opacity-100', 'scale-100');
             setTimeout(() => {
-                btn.innerText = 'Bagikan';
-            }, 2500);
-        });
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 200);
+        }
     }
+
+    window.openShareModal = function() {
+        toggleDetailModal('shareEventModal', 'shareEventBackdrop', 'shareEventCard', true);
+    };
+    window.closeShareModal = function() {
+        toggleDetailModal('shareEventModal', 'shareEventBackdrop', 'shareEventCard', false);
+    };
+
+    window.openContactModal = function() {
+        toggleDetailModal('contactOrganizerModal', 'contactOrganizerBackdrop', 'contactOrganizerCard', true);
+    };
+    window.closeContactModal = function() {
+        toggleDetailModal('contactOrganizerModal', 'contactOrganizerBackdrop', 'contactOrganizerCard', false);
+    };
+
+    function fallbackCopyText(text) {
+        const tempInput = document.createElement('textarea');
+        tempInput.value = text;
+        tempInput.setAttribute('readonly', '');
+        tempInput.style.position = 'fixed';
+        tempInput.style.top = '-9999px';
+        tempInput.style.left = '-9999px';
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        tempInput.setSelectionRange(0, text.length);
+        let ok = false;
+        try {
+            ok = document.execCommand('copy');
+        } catch (e) {
+            ok = false;
+        }
+        document.body.removeChild(tempInput);
+        return ok;
+    }
+
+    window.copyTextWithFeedback = function(inputId, btnId, defaultLabel) {
+        const input = document.getElementById(inputId);
+        const btn = document.getElementById(btnId);
+        if (!input || !btn) return;
+        const text = input.value;
+
+        const markCopied = () => {
+            btn.innerText = '✓ Tersalin!';
+            btn.classList.add('bg-teal-600', 'text-white');
+            btn.classList.remove('bg-indigo-600', 'bg-slate-100', 'text-slate-700');
+            setTimeout(() => {
+                btn.innerText = defaultLabel;
+                btn.classList.remove('bg-teal-600', 'text-white');
+                if (btnId === 'copyShareUrlBtn') {
+                    btn.classList.add('bg-indigo-600', 'text-white');
+                } else {
+                    btn.classList.add('bg-slate-100', 'text-slate-700');
+                }
+            }, 2200);
+        };
+
+        if (window.isSecureContext && navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(markCopied).catch(() => {
+                if (fallbackCopyText(text)) markCopied();
+            });
+        } else if (fallbackCopyText(text)) {
+            markCopied();
+        } else {
+            input.select();
+        }
+    };
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            window.closeShareModal();
+            window.closeContactModal();
+        }
+    });
 </script>
 @endpush

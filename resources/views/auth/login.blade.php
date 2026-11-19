@@ -10,19 +10,13 @@
         <div class="flex-1 p-8 sm:p-12 flex flex-col justify-between">
             <div>
                 <!-- Brand Logo -->
-                <div class="flex items-center gap-3 mb-8">
-                    <div class="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-extrabold text-xl shadow-md shadow-indigo-600/20">
-                        <i class="fas fa-cubes text-sm"></i>
-                    </div>
-                    <div>
-                        <span class="text-xl font-extrabold text-slate-900 tracking-tight">Camp<span class="text-indigo-600">ven</span></span>
-                        <span class="block text-[10px] font-semibold text-slate-400 tracking-wider -mt-1">Pusat Kegiatan Kampus</span>
-                    </div>
-                </div>
+                <a href="{{ route('home') }}" class="inline-block mb-8 hover:opacity-95 transition-opacity">
+                    <x-campven-logo size="md" subtitle="Pusat Kegiatan Kampus" />
+                </a>
 
                 <div class="mb-6">
-                    <h2 class="text-2xl font-black text-slate-900 tracking-tight">Selamat Datang Kembali 👋</h2>
-                    <p class="text-xs text-slate-500 mt-1">Masuk untuk mengakses tiket, jadwal seminar, dan sertifikat SKPI Anda.</p>
+                    <h2 class="text-2xl font-black text-slate-900 tracking-tight">Selamat Datang Kembali</h2>
+                    <p class="text-xs text-slate-500 mt-1">Satu pintu masuk untuk akun <strong>Mahasiswa</strong>, <strong>Penyelenggara Organisasi</strong>, dan <strong>Administrator</strong>.</p>
                 </div>
 
                 @if(session('success'))
@@ -43,10 +37,10 @@
                     @csrf
                     
                     <div class="space-y-1.5">
-                        <label class="block font-bold text-slate-700">Alamat Email Mahasiswa / Akun</label>
+                        <label class="block font-bold text-slate-700">Alamat Email (Mahasiswa / Penyelenggara / Admin)</label>
                         <div class="relative">
                             <i class="far fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                            <input type="email" name="email" value="{{ old('email') }}" required placeholder="nim@polindra.ac.id atau email Anda" class="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:bg-white focus:border-indigo-600 transition">
+                            <input type="email" name="email" value="{{ old('email') }}" required placeholder="nama@campven.com" class="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:bg-white focus:border-indigo-600 transition">
                         </div>
                     </div>
 

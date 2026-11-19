@@ -78,6 +78,12 @@ class EventController extends Controller
                 ->with('error', 'Maaf, kuota event ini sudah penuh!');
         }
 
+        $isFree = ((int) ($event->harga ?? 0)) <= 0;
+        $initialStatus = $isFree ? 'confirmed' : 'registered';
+        $successMsg = $isFree
+            ? 'Pendaftaran berhasil dan langsung terkonfirmasi! Tiket QR Anda sudah aktif di halaman Tiket Saya.'
+            : 'Berhasil mendaftar ke event berbayar! Menunggu konfirmasi pembayaran dari panitia penyelenggara.';
+
         $existing = Participant::where('event_id', $id)
             ->where('user_id', Auth::id())
             ->first();
@@ -87,18 +93,44 @@ class EventController extends Controller
                 return redirect()->route('event.detail', $id)
                     ->with('error', 'Anda sudah terdaftar di event ini!');
             }
-            $existing->update(['status' => 'registered']);
+            $existing->update(['status' => $initialStatus]);
             return redirect()->route('event.detail', $id)
-                ->with('success', 'Pendaftaran Anda berhasil diperbarui! Menunggu konfirmasi panitia.');
+                ->with('success', $successMsg);
         }
 
         Participant::create([
             'event_id' => $id,
             'user_id' => Auth::id(),
-            'status' => 'registered',
+            'status' => $initialStatus,
         ]);
 
         return redirect()->route('event.detail', $id)
-            ->with('success', 'Berhasil mendaftar ke event! Menunggu konfirmasi panitia.');
+            ->with('success', $successMsg);
+    }
+
+    public function verifyTicket(string $code)
+    {
+        $participant = null;
+        if (preg_match('/^CV-(\d+)-(\d+)$/i', trim($code), $matches)) {
+            $participant = Participant::with(['event.creator', 'user'])
+                ->where('event_id', (int) $matches[1])
+                ->where('id', (int) $matches[2])
+                ->first();
+        }
+
+        $isOwnerOrganizer = false;
+        $isTicketOwner = false;
+
+        if ($participant && Auth::check()) {
+            $authUser = Auth::user();
+            if ($authUser->role === 'penyelenggara' && $participant->event && (int) $participant->event->created_by === (int) $authUser->id) {
+                $isOwnerOrganizer = true;
+            }
+            if ($authUser->role === 'mahasiswa' && (int) $participant->user_id === (int) $authUser->id) {
+                $isTicketOwner = true;
+            }
+        }
+
+        return view('events.ticket-verify', compact('code', 'participant', 'isOwnerOrganizer', 'isTicketOwner'));
     }
 }

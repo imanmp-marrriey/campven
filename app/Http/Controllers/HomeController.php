@@ -10,6 +10,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
@@ -19,9 +20,14 @@ class HomeController extends Controller
         $kategori = $request->input('kategori');
         $rentang = $request->input('rentang');
         $lokasi_filter = $request->input('lokasi_filter');
-        $sort = $request->input('sort', 'terbaru');
+        $status_filter = $request->input('status', 'mendatang');
+        if (!in_array($status_filter, ['mendatang', 'semua', 'selesai'], true)) {
+            $status_filter = 'mendatang';
+        }
+        $sort = $request->input('sort', $status_filter === 'mendatang' ? 'terdekat' : 'terbaru');
         $is_logged_in = Auth::check();
         $user = Auth::user();
+        $today = Carbon::today()->toDateString();
 
         $query = Event::with('creator');
 
@@ -50,6 +56,10 @@ class HomeController extends Controller
             } elseif ($rentang === 'semester') {
                 $query->whereYear('tanggal', date('Y'));
             }
+        } elseif ($status_filter === 'mendatang') {
+            $query->where('tanggal', '>=', $today);
+        } elseif ($status_filter === 'selesai') {
+            $query->where('tanggal', '<', $today);
         }
 
         if ($sort === 'terdekat') {
@@ -60,24 +70,31 @@ class HomeController extends Controller
             $query->orderBy('tanggal', 'DESC');
         }
 
-        $events = $query->paginate(6)->withQueryString();
+        $events = $query->get();
 
         $featured_events = Event::with('creator')
-            ->where('tanggal', '>=', date('Y-m-d'))
+            ->where('tanggal', '>=', $today)
             ->orderBy('tanggal', 'ASC')
-            ->limit(4)
+            ->limit(2)
             ->get();
 
         if ($featured_events->isEmpty()) {
             $featured_events = Event::with('creator')
                 ->orderBy('tanggal', 'DESC')
-                ->limit(4)
+                ->limit(2)
                 ->get();
         }
 
-        $categories = Category::all();
+        $hero_mosaic_events = Event::whereNotNull('poster')
+            ->orderBy('tanggal', 'DESC')
+            ->limit(6)
+            ->get();
+
+        $categories = Category::orderBy('nama', 'ASC')->get();
         $announcements = Announcement::orderBy('created_at', 'DESC')->limit(3)->get();
         $total_events = Event::count();
+        $upcoming_events_count = Event::where('tanggal', '>=', $today)->count();
+        $past_events_count = Event::where('tanggal', '<', $today)->count();
         $total_users = User::count();
         $total_organizers = User::where('role', 'penyelenggara')->count();
         $total_participants = Participant::whereIn('status', ['registered', 'confirmed', 'attended'])->count();
@@ -85,9 +102,12 @@ class HomeController extends Controller
         return view('mahasiswa.index', compact(
             'events',
             'featured_events',
+            'hero_mosaic_events',
             'categories',
             'announcements',
             'total_events',
+            'upcoming_events_count',
+            'past_events_count',
             'total_users',
             'total_organizers',
             'total_participants',
@@ -97,6 +117,7 @@ class HomeController extends Controller
             'kategori',
             'rentang',
             'lokasi_filter',
+            'status_filter',
             'sort'
         ));
     }
@@ -143,6 +164,49 @@ class HomeController extends Controller
         }
 
         return redirect()->route('my.events')->with('error', 'Pendaftaran tidak dapat dibatalkan atau sudah diproses.');
+    }
+
+    public function uploadPaymentProof(Request $request, $id)
+    {
+        if (Auth::user()->role !== 'mahasiswa') {
+            abort(403, 'Akses ditolak.');
+        }
+
+        $participant = Participant::with('event')
+            ->where('event_id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        if (!$participant->event || ((int) ($participant->event->harga ?? 0)) <= 0) {
+            return redirect()->route('my.events')->with('error', 'Acara gratis tidak memerlukan unggah bukti pembayaran.');
+        }
+
+        if ($participant->status !== 'registered') {
+            return redirect()->route('my.events')->with('error', 'Bukti pembayaran hanya dapat diunggah saat status masih Menunggu Konfirmasi.');
+        }
+
+        $request->validate([
+            'bukti_bayar' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ], [
+            'bukti_bayar.required' => 'Pilih file gambar bukti pembayaran terlebih dahulu.',
+            'bukti_bayar.image' => 'Bukti pembayaran harus berupa file gambar yang valid.',
+            'bukti_bayar.mimes' => 'Format yang didukung: JPG, JPEG, PNG, atau WEBP.',
+            'bukti_bayar.max' => 'Ukuran file maksimal 2 MB.',
+        ]);
+
+        $oldProof = $participant->bukti_bayar;
+        $file = $request->file('bukti_bayar');
+        $ext = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+        $fileName = 'proof_' . $participant->event_id . '_' . $participant->id . '_' . time() . '.' . $ext;
+        $path = $file->storeAs('payment_proofs', $fileName, 'public');
+
+        $participant->update(['bukti_bayar' => $path]);
+
+        if ($oldProof && $oldProof !== $path && Storage::disk('public')->exists($oldProof)) {
+            Storage::disk('public')->delete($oldProof);
+        }
+
+        return redirect()->route('my.events')->with('success', 'Bukti pembayaran berhasil diunggah! Panitia akan segera memverifikasi pendaftaran Anda.');
     }
 
     public function certificate($id)

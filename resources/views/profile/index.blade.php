@@ -8,14 +8,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-20">
             <!-- Brand Logo -->
-            <a href="{{ $back_url ?? route('home') }}" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-extrabold text-xl shadow-md shadow-indigo-600/20 group-hover:scale-105 transition-transform duration-300">
-                    <i class="fas fa-cubes text-sm"></i>
-                </div>
-                <div>
-                    <span class="text-xl font-extrabold text-slate-900 tracking-tight">Camp<span class="text-indigo-600">ven</span></span>
-                    <span class="block text-[10px] font-semibold text-slate-400 tracking-wider uppercase -mt-1">Portal Kegiatan Kampus</span>
-                </div>
+            <a href="{{ $back_url ?? route('home') }}" class="hover:opacity-95 transition-opacity">
+                <x-campven-logo size="md" subtitle="Portal Kegiatan Kampus" />
             </a>
 
             <!-- Right Action -->
@@ -33,14 +27,14 @@
     </div>
 </nav>
 
-<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-start">
         <!-- Profile Summary Card (Left) -->
-        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm text-center md:sticky md:top-28">
+        <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm text-center md:sticky md:top-24">
             <div class="relative w-28 h-28 mx-auto mb-4 group">
                 <div class="w-28 h-28 rounded-full overflow-hidden ring-4 ring-slate-100 shadow-md bg-slate-900 text-white flex items-center justify-center text-3xl font-extrabold">
                     @if($user->foto && Storage::disk('public')->exists($user->foto))
-                        <img id="avatarPreview" src="{{ Storage::url($user->foto) }}" alt="Foto Profil" class="w-full h-full object-cover">
+                        <img id="avatarPreview" src="{{ asset('storage/' . $user->foto) }}?v={{ optional($user->updated_at)->timestamp }}" alt="Foto Profil" class="w-full h-full object-cover">
                     @else
                         <span id="avatarPlaceholder">{{ strtoupper(substr($user->nama, 0, 1)) }}</span>
                         <img id="avatarPreview" src="" alt="Foto Profil" class="w-full h-full object-cover hidden">
@@ -134,8 +128,11 @@
                 <!-- Ganti Foto -->
                 <div class="space-y-1.5">
                     <label class="block text-xs font-bold text-slate-700">Unggah Foto Profil Baru</label>
-                    <input type="file" name="foto" id="fotoInput" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 file:cursor-pointer file:transition">
-                    <span class="text-[11px] text-slate-400 block">Maksimal 2MB (Format: JPG, PNG, GIF).</span>
+                    <input type="file" name="foto" id="fotoInput" accept="image/jpeg,image/png,image/webp" class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 file:cursor-pointer file:transition">
+                    <span class="text-[11px] text-slate-400 block">Maksimal 2MB (Format: JPG, JPEG, PNG, WEBP). Pratinjau tampil otomatis sebelum disimpan.</span>
+                    @error('foto')
+                        <p class="text-[11px] text-rose-600 font-semibold">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Password Baru (Optional) -->

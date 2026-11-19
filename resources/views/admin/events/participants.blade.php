@@ -22,9 +22,17 @@
             </div>
 
             <div class="flex items-center gap-2 flex-shrink-0">
-                <a href="{{ route('admin.event.exportCsv', $event->id) }}" class="px-3.5 py-2 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-xs hover:bg-emerald-100 transition flex items-center gap-1.5">
+                <a href="{{ route('admin.event.exportReport', [$event->id, 'excel']) }}" class="px-3 py-2 rounded-xl bg-teal-50 text-teal-700 border border-teal-200 font-bold text-xs hover:bg-teal-100 transition flex items-center gap-1.5" title="Unduh Tabel Rapi Excel (.xls)">
+                    <i class="fas fa-file-excel"></i>
+                    <span class="hidden sm:inline">Excel</span>
+                </a>
+                <a href="{{ route('admin.event.exportReport', [$event->id, 'word']) }}" class="px-3 py-2 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold text-xs hover:bg-indigo-100 transition flex items-center gap-1.5" title="Unduh Laporan Resmi Word (.doc)">
+                    <i class="fas fa-file-word"></i>
+                    <span class="hidden sm:inline">Word</span>
+                </a>
+                <a href="{{ route('admin.event.exportCsv', $event->id) }}" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 font-bold text-xs hover:bg-slate-200 transition flex items-center gap-1.5" title="Unduh Data Mentah CSV">
                     <i class="fas fa-file-csv"></i>
-                    <span class="hidden sm:inline">Ekspor CSV</span>
+                    <span class="hidden md:inline">CSV</span>
                 </a>
                 <a href="{{ route('admin.dashboard') }}" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition flex items-center gap-1.5">
                     <i class="fas fa-arrow-left"></i>

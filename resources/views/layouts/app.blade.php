@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Campven - Platform Kegiatan Kampus Terpadu')</title>
 
+    <!-- Custom Campven SVG Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,22 +53,15 @@
         }
 
         .btn-spring {
-            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1), background-color 200ms ease, border-color 200ms ease, color 200ms ease;
         }
         .btn-spring:active {
-            transform: scale(0.96);
+            transform: scale(0.98);
         }
 
-        @keyframes toastSlideIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
         @keyframes toastProgress {
             from { width: 100%; }
             to { width: 0%; }
-        }
-        .toast-animate {
-            animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .toast-progress {
             animation: toastProgress 4.5s linear forwards;
@@ -132,8 +128,8 @@
 
     <!-- Global Logout Confirmation Modal -->
     <div id="logoutModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
-        <div id="logoutModalBackdrop" onclick="closeLogoutModal()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity duration-300 opacity-0"></div>
-        <div id="logoutModalCard" class="relative bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-slate-100 p-6 sm:p-8 text-center transform scale-95 opacity-0 transition-all duration-300 ease-out">
+        <div id="logoutModalBackdrop" onclick="closeLogoutModal()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] opacity-0"></div>
+        <div id="logoutModalCard" class="relative bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-slate-100 p-6 sm:p-8 text-center transform scale-95 opacity-0 transition-all duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]">
             <div class="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner">
                 <i class="fas fa-sign-out-alt"></i>
             </div>
@@ -155,8 +151,8 @@
 
     <!-- Global Delete Confirmation Modal -->
     <div id="confirmDeleteModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
-        <div id="confirmDeleteBackdrop" onclick="closeDeleteModal()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity duration-300 opacity-0"></div>
-        <div id="confirmDeleteCard" class="relative bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-slate-100 p-6 sm:p-8 text-center transform scale-95 opacity-0 transition-all duration-300 ease-out">
+        <div id="confirmDeleteBackdrop" onclick="closeDeleteModal()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] opacity-0"></div>
+        <div id="confirmDeleteCard" class="relative bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-slate-100 p-6 sm:p-8 text-center transform scale-95 opacity-0 transition-all duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]">
             <div class="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner">
                 <i class="fas fa-trash-alt"></i>
             </div>

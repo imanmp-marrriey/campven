@@ -9,7 +9,9 @@ use App\Models\Participant;
 use App\Models\User;
 use App\Support\QrCodeSvg;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class CampvenAuditTest extends TestCase
@@ -168,14 +170,14 @@ class CampvenAuditTest extends TestCase
             ->assertSessionHas('error');
         $this->assertDatabaseCount('participants', 0);
 
-        // Mahasiswa 1 daftar ke event mendatang
+        // Mahasiswa 1 daftar ke event GRATIS mendatang -> langsung auto-confirmed (Hybrid Flow)
         $this->actingAs($mahasiswa)->post(route('event.register', $event->id))
             ->assertRedirect(route('event.detail', $event->id))
             ->assertSessionHas('success');
         $this->assertDatabaseHas('participants', [
             'event_id' => $event->id,
             'user_id' => $mahasiswa->id,
-            'status' => 'registered',
+            'status' => 'confirmed',
         ]);
 
         // Daftar ganda oleh mahasiswa 1 ditolak
@@ -188,7 +190,7 @@ class CampvenAuditTest extends TestCase
             ->assertRedirect(route('event.detail', $event->id))
             ->assertSessionHas('error');
 
-        // Mahasiswa 1 membatalkan pendaftaran -> kuota bebas lagi -> mahasiswa 1 bisa daftar ulang
+        // Mahasiswa 1 membatalkan pendaftaran -> kuota bebas lagi -> mahasiswa 1 bisa daftar ulang (auto-confirmed)
         $this->actingAs($mahasiswa)->post(route('my.events.cancel', $event->id))
             ->assertRedirect(route('my.events'))
             ->assertSessionHas('success');
@@ -205,8 +207,38 @@ class CampvenAuditTest extends TestCase
         $this->assertDatabaseHas('participants', [
             'event_id' => $event->id,
             'user_id' => $mahasiswa->id,
+            'status' => 'confirmed',
+        ]);
+
+        // Event BERBAYAR (harga > 0) -> status awal harus 'registered' menunggu konfirmasi penyelenggara
+        $paidEvent = $this->createEvent($org, [
+            'nama_event' => 'Workshop Berbayar Hybrid',
+            'harga' => 25000,
+            'kuota' => 20,
+        ]);
+        $this->actingAs($mahasiswa2)->post(route('event.register', $paidEvent->id))
+            ->assertRedirect(route('event.detail', $paidEvent->id))
+            ->assertSessionHas('success');
+        $this->assertDatabaseHas('participants', [
+            'event_id' => $paidEvent->id,
+            'user_id' => $mahasiswa2->id,
             'status' => 'registered',
         ]);
+
+        // Mahasiswa mengunggah bukti pembayaran -> tersimpan di disk public & terlihat di halaman panitia
+        Storage::fake('public');
+        $proofImg = UploadedFile::fake()->image('struk_transfer.jpg', 400, 600);
+        $this->actingAs($mahasiswa2)->post(route('my.events.paymentProof', $paidEvent->id), [
+            'bukti_bayar' => $proofImg,
+        ])->assertRedirect(route('my.events'))->assertSessionHas('success');
+
+        $paidParticipant = Participant::where('event_id', $paidEvent->id)->where('user_id', $mahasiswa2->id)->firstOrFail();
+        $this->assertNotNull($paidParticipant->bukti_bayar);
+        Storage::disk('public')->assertExists($paidParticipant->bukti_bayar);
+
+        $this->actingAs($org)->get(route('organizer.event.participants', $paidEvent->id))
+            ->assertStatus(200)
+            ->assertSee('Lihat Bukti');
     }
 
     public function test_my_events_qr_svg_and_certificate_access_control(): void
@@ -332,10 +364,24 @@ class CampvenAuditTest extends TestCase
             ->assertSessionHas('success');
         $this->assertDatabaseMissing('events', ['id' => $eventOnlyCanceled->id]);
 
-        // Export CSV Event A berhasil
+        // Export CSV, Excel (.xls), dan Word (.doc) Event A berhasil + Anti-IDOR untuk Event B
         $this->actingAs($orgA)->get(route('organizer.exportCsv', $eventA->id))
             ->assertStatus(200)
             ->assertHeader('Content-Type', 'text/csv; charset=utf-8');
+
+        $this->actingAs($orgA)->get(route('organizer.exportReport', ['format' => 'excel', 'event_id' => $eventA->id]))
+            ->assertStatus(200)
+            ->assertHeader('Content-Type', 'application/vnd.ms-excel; charset=utf-8')
+            ->assertSee('<table class="data-table">', false)
+            ->assertSee($mhs1->nama);
+
+        $this->actingAs($orgA)->get(route('organizer.exportReport', ['format' => 'word', 'event_id' => $eventA->id]))
+            ->assertStatus(200)
+            ->assertHeader('Content-Type', 'application/msword; charset=utf-8')
+            ->assertSee('Penanggung Jawab Kegiatan');
+
+        $this->actingAs($orgA)->get(route('organizer.exportReport', ['format' => 'excel', 'event_id' => $eventB->id]))
+            ->assertStatus(404);
     }
 
     public function test_admin_self_protection_and_cruds(): void
@@ -406,6 +452,171 @@ class CampvenAuditTest extends TestCase
         $this->actingAs($admin)->get(route('admin.event.participants', $ev->id))
             ->assertStatus(200)
             ->assertSee($mahasiswa->nama);
+
+        $this->actingAs($admin)->get(route('admin.event.exportCsv', $ev->id))
+            ->assertStatus(200)
+            ->assertHeader('Content-Type', 'text/csv; charset=utf-8');
+
+        // Admin CRUD kategori
+        $this->actingAs($admin)->post(route('admin.category.store'), [
+            'nama' => 'Bakti Sosial',
+            'icon' => 'fa-hands-helping',
+            'color' => '#10B981',
+            'description' => 'Kegiatan sosial',
+        ])->assertRedirect(route('admin.categories'))->assertSessionHas('success');
+        $cat = Category::where('nama', 'Bakti Sosial')->firstOrFail();
+
+        $this->actingAs($admin)->put(route('admin.category.update', $cat->id), [
+            'nama' => 'Pengabdian Masyarakat',
+            'icon' => 'fa-hands-helping',
+            'color' => '#10B981',
+            'description' => 'Update deskripsi',
+        ])->assertRedirect(route('admin.categories'))->assertSessionHas('success');
+        $this->assertSame('Pengabdian Masyarakat', $cat->fresh()->nama);
+
+        $this->actingAs($admin)->delete(route('admin.category.delete', $cat->id))
+            ->assertRedirect(route('admin.categories'))
+            ->assertSessionHas('success');
+        $this->assertDatabaseMissing('categories', ['id' => $cat->id]);
+    }
+
+    public function test_ticket_verify_page_url_checkin_profile_update_and_logout(): void
+    {
+        $org = $this->createUser('penyelenggara');
+        $otherOrg = $this->createUser('penyelenggara');
+        $mhs = $this->createUser('mahasiswa');
+        $this->createCategory('Seminar');
+        $event = $this->createEvent($org);
+
+        $participant = Participant::create([
+            'event_id' => $event->id,
+            'user_id' => $mhs->id,
+            'status' => 'confirmed',
+        ]);
+
+        // Publik bisa membuka halaman verifikasi tiket (misalnya hasil scan QR)
+        $this->get(route('ticket.verify', $participant->ticketCode()))
+            ->assertStatus(200)
+            ->assertSee($participant->ticketCode())
+            ->assertSee($mhs->nama)
+            ->assertSee($event->nama_event)
+            ->assertDontSee('Verifikasi & Catat Hadir Sekarang');
+
+        // Tiket palsu menampilkan halaman Tiket Tidak Ditemukan
+        $this->get(route('ticket.verify', 'CV-999-999'))
+            ->assertStatus(200)
+            ->assertSee('Tiket Tidak Ditemukan');
+
+        // Penyelenggara lain tidak melihat tombol catat hadir
+        $this->actingAs($otherOrg)->get(route('ticket.verify', $participant->ticketCode()))
+            ->assertStatus(200)
+            ->assertDontSee('Verifikasi & Catat Hadir Sekarang');
+
+        // Penyelenggara pemilik melihat tombol catat hadir & bisa check-in via URL QR
+        $this->actingAs($org)->get(route('ticket.verify', $participant->ticketCode()))
+            ->assertStatus(200)
+            ->assertSee('Verifikasi &amp; Catat Hadir Sekarang', false);
+
+        $this->actingAs($org)->post(route('organizer.quickCheckin'), [
+            'event_id' => $event->id,
+            'query' => route('ticket.verify', $participant->ticketCode()),
+        ])->assertSessionHas('success');
+        $this->assertSame('attended', $participant->fresh()->status);
+
+        // Mahasiswa update profil & logout
+        $this->actingAs($mhs)->post(route('profile.update'), [
+            'nama' => 'Nama Mahasiswa Baru',
+            'no_telp' => '089999999999',
+            'bio' => 'Bio diperbarui',
+        ])->assertRedirect(route('profile'))->assertSessionHas('success');
+        $this->assertSame('Nama Mahasiswa Baru', $mhs->fresh()->nama);
+
+        $this->actingAs($mhs)->post(route('logout'))
+            ->assertRedirect(route('home'));
+        $this->assertGuest();
+    }
+
+    public function test_home_search_filters_sorting_and_organizer_event_crud(): void
+    {
+        $org = $this->createUser('penyelenggara');
+        $this->createCategory('Seminar');
+        $this->createCategory('Workshop');
+
+        // Organizer tambah & edit event
+        $this->actingAs($org)->post(route('organizer.event.store'), [
+            'nama_event' => 'Workshop DevOps Kampus',
+            'kategori' => 'Workshop',
+            'tanggal' => now()->addDays(15)->format('Y-m-d'),
+            'waktu_mulai' => '10:00',
+            'waktu_selesai' => '14:00',
+            'lokasi' => 'Lab Cloud Lt. 2',
+            'kuota' => 35,
+            'harga' => 10000,
+            'skpi_poin' => 12,
+            'deskripsi' => 'Belajar Docker dan CI/CD.',
+        ])->assertRedirect(route('organizer.dashboard'))->assertSessionHas('success');
+
+        $ev = Event::where('nama_event', 'Workshop DevOps Kampus')->firstOrFail();
+        $this->assertSame(12, (int) $ev->skpi_poin);
+
+        $this->actingAs($org)->put(route('organizer.event.update', $ev->id), [
+            'nama_event' => 'Workshop DevOps Kampus v2',
+            'kategori' => 'Workshop',
+            'tanggal' => now()->addDays(16)->format('Y-m-d'),
+            'waktu_mulai' => '10:00',
+            'waktu_selesai' => '15:00',
+            'lokasi' => 'Lab Cloud Lt. 2',
+            'kuota' => 40,
+            'harga' => 15000,
+            'skpi_poin' => 15,
+        ])->assertRedirect(route('organizer.dashboard'))->assertSessionHas('success');
+        $this->assertSame('Workshop DevOps Kampus v2', $ev->fresh()->nama_event);
+
+        // Uji filter pencarian, kategori, lokasi, status, dan sortir di beranda
+        $pastEv = $this->createEvent($org, [
+            'nama_event' => 'Arsip Seminar Lama',
+            'kategori' => 'Seminar',
+            'tanggal' => now()->subDays(10)->format('Y-m-d'),
+        ]);
+
+        // Default beranda hanya menampilkan agenda mendatang
+        $this->get(route('home'))
+            ->assertStatus(200)
+            ->assertSee('Workshop DevOps Kampus v2')
+            ->assertDontSee('Arsip Seminar Lama');
+
+        // Status selesai menampilkan arsip
+        $this->get(route('home', ['status' => 'selesai']))
+            ->assertStatus(200)
+            ->assertSee('Arsip Seminar Lama');
+
+        $this->get(route('home', ['search' => 'DevOps', 'kategori' => 'Workshop', 'lokasi_filter' => 'Lab', 'sort' => 'kuota']))
+            ->assertStatus(200)
+            ->assertSee('Workshop DevOps Kampus v2');
+
+        // Uji upload foto profil (tersimpan ke disk public & menghapus foto lama saat diganti)
+        Storage::fake('public');
+        $mhs = $this->createUser('mahasiswa');
+        $file1 = UploadedFile::fake()->image('avatar1.jpg', 200, 200);
+        $this->actingAs($mhs)->post(route('profile.update'), [
+            'nama' => $mhs->nama,
+            'foto' => $file1,
+        ])->assertRedirect(route('profile'))->assertSessionHas('success');
+
+        $firstPhoto = $mhs->fresh()->foto;
+        $this->assertNotNull($firstPhoto);
+        Storage::disk('public')->assertExists($firstPhoto);
+
+        $file2 = UploadedFile::fake()->image('avatar2.png', 200, 200);
+        $this->actingAs($mhs)->post(route('profile.update'), [
+            'nama' => $mhs->nama,
+            'foto' => $file2,
+        ])->assertRedirect(route('profile'))->assertSessionHas('success');
+
+        $secondPhoto = $mhs->fresh()->foto;
+        $this->assertNotSame($firstPhoto, $secondPhoto);
+        Storage::disk('public')->assertMissing($firstPhoto);
+        Storage::disk('public')->assertExists($secondPhoto);
     }
 }
 

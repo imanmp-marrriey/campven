@@ -29,7 +29,7 @@
                 <a href="{{ route('profile') }}" class="flex items-center gap-2.5 pl-2">
                     <div class="w-9 h-9 rounded-full overflow-hidden bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
                         @if($user->foto && Storage::disk('public')->exists($user->foto))
-                            <img src="{{ Storage::url($user->foto) }}" alt="Foto" class="w-full h-full object-cover">
+                            <img src="{{ asset('storage/' . $user->foto) }}?v={{ optional($user->updated_at)->timestamp }}" alt="Foto" class="w-full h-full object-cover">
                         @else
                             {{ strtoupper(substr($user->nama, 0, 1)) }}
                         @endif
@@ -62,9 +62,14 @@
 
                 <!-- Action Toolbar -->
                 <div class="flex items-center gap-2.5 flex-wrap">
-                    <a href="{{ route('organizer.exportCsv') }}" class="px-4 py-3 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-sm transition btn-spring flex items-center gap-2">
-                        <i class="fas fa-file-csv text-emerald-600"></i>
-                        <span>Ekspor CSV</span>
+                    <a href="{{ route('organizer.exportReport', ['format' => 'excel']) }}" class="px-4 py-3 rounded-2xl bg-teal-50 border border-teal-200 hover:bg-teal-100 text-teal-800 font-bold text-xs shadow-sm transition btn-spring flex items-center gap-2">
+                        <i class="fas fa-file-excel text-teal-600"></i>
+                        <span>Ekspor Excel</span>
+                    </a>
+
+                    <a href="{{ route('organizer.exportReport', ['format' => 'word']) }}" class="px-4 py-3 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-sm transition btn-spring flex items-center gap-2">
+                        <i class="fas fa-file-word text-indigo-600"></i>
+                        <span>Ekspor Word</span>
                     </a>
 
                     <button type="button" onclick="openCreateModal()" class="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition btn-spring flex items-center gap-2">

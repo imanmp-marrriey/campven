@@ -1,13 +1,4 @@
 @php
-    $categoriesConfig = [
-        'Seminar'  => ['bg' => 'from-slate-800 to-indigo-950', 'badge' => 'bg-indigo-50 text-indigo-700 border-indigo-200', 'tag' => 'Seminar & Konferensi', 'icon' => 'fa-graduation-cap'],
-        'Workshop' => ['bg' => 'from-blue-700 to-slate-900', 'badge' => 'bg-blue-50 text-blue-700 border-blue-200', 'tag' => 'Workshop & Pelatihan', 'icon' => 'fa-laptop-code'],
-        'Lomba'    => ['bg' => 'from-amber-600 to-slate-900', 'badge' => 'bg-amber-50 text-amber-700 border-amber-200', 'tag' => 'Kompetisi & Lomba', 'icon' => 'fa-trophy'],
-        'Webinar'  => ['bg' => 'from-emerald-700 to-slate-900', 'badge' => 'bg-emerald-50 text-emerald-700 border-emerald-200', 'tag' => 'Webinar Daring', 'icon' => 'fa-video'],
-        'Festival' => ['bg' => 'from-purple-700 to-pink-900', 'badge' => 'bg-purple-50 text-purple-700 border-purple-200', 'tag' => 'Festival & Seni', 'icon' => 'fa-music'],
-        'Olahraga' => ['bg' => 'from-teal-700 to-slate-900', 'badge' => 'bg-teal-50 text-teal-700 border-teal-200', 'tag' => 'Olahraga Kampus', 'icon' => 'fa-running'],
-    ];
-    $cfg = $categoriesConfig[$event->kategori] ?? ['bg' => 'from-slate-800 to-slate-900', 'badge' => 'bg-slate-50 text-slate-700 border-slate-200', 'tag' => $event->kategori, 'icon' => 'fa-calendar'];
     $hasPoster = $event->poster && file_exists(public_path('storage/' . $event->poster));
     $quota = $event->kuota;
     $sisa = $event->sisaKuota();
@@ -18,84 +9,72 @@
     $skpi = (int) ($event->skpi_poin ?? 0);
 @endphp
 
-<div class="group bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full relative">
-    <!-- Poster Media Banner -->
-    <a href="{{ route('event.detail', $event->id) }}" class="relative h-48 w-full overflow-hidden bg-gradient-to-br {{ $cfg['bg'] }} block flex-shrink-0">
+<article class="group bg-white rounded-xl border border-slate-200 overflow-hidden hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] flex flex-col h-full">
+    <!-- Poster Image (Proportional 16:9 Full-Bleed Frame) -->
+    <a href="{{ route('event.detail', $event->id) }}" class="relative aspect-[16/9] w-full overflow-hidden bg-slate-900 block flex-shrink-0">
         @if($hasPoster)
             <img src="{{ asset('storage/' . $event->poster) }}"
                  alt="{{ $event->nama_event }}"
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out {{ $isPast ? 'grayscale-[35%]' : '' }}"
+                 class="w-full h-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] {{ $isPast ? 'grayscale-[30%]' : '' }}"
                  loading="lazy">
         @else
-            <div class="w-full h-full flex flex-col items-center justify-center text-white/80 p-4 text-center">
-                <i class="fas {{ $cfg['icon'] }} text-4xl mb-2 group-hover:scale-110 transition-transform duration-300 text-indigo-300"></i>
-                <span class="text-[11px] font-bold uppercase tracking-wider opacity-90">{{ $cfg['tag'] }}</span>
+            <div class="w-full h-full bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-800 flex flex-col items-center justify-center text-slate-300 p-4 text-center">
+                <i class="far fa-calendar-alt text-3xl mb-2 opacity-75 text-teal-400"></i>
+                <span class="text-xs font-semibold">{{ $event->kategori }}</span>
             </div>
         @endif
 
-        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20"></div>
-
-        <!-- Floating Category Tag -->
-        <div class="absolute top-3.5 left-3.5 flex items-center gap-1.5">
-            <span class="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-md bg-white/95 text-slate-800 shadow-sm border border-white/40 flex items-center gap-1.5">
-                <i class="fas {{ $cfg['icon'] }} text-indigo-600 text-[10px]"></i>
+        <!-- Category Badge -->
+        <div class="absolute top-2.5 left-2.5 z-20">
+            <span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-white/95 text-slate-800 shadow-sm">
                 {{ $event->kategori }}
             </span>
         </div>
 
-        <!-- Availability / Status Badge -->
-        <div class="absolute top-3.5 right-3.5">
+        <!-- Status Badge -->
+        <div class="absolute top-2.5 right-2.5 z-20">
             @if($isPast)
-                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-700/90 text-white shadow-sm flex items-center gap-1">
-                    <i class="fas fa-history text-[9px]"></i> Selesai
+                <span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-800/90 text-white">
+                    Selesai
                 </span>
             @elseif($isFull)
-                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-600 text-white shadow-sm flex items-center gap-1">
-                    <i class="fas fa-ban text-[9px]"></i> Penuh
+                <span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-rose-600 text-white">
+                    Penuh
                 </span>
             @elseif($quota && $sisa <= 10)
-                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500 text-white shadow-sm flex items-center gap-1">
-                    <i class="fas fa-fire text-[9px]"></i> Sisa {{ $sisa }} Kursi
+                <span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-amber-500 text-slate-950">
+                    Sisa {{ $sisa }} kursi
                 </span>
             @else
-                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-600 text-white shadow-sm flex items-center gap-1">
-                    <i class="fas fa-check-circle text-[9px]"></i> Tersedia
+                <span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-teal-600 text-white">
+                    Tersedia
                 </span>
             @endif
         </div>
-
-        @if($skpi > 0)
-        <div class="absolute bottom-3 left-3.5">
-            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-600/90 backdrop-blur-sm text-white shadow-sm">
-                +{{ $skpi }} SKPI
-            </span>
-        </div>
-        @endif
     </a>
 
     <!-- Card Body -->
-    <div class="p-5 flex flex-col flex-grow justify-between">
-        <div>
-            <!-- Organizer Row -->
-            <div class="flex items-center gap-2 mb-2.5">
-                <div class="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0">
-                    {{ strtoupper(substr($event->creator->nama ?? 'C', 0, 1)) }}
-                </div>
-                <span class="text-xs font-semibold text-slate-600 truncate">{{ $event->creator->nama ?? 'Penyelenggara Kampus' }}</span>
-                <i class="fas fa-check-circle text-indigo-600 text-[11px] ml-0.5" title="Penyelenggara Kampus"></i>
+    <div class="p-4 flex flex-col flex-grow justify-between gap-3.5">
+        <div class="space-y-2">
+            <!-- Organizer & SKPI -->
+            <div class="flex items-center justify-between gap-2 text-xs text-slate-500">
+                <span class="font-medium truncate">{{ $event->creator->nama ?? 'Penyelenggara Kampus' }}</span>
+                @if($skpi > 0)
+                    <span class="text-[11px] font-semibold text-teal-700 bg-teal-50 border border-teal-100 px-2 py-0.5 rounded flex-shrink-0">+{{ $skpi }} SKPI</span>
+                @endif
             </div>
 
             <!-- Event Title -->
-            <a href="{{ route('event.detail', $event->id) }}" class="block group-hover:text-indigo-600 transition-colors">
-                <h3 class="text-base font-extrabold text-slate-900 leading-snug line-clamp-2 mb-3">
+            <a href="{{ route('event.detail', $event->id) }}" class="block">
+                <h3 class="text-[15px] font-bold text-slate-900 group-hover:text-indigo-600 transition-colors leading-snug line-clamp-2">
                     {{ $event->nama_event }}
                 </h3>
             </a>
 
-            <!-- Event Date & Venue Meta -->
-            <div class="space-y-1.5 text-xs text-slate-600 mb-4">
+            <!-- Date & Venue -->
+            <div class="space-y-1 text-xs text-slate-600">
                 <div class="flex items-center gap-2">
-                    <i class="fas fa-calendar-day text-slate-400 w-3.5"></i>
+                    <i class="far fa-calendar text-slate-400 w-3.5 text-center"></i>
                     <span>{{ \Carbon\Carbon::parse($event->tanggal)->locale('id')->isoFormat('D MMMM Y') }}</span>
                     @if($event->waktu_mulai)
                         <span class="text-slate-300">•</span>
@@ -103,38 +82,34 @@
                     @endif
                 </div>
                 <div class="flex items-center gap-2">
-                    <i class="fas fa-map-marker-alt text-rose-500 w-3.5 flex-shrink-0"></i>
+                    <i class="fas fa-map-marker-alt text-slate-400 w-3.5 text-center flex-shrink-0"></i>
                     <span class="truncate">{{ $event->lokasi }}</span>
                 </div>
             </div>
 
-            <!-- Sisa Kuota Meter -->
+            <!-- Quota Bar -->
             @if($quota)
-            <div class="mb-4 pt-3 border-t border-slate-100">
-                <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 mb-1.5">
-                    <span>Sisa Kuota: <strong class="{{ $isFull ? 'text-rose-600' : 'text-slate-800' }}">{{ $sisa }} / {{ $quota }} Kursi</strong></span>
-                    <span class="{{ $percent >= 80 ? 'text-amber-600' : 'text-emerald-600' }}">{{ $percent }}% Terisi</span>
+            <div class="pt-1.5">
+                <div class="flex items-center justify-between text-[11px] text-slate-500 mb-1">
+                    <span>Kuota tersisa: <strong class="text-slate-800">{{ $sisa }}/{{ $quota }}</strong></span>
+                    <span>{{ $percent }}%</span>
                 </div>
                 <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                    <div class="h-full rounded-full transition-all duration-500 {{ $isFull ? 'bg-rose-500' : ($percent >= 80 ? 'bg-amber-500' : 'bg-indigo-600') }}" style="width: {{ $percent }}%;"></div>
+                    <div class="quota-progress-bar h-full rounded-full {{ $isFull ? 'bg-rose-500' : 'bg-indigo-600' }}" style="width: 0%;" data-target-width="{{ $percent }}"></div>
                 </div>
             </div>
             @endif
         </div>
 
-        <!-- Price & Action CTA -->
+        <!-- Footer -->
         <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
-            <div>
-                <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Biaya Partisipasi</span>
-                <span class="text-sm font-extrabold {{ $price === 'GRATIS' ? 'text-emerald-600' : 'text-indigo-600' }}">
-                    {{ $price }}
-                </span>
-            </div>
+            <span class="text-sm font-bold {{ $price === 'GRATIS' ? 'text-teal-600' : 'text-slate-900' }}">
+                {{ $price }}
+            </span>
 
-            <a href="{{ route('event.detail', $event->id) }}" class="px-4 py-2 rounded-xl {{ $isPast || $isFull ? 'bg-slate-800 hover:bg-slate-900' : 'bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/20' }} text-white font-bold text-xs transition-all btn-spring flex items-center gap-1.5">
-                <span>{{ $isPast || $isFull ? 'Lihat Detail' : 'Daftar Sekarang' }}</span>
-                <i class="fas fa-arrow-right text-[10px]"></i>
+            <a href="{{ route('event.detail', $event->id) }}" class="btn-tactile active:scale-[0.98] px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 {{ $isPast || $isFull ? 'bg-slate-100 hover:bg-slate-200 text-slate-700' : 'bg-indigo-600 hover:bg-indigo-700 text-white' }}">
+                {{ $isPast || $isFull ? 'Lihat Detail' : 'Daftar' }}
             </a>
         </div>
     </div>
-</div>
+</article>

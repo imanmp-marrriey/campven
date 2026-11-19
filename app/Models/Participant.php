@@ -13,6 +13,7 @@ class Participant extends Model
         'event_id',
         'user_id',
         'status',
+        'bukti_bayar',
     ];
 
     public function event()

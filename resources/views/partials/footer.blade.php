@@ -1,14 +1,11 @@
-<footer class="bg-white text-slate-600 py-14 border-t border-slate-200 mt-12">
+<footer class="bg-white text-slate-600 py-10 border-t border-slate-200 mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 pb-10 border-b border-slate-100">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-b border-slate-100">
             <!-- Brand Info -->
             <div class="space-y-3">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
-                        <i class="fas fa-cubes"></i>
-                    </div>
-                    <span class="text-lg font-extrabold text-slate-900 tracking-tight">Camp<span class="text-indigo-600">ven</span></span>
-                </div>
+                <a href="{{ route('home') }}" class="inline-block">
+                    <x-campven-logo size="sm" subtitle="Portal Event Kampus" />
+                </a>
                 <p class="text-xs text-slate-500 leading-relaxed max-w-xs">
                     Platform terpusat manajemen kegiatan, pendaftaran tiket acara organisasi kampus, dan pencatatan keaktifan mahasiswa.
                 </p>

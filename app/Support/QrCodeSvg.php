@@ -11,6 +11,7 @@ class QrCodeSvg
         1 => ['size' => 21, 'dataCodewords' => 19, 'ecCodewords' => 7,  'align' => []],
         2 => ['size' => 25, 'dataCodewords' => 34, 'ecCodewords' => 10, 'align' => [6, 18]],
         3 => ['size' => 29, 'dataCodewords' => 55, 'ecCodewords' => 15, 'align' => [6, 22]],
+        4 => ['size' => 33, 'dataCodewords' => 80, 'ecCodewords' => 20, 'align' => [6, 26]],
     ];
 
     public static function generate(string $text, int $pixelSize = 120): string
@@ -23,10 +24,12 @@ class QrCodeSvg
             $version = 2;
         } elseif ($len > 32 && $len <= 53) {
             $version = 3;
-        } elseif ($len > 53) {
-            $bytes = array_slice($bytes, 0, 53);
-            $len = 53;
-            $version = 3;
+        } elseif ($len > 53 && $len <= 78) {
+            $version = 4;
+        } elseif ($len > 78) {
+            $bytes = array_slice($bytes, 0, 78);
+            $len = 78;
+            $version = 4;
         }
 
         $spec = self::VERSIONS[$version];

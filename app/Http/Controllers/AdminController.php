@@ -120,7 +120,8 @@ class AdminController extends Controller
         $callback = function () use ($participants, $event) {
             $file = fopen('php://output', 'w');
             fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
-            fputcsv($file, ['Kode Tiket', 'Nama Mahasiswa', 'Email', 'No Telepon', 'Nama Acara', 'Status', 'Waktu Registrasi', 'Waktu Update']);
+            fwrite($file, "sep=;\r\n");
+            fputcsv($file, ['Kode Tiket', 'Nama Mahasiswa', 'Email', 'No Telepon', 'Nama Acara', 'Status', 'Waktu Registrasi', 'Waktu Update'], ';');
 
             foreach ($participants as $p) {
                 fputcsv($file, [
@@ -132,7 +133,7 @@ class AdminController extends Controller
                     ucfirst($p->status),
                     $p->created_at ? $p->created_at->format('Y-m-d H:i:s') : '-',
                     $p->updated_at ? $p->updated_at->format('Y-m-d H:i:s') : '-',
-                ]);
+                ], ';');
             }
 
             fclose($file);
@@ -393,5 +394,42 @@ class AdminController extends Controller
         $announcement->delete();
 
         return redirect()->route('admin.announcements')->with('success', 'Pengumuman berhasil dihapus!');
+    }
+
+    public function exportEventReport($id, string $format)
+    {
+        if (Auth::user()->role !== 'admin') {
+            abort(403, 'Unauthorized access.');
+        }
+
+        if (!in_array($format, ['excel', 'word'], true)) {
+            abort(404);
+        }
+
+        $event = Event::with('creator')->findOrFail($id);
+        $participants = Participant::with(['user', 'event.creator'])
+            ->where('event_id', $event->id)
+            ->orderBy('created_at', 'DESC')
+            ->get();
+
+        $reportTitle = 'Laporan Peserta Acara (Admin)';
+        $exportedBy = Auth::user()->nama . ' (Administrator)';
+        $html = view('exports.participants-report', compact('participants', 'event', 'reportTitle', 'exportedBy', 'format'))->render();
+
+        if ($format === 'excel') {
+            $fileName = "laporan_peserta_event_{$event->id}_" . date('Ymd_His') . '.xls';
+            $contentType = 'application/vnd.ms-excel; charset=utf-8';
+        } else {
+            $fileName = "laporan_peserta_event_{$event->id}_" . date('Ymd_His') . '.doc';
+            $contentType = 'application/msword; charset=utf-8';
+        }
+
+        return response("\xEF\xBB\xBF" . $html, 200, [
+            'Content-Type' => $contentType,
+            'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ]);
     }
 }

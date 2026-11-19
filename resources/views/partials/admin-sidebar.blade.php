@@ -2,21 +2,15 @@
     $activeAdmin = $activeAdmin ?? 'dashboard';
 @endphp
 <!-- Mobile Drawer Backdrop -->
-<div id="adminSidebarBackdrop" onclick="toggleAdminSidebar()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 hidden md:hidden"></div>
+<div id="adminSidebarBackdrop" onclick="toggleAdminSidebar()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 hidden opacity-0 transition-opacity duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden"></div>
 
-<aside id="adminSidebar" class="w-64 bg-white border-r border-slate-200/90 flex flex-col justify-between fixed top-0 bottom-0 left-0 z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+<aside id="adminSidebar" class="w-64 bg-white border-r border-slate-200/90 flex flex-col justify-between fixed top-0 bottom-0 left-0 z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]">
     <div>
         <!-- Brand Logo -->
         <div class="h-20 flex items-center justify-between px-6 border-b border-slate-100">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-indigo-600/20">
-                    <i class="fas fa-cubes text-sm"></i>
-                </div>
-                <div>
-                    <span class="text-xl font-extrabold text-slate-900 tracking-tight">Camp<span class="text-indigo-600">ven</span></span>
-                    <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider -mt-1">Pusat Administrator</span>
-                </div>
-            </div>
+            <a href="{{ route('admin.dashboard') }}" class="block">
+                <x-campven-logo size="md" subtitle="Pusat Administrator" />
+            </a>
             <button type="button" onclick="toggleAdminSidebar()" class="md:hidden w-8 h-8 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center text-xs">
                 <i class="fas fa-times"></i>
             </button>
@@ -74,8 +68,18 @@
             const sidebar = document.getElementById('adminSidebar');
             const backdrop = document.getElementById('adminSidebarBackdrop');
             if (!sidebar || !backdrop) return;
-            sidebar.classList.toggle('-translate-x-full');
-            backdrop.classList.toggle('hidden');
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+            if (isClosed) {
+                backdrop.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                    backdrop.classList.remove('opacity-0');
+                    sidebar.classList.remove('-translate-x-full');
+                });
+            } else {
+                backdrop.classList.add('opacity-0');
+                sidebar.classList.add('-translate-x-full');
+                setTimeout(() => backdrop.classList.add('hidden'), 260);
+            }
         };
     }
 </script>

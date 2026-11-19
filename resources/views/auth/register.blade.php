@@ -10,14 +10,8 @@
         <div class="flex-1 p-8 sm:p-12 flex flex-col justify-between">
             <div>
                 <!-- Brand Logo -->
-                <a href="{{ route('home') }}" class="flex items-center gap-3 mb-8 group">
-                    <div class="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-extrabold text-xl shadow-md shadow-indigo-600/20 group-hover:scale-105 transition-transform">
-                        <i class="fas fa-cubes text-sm"></i>
-                    </div>
-                    <div>
-                        <span class="text-xl font-extrabold text-slate-900 tracking-tight">Camp<span class="text-indigo-600">ven</span></span>
-                        <span class="block text-[10px] font-semibold text-slate-400 tracking-wider -mt-1">Portal Kegiatan Kampus</span>
-                    </div>
+                <a href="{{ route('home') }}" class="inline-block mb-8 hover:opacity-95 transition-opacity">
+                    <x-campven-logo size="md" subtitle="Portal Kegiatan Kampus" />
                 </a>
 
                 <div class="mb-6">

@@ -298,7 +298,7 @@ class OrganizerController extends Controller
         $query = trim($validated['query']);
         $participant = null;
 
-        if (preg_match('/^CV-(\d+)-(\d+)$/i', $query, $matches)) {
+        if (preg_match('/(?:^|\/ticket\/)CV-(\d+)-(\d+)$/i', $query, $matches)) {
             if ((int) $matches[1] !== (int) $event->id) {
                 return redirect()->back()->with('error', "Kode tiket tersebut bukan untuk acara {$event->nama_event}.");
             }
@@ -367,8 +367,9 @@ class OrganizerController extends Controller
         $callback = function () use ($participants) {
             $file = fopen('php://output', 'w');
             fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fwrite($file, "sep=;\r\n");
 
-            fputcsv($file, ['Kode Tiket', 'Nama Mahasiswa', 'Email', 'No Telepon', 'Nama Acara', 'Kategori', 'Tanggal Pelaksanaan', 'Status Kehadiran', 'Waktu Registrasi', 'Waktu Verifikasi Presensi']);
+            fputcsv($file, ['Kode Tiket', 'Nama Mahasiswa', 'Email', 'No Telepon', 'Nama Acara', 'Kategori', 'Tanggal Pelaksanaan', 'Status Kehadiran', 'Waktu Registrasi', 'Waktu Verifikasi Presensi'], ';');
 
             foreach ($participants as $p) {
                 fputcsv($file, [
@@ -382,12 +383,59 @@ class OrganizerController extends Controller
                     ucfirst($p->status),
                     $p->created_at ? $p->created_at->format('Y-m-d H:i:s') : '-',
                     $p->updated_at ? $p->updated_at->format('Y-m-d H:i:s') : '-',
-                ]);
+                ], ';');
             }
 
             fclose($file);
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportReport(string $format, $eventId = null)
+    {
+        if (Auth::user()->role !== 'penyelenggara') {
+            abort(403, 'Unauthorized access.');
+        }
+
+        if (!in_array($format, ['excel', 'word'], true)) {
+            abort(404);
+        }
+
+        $event = null;
+        $query = Participant::with(['user', 'event.creator']);
+
+        if ($eventId !== null) {
+            $event = Event::with('creator')->where('created_by', Auth::id())->findOrFail($eventId);
+            $query->where('event_id', $event->id);
+            $reportTitle = 'Laporan Peserta Acara';
+            $slug = 'acara_' . $event->id;
+        } else {
+            $myEventIds = Event::where('created_by', Auth::id())->pluck('id');
+            $query->whereIn('event_id', $myEventIds);
+            $reportTitle = 'Rekapitulasi Seluruh Peserta';
+            $slug = 'semua_acara';
+        }
+
+        $participants = $query->orderBy('created_at', 'DESC')->get();
+        $exportedBy = Auth::user()->nama;
+
+        $html = view('exports.participants-report', compact('participants', 'event', 'reportTitle', 'exportedBy', 'format'))->render();
+
+        if ($format === 'excel') {
+            $fileName = "laporan_peserta_{$slug}_" . date('Ymd_His') . '.xls';
+            $contentType = 'application/vnd.ms-excel; charset=utf-8';
+        } else {
+            $fileName = "laporan_peserta_{$slug}_" . date('Ymd_His') . '.doc';
+            $contentType = 'application/msword; charset=utf-8';
+        }
+
+        return response("\xEF\xBB\xBF" . $html, 200, [
+            'Content-Type' => $contentType,
+            'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ]);
     }
 }

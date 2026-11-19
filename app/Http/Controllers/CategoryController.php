@@ -9,8 +9,12 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
-        return view('categories.index', compact('categories'));
+        $categories = Category::orderBy('nama', 'ASC')->get();
+        $eventCounts = \App\Models\Event::selectRaw('kategori, COUNT(*) as total')
+            ->groupBy('kategori')
+            ->pluck('total', 'kategori');
+
+        return view('categories.index', compact('categories', 'eventCounts'));
     }
 
     public function store(Request $request)
@@ -21,6 +25,9 @@ class CategoryController extends Controller
             'color' => 'nullable|string|max:20',
             'description' => 'nullable|string',
         ]);
+
+        $validated['icon'] = !empty($validated['icon']) ? trim($validated['icon']) : 'fa-tag';
+        $validated['color'] = !empty($validated['color']) ? trim($validated['color']) : '#4F46E5';
 
         Category::create($validated);
         return redirect()->route('admin.categories')->with('success', 'Kategori berhasil ditambahkan!');
@@ -37,6 +44,9 @@ class CategoryController extends Controller
             'color' => 'nullable|string|max:20',
             'description' => 'nullable|string',
         ]);
+
+        $validated['icon'] = !empty($validated['icon']) ? trim($validated['icon']) : 'fa-tag';
+        $validated['color'] = !empty($validated['color']) ? trim($validated['color']) : '#4F46E5';
 
         $category->update($validated);
 

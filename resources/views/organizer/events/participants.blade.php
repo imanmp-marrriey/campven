@@ -22,9 +22,17 @@
             </div>
 
             <div class="flex items-center gap-2 flex-shrink-0">
-                <a href="{{ route('organizer.exportCsv', $event->id) }}" class="px-3.5 py-2 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-xs hover:bg-emerald-100 transition flex items-center gap-1.5">
+                <a href="{{ route('organizer.exportReport', ['format' => 'excel', 'event_id' => $event->id]) }}" class="px-3 py-2 rounded-xl bg-teal-50 text-teal-700 border border-teal-200 font-bold text-xs hover:bg-teal-100 transition flex items-center gap-1.5" title="Unduh Tabel Rapi Excel (.xls)">
+                    <i class="fas fa-file-excel"></i>
+                    <span class="hidden sm:inline">Excel</span>
+                </a>
+                <a href="{{ route('organizer.exportReport', ['format' => 'word', 'event_id' => $event->id]) }}" class="px-3 py-2 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold text-xs hover:bg-indigo-100 transition flex items-center gap-1.5" title="Unduh Laporan Resmi Word (.doc)">
+                    <i class="fas fa-file-word"></i>
+                    <span class="hidden sm:inline">Word</span>
+                </a>
+                <a href="{{ route('organizer.exportCsv', $event->id) }}" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 font-bold text-xs hover:bg-slate-200 transition flex items-center gap-1.5" title="Unduh Data Mentah CSV">
                     <i class="fas fa-file-csv"></i>
-                    <span class="hidden sm:inline">Ekspor CSV</span>
+                    <span class="hidden md:inline">CSV</span>
                 </a>
                 <a href="{{ route('organizer.dashboard') }}" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition flex items-center gap-1.5">
                     <i class="fas fa-arrow-left"></i>
@@ -122,6 +130,7 @@
                                 <th class="px-6 py-3.5">KODE TIKET</th>
                                 <th class="px-4 py-3.5">PESERTA</th>
                                 <th class="px-4 py-3.5">KONTAK</th>
+                                <th class="px-4 py-3.5">BUKTI BAYAR</th>
                                 <th class="px-4 py-3.5">STATUS</th>
                                 <th class="px-6 py-3.5 text-right">AKSI PANITIA</th>
                             </tr>
@@ -136,6 +145,8 @@
                                     'canceled'   => ['bg' => 'bg-rose-50 text-rose-700 border-rose-200', 'label' => 'Dibatalkan'],
                                 ];
                                 $st = $statusMap[$p->status] ?? ['bg' => 'bg-slate-100 text-slate-700 border-slate-200', 'label' => ucfirst($p->status)];
+                                $isPaidEvent = ((int) ($event->harga ?? 0)) > 0;
+                                $hasProof = $p->bukti_bayar && \Illuminate\Support\Facades\Storage::disk('public')->exists($p->bukti_bayar);
                             @endphp
                             <tr class="hover:bg-slate-50/50 transition participant-row">
                                 <td class="px-6 py-4 font-mono font-extrabold text-indigo-700 whitespace-nowrap">
@@ -147,6 +158,18 @@
                                 </td>
                                 <td class="px-4 py-4 text-slate-500">
                                     {{ $p->user->no_telp ?? '-' }}
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap">
+                                    @if(!$isPaidEvent)
+                                        <span class="text-[11px] text-teal-600 font-semibold">Gratis</span>
+                                    @elseif($hasProof)
+                                        <a href="{{ asset('storage/' . $p->bukti_bayar) }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold text-[11px] transition">
+                                            <i class="fas fa-receipt text-[10px]"></i>
+                                            <span>Lihat Bukti</span>
+                                        </a>
+                                    @else
+                                        <span class="text-[11px] text-amber-600 font-semibold">Belum unggah</span>
+                                    @endif
                                 </td>
                                 <td class="px-4 py-4">
                                     <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold border {{ $st['bg'] }} whitespace-nowrap">
@@ -188,7 +211,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="p-10 text-center text-slate-400">
+                                <td colspan="6" class="p-10 text-center text-slate-400">
                                     Belum ada peserta yang sesuai dengan filter ini.
                                 </td>
                             </tr>

@@ -24,7 +24,7 @@ class CampvenSeeder extends Seeder
         ];
 
         foreach ($categories as $cat) {
-            Category::create($cat);
+            Category::firstOrCreate(['nama' => $cat['nama']], $cat);
         }
 
         // Users (password = 'password')
@@ -32,24 +32,27 @@ class CampvenSeeder extends Seeder
             ['nama' => 'Admin Utama', 'email' => 'admin@campven.com', 'password' => Hash::make('password'), 'role' => 'admin'],
             ['nama' => 'BEM Polindra', 'email' => 'bem@campven.com', 'password' => Hash::make('password'), 'role' => 'penyelenggara'],
             ['nama' => 'HIMTI', 'email' => 'himti@campven.com', 'password' => Hash::make('password'), 'role' => 'penyelenggara'],
-            ['nama' => 'Mahasiswa 1', 'email' => 'mahasiswa1@campven.com', 'password' => Hash::make('password'), 'role' => 'mahasiswa'],
-            ['nama' => 'Mahasiswa 2', 'email' => 'mahasiswa2@campven.com', 'password' => Hash::make('password'), 'role' => 'mahasiswa'],
+            ['nama' => 'Raka Pratama', 'email' => 'mahasiswa1@campven.com', 'password' => Hash::make('password'), 'role' => 'mahasiswa'],
+            ['nama' => 'Siti Aulia', 'email' => 'mahasiswa2@campven.com', 'password' => Hash::make('password'), 'role' => 'mahasiswa'],
+            ['nama' => 'Budi Santoso', 'email' => 'mahasiswa3@campven.com', 'password' => Hash::make('password'), 'role' => 'mahasiswa'],
         ];
 
+        $userMap = [];
         foreach ($users as $user) {
-            User::create($user);
+            $u = User::firstOrCreate(['email' => $user['email']], $user);
+            $userMap[$user['email']] = $u->id;
         }
 
         // Events
         $events = [
-            ['nama_event' => 'Seminar AI 2026', 'kategori' => 'Seminar', 'tanggal' => '2026-07-20', 'waktu_mulai' => '09:00', 'waktu_selesai' => '12:00', 'lokasi' => 'GSC Lantai 7, Politeknik Negeri Indramayu', 'deskripsi' => 'Seminar tentang perkembangan Artificial Intelligence', 'created_by' => 2, 'kuota' => 100],
-            ['nama_event' => 'Workshop Flutter', 'kategori' => 'Workshop', 'tanggal' => '2026-07-25', 'waktu_mulai' => '13:00', 'waktu_selesai' => '17:00', 'lokasi' => 'Lab Komputer, Politeknik Negeri Indramayu', 'deskripsi' => 'Workshop praktis pengembangan aplikasi mobile dengan Flutter', 'created_by' => 2, 'kuota' => 30],
-            ['nama_event' => 'Lomba Inovasi', 'kategori' => 'Lomba', 'tanggal' => '2026-08-01', 'waktu_mulai' => '08:00', 'waktu_selesai' => '16:00', 'lokasi' => 'Aula Utama, Politeknik Negeri Indramayu', 'deskripsi' => 'Lomba inovasi antar mahasiswa', 'created_by' => 3, 'kuota' => 50],
-            ['nama_event' => 'Webinar Karir', 'kategori' => 'Webinar', 'tanggal' => '2026-08-05', 'waktu_mulai' => '19:00', 'waktu_selesai' => '21:00', 'lokasi' => 'Online (Zoom)', 'deskripsi' => 'Webinar membahas peluang karir di bidang digital', 'created_by' => 2, 'kuota' => null],
+            ['nama_event' => 'Seminar AI 2026', 'kategori' => 'Seminar', 'tanggal' => '2026-07-20', 'waktu_mulai' => '09:00', 'waktu_selesai' => '12:00', 'lokasi' => 'GSC Lantai 7, Politeknik Negeri Indramayu', 'deskripsi' => 'Seminar tentang perkembangan Artificial Intelligence', 'created_by' => $userMap['bem@campven.com'], 'kuota' => 100],
+            ['nama_event' => 'Workshop Flutter', 'kategori' => 'Workshop', 'tanggal' => '2026-07-25', 'waktu_mulai' => '13:00', 'waktu_selesai' => '17:00', 'lokasi' => 'Lab Komputer, Politeknik Negeri Indramayu', 'deskripsi' => 'Workshop praktis pengembangan aplikasi mobile dengan Flutter', 'created_by' => $userMap['bem@campven.com'], 'kuota' => 30],
+            ['nama_event' => 'Lomba Inovasi', 'kategori' => 'Lomba', 'tanggal' => '2026-08-01', 'waktu_mulai' => '08:00', 'waktu_selesai' => '16:00', 'lokasi' => 'Aula Utama, Politeknik Negeri Indramayu', 'deskripsi' => 'Lomba inovasi antar mahasiswa', 'created_by' => $userMap['himti@campven.com'], 'kuota' => 50],
+            ['nama_event' => 'Webinar Karir', 'kategori' => 'Webinar', 'tanggal' => '2026-08-05', 'waktu_mulai' => '19:00', 'waktu_selesai' => '21:00', 'lokasi' => 'Online (Zoom)', 'deskripsi' => 'Webinar membahas peluang karir di bidang digital', 'created_by' => $userMap['bem@campven.com'], 'kuota' => null],
         ];
 
         foreach ($events as $event) {
-            Event::create($event);
+            Event::firstOrCreate(['nama_event' => $event['nama_event']], $event);
         }
     }
 }
