@@ -87,18 +87,24 @@
                     <input type="text" name="lokasi" value="{{ old('lokasi', $event->lokasi) }}" required class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-indigo-600 transition">
                 </div>
 
-                <!-- Kuota & Harga Tiket -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <!-- Kuota, Harga Tiket & Poin SKPI -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
                     <div class="space-y-1.5">
                         <label class="block font-bold text-slate-700">Batas Kuota Peserta</label>
-                        <input type="number" name="kuota" value="{{ old('kuota', $event->kuota) }}" placeholder="Kosongkan jika kuota bebas" min="1" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-indigo-600 transition">
-                        <span class="text-[11px] text-slate-400 block">Kosongkan jika tidak ada batas peserta.</span>
+                        <input type="number" name="kuota" value="{{ old('kuota', $event->kuota) }}" placeholder="Kosongkan jika bebas" min="1" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-indigo-600 transition">
+                        <span class="text-[11px] text-slate-400 block">Kosongkan jika tanpa batas.</span>
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="block font-bold text-slate-700">Biaya / Harga Tiket (Rp)</label>
+                        <label class="block font-bold text-slate-700">Harga Tiket (Rp)</label>
                         <input type="number" name="harga" value="{{ old('harga', $event->harga ?? 0) }}" placeholder="0 untuk GRATIS" min="0" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-indigo-600 transition">
-                        <span class="text-[11px] text-slate-400 block">Isi 0 jika acara gratis tanpa biaya.</span>
+                        <span class="text-[11px] text-slate-400 block">Isi 0 jika acara gratis.</span>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="block font-bold text-slate-700">Poin SKPI</label>
+                        <input type="number" name="skpi_poin" value="{{ old('skpi_poin', $event->skpi_poin ?? 10) }}" min="0" max="100" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-indigo-600 transition">
+                        <span class="text-[11px] text-slate-400 block">Isi 0 jika non-SKPI.</span>
                     </div>
                 </div>
 

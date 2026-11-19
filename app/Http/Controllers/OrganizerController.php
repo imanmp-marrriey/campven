@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Event;
+use App\Models\Participant;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -12,7 +14,6 @@ class OrganizerController extends Controller
 {
     public function dashboard()
     {
-        // Cek role - jika bukan penyelenggara, redirect
         if (Auth::user()->role !== 'penyelenggara') {
             abort(403, 'Unauthorized access.');
         }
@@ -24,20 +25,28 @@ class OrganizerController extends Controller
             ->get();
 
         $total_events = $events->count();
+        $upcoming_events_count = $events->filter(function ($event) {
+            return Carbon::parse($event->tanggal)->gte(Carbon::today());
+        })->count();
+
         $total_participants = $events->sum(function ($event) {
-            return $event->participants()->count();
+            return $event->activeParticipants()->count();
         });
         $attended_participants = $events->sum(function ($event) {
             return $event->participants()->where('status', 'attended')->count();
         });
         $attendance_rate = $total_participants > 0 ? round(($attended_participants / $total_participants) * 100, 1) : 0;
-        
-        $total_quota = $events->sum('kuota');
-        $quota_rate = $total_quota > 0 ? min(100, round(($total_participants / $total_quota) * 100, 1)) : 0;
 
-        $active_event = $events->first();
+        $eventsWithQuota = $events->filter(fn ($e) => $e->kuota && $e->kuota > 0);
+        $total_quota = $eventsWithQuota->sum('kuota');
+        $filled_quota = $eventsWithQuota->sum(fn ($e) => $e->activeParticipants()->count());
+        $quota_rate = $total_quota > 0 ? min(100, round(($filled_quota / $total_quota) * 100, 1)) : 0;
 
-        $recent_attendances = \App\Models\Participant::with(['user', 'event'])
+        $active_event = $events->first(function ($event) {
+            return Carbon::parse($event->tanggal)->gte(Carbon::today());
+        }) ?? $events->first();
+
+        $recent_attendances = Participant::with(['user', 'event'])
             ->whereHas('event', function ($q) use ($user) {
                 $q->where('created_by', $user->id);
             })
@@ -51,6 +60,7 @@ class OrganizerController extends Controller
         return view('organizer.dashboard', compact(
             'events',
             'total_events',
+            'upcoming_events_count',
             'total_participants',
             'attended_participants',
             'attendance_rate',
@@ -60,6 +70,31 @@ class OrganizerController extends Controller
             'user',
             'categories'
         ));
+    }
+
+    public function participants(Request $request, $id)
+    {
+        if (Auth::user()->role !== 'penyelenggara') {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $event = Event::where('created_by', Auth::id())->findOrFail($id);
+        $allParticipants = $event->participants()->with('user')->orderBy('created_at', 'DESC')->get();
+
+        $counts = [
+            'all' => $allParticipants->count(),
+            'registered' => $allParticipants->where('status', 'registered')->count(),
+            'confirmed' => $allParticipants->where('status', 'confirmed')->count(),
+            'attended' => $allParticipants->where('status', 'attended')->count(),
+            'canceled' => $allParticipants->where('status', 'canceled')->count(),
+        ];
+
+        $statusFilter = $request->input('status');
+        $participants = $statusFilter
+            ? $allParticipants->where('status', $statusFilter)->values()
+            : $allParticipants;
+
+        return view('organizer.events.participants', compact('event', 'participants', 'counts', 'statusFilter'));
     }
 
     public function editEvent($id)
@@ -76,7 +111,6 @@ class OrganizerController extends Controller
 
     public function storeEvent(Request $request)
     {
-        // Cek role - jika bukan penyelenggara, redirect
         if (Auth::user()->role !== 'penyelenggara') {
             abort(403, 'Unauthorized access.');
         }
@@ -91,7 +125,7 @@ class OrganizerController extends Controller
             'deskripsi' => 'nullable|string',
             'kuota' => 'nullable|integer|min:1',
             'harga' => 'nullable|integer|min:0',
-            'skpi_poin' => 'nullable|integer|min:0',
+            'skpi_poin' => 'nullable|integer|min:0|max:100',
             'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'tanggal.after_or_equal' => 'Tanggal event tidak boleh di masa lalu.',
@@ -111,6 +145,8 @@ class OrganizerController extends Controller
         }
 
         Event::create(array_merge($validated, [
+            'harga' => $validated['harga'] ?? 0,
+            'skpi_poin' => $validated['skpi_poin'] ?? 10,
             'poster' => $poster,
             'created_by' => Auth::id(),
         ]));
@@ -120,7 +156,6 @@ class OrganizerController extends Controller
 
     public function updateEvent(Request $request, $id)
     {
-        // Cek role - jika bukan penyelenggara, redirect
         if (Auth::user()->role !== 'penyelenggara') {
             abort(403, 'Unauthorized access.');
         }
@@ -137,14 +172,13 @@ class OrganizerController extends Controller
             'deskripsi' => 'nullable|string',
             'kuota' => 'nullable|integer|min:1',
             'harga' => 'nullable|integer|min:0',
-            'skpi_poin' => 'nullable|integer|min:0',
+            'skpi_poin' => 'nullable|integer|min:0|max:100',
             'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'waktu_selesai.after' => 'Waktu selesai harus setelah waktu mulai.',
         ]);
 
         if ($request->hasFile('poster') && $request->file('poster')->isValid()) {
-            // Hapus poster lama
             if ($event->poster && Storage::disk('public')->exists($event->poster)) {
                 Storage::disk('public')->delete($event->poster);
             }
@@ -159,6 +193,9 @@ class OrganizerController extends Controller
             }
         }
 
+        $validated['harga'] = $validated['harga'] ?? 0;
+        $validated['skpi_poin'] = $validated['skpi_poin'] ?? 10;
+
         $event->update($validated);
 
         return redirect()->route('organizer.dashboard')->with('success', 'Event berhasil diperbarui!');
@@ -166,15 +203,14 @@ class OrganizerController extends Controller
 
     public function deleteEvent($id)
     {
-        // Cek role - jika bukan penyelenggara, redirect
         if (Auth::user()->role !== 'penyelenggara') {
             abort(403, 'Unauthorized access.');
         }
 
         $event = Event::where('created_by', Auth::id())->findOrFail($id);
 
-        if ($event->participants()->count() > 0) {
-            return redirect()->route('organizer.dashboard')->with('error', 'Event tidak dapat dihapus karena memiliki peserta!');
+        if ($event->activeParticipants()->count() > 0) {
+            return redirect()->route('organizer.dashboard')->with('error', 'Event tidak dapat dihapus karena masih memiliki peserta aktif!');
         }
 
         if ($event->poster && Storage::disk('public')->exists($event->poster)) {
@@ -192,13 +228,21 @@ class OrganizerController extends Controller
             abort(403, 'Unauthorized access.');
         }
 
-        $participant = \App\Models\Participant::whereHas('event', function ($query) {
+        $participant = Participant::with('user')->whereHas('event', function ($query) {
             $query->where('created_by', Auth::id());
         })->findOrFail($id);
 
+        if ($participant->status === 'canceled') {
+            return redirect()->back()->with('error', "Pendaftaran {$participant->user->nama} sudah dibatalkan dan tidak dapat dikonfirmasi.");
+        }
+
+        if ($participant->status === 'attended') {
+            return redirect()->back()->with('success', "Peserta {$participant->user->nama} sudah berstatus hadir.");
+        }
+
         $participant->update(['status' => 'confirmed']);
 
-        return redirect()->route('organizer.dashboard')->with('success', 'Pendaftaran peserta berhasil dikonfirmasi!');
+        return redirect()->back()->with('success', "Pendaftaran {$participant->user->nama} berhasil dikonfirmasi!");
     }
 
     public function attendParticipant($id)
@@ -207,13 +251,36 @@ class OrganizerController extends Controller
             abort(403, 'Unauthorized access.');
         }
 
-        $participant = \App\Models\Participant::whereHas('event', function ($query) {
+        $participant = Participant::with('user')->whereHas('event', function ($query) {
             $query->where('created_by', Auth::id());
         })->findOrFail($id);
 
+        if ($participant->status === 'canceled') {
+            return redirect()->back()->with('error', "Pendaftaran {$participant->user->nama} sudah dibatalkan dan tidak dapat dipresensi.");
+        }
+
         $participant->update(['status' => 'attended']);
 
-        return redirect()->route('organizer.dashboard')->with('success', 'Kehadiran peserta berhasil dikonfirmasi!');
+        return redirect()->back()->with('success', "Kehadiran {$participant->user->nama} berhasil diverifikasi!");
+    }
+
+    public function cancelParticipant($id)
+    {
+        if (Auth::user()->role !== 'penyelenggara') {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $participant = Participant::with('user')->whereHas('event', function ($query) {
+            $query->where('created_by', Auth::id());
+        })->findOrFail($id);
+
+        if ($participant->status === 'attended') {
+            return redirect()->back()->with('error', 'Peserta yang sudah hadir tidak dapat dibatalkan.');
+        }
+
+        $participant->update(['status' => 'canceled']);
+
+        return redirect()->back()->with('success', "Pendaftaran {$participant->user->nama} berhasil ditolak/dibatalkan.");
     }
 
     public function quickCheckIn(Request $request)
@@ -223,50 +290,51 @@ class OrganizerController extends Controller
         }
 
         $validated = $request->validate([
-            'query' => 'required|string',
-            'event_id' => 'nullable|exists:events,id',
+            'query' => 'required|string|max:150',
+            'event_id' => 'required|integer',
         ]);
 
+        $event = Event::where('created_by', Auth::id())->findOrFail($validated['event_id']);
         $query = trim($validated['query']);
-        $myEventIds = Event::where('created_by', Auth::id())->pluck('id')->toArray();
+        $participant = null;
 
-        if (empty($myEventIds)) {
-            return redirect()->route('organizer.dashboard')->with('error', "Anda belum memiliki event aktif untuk melakukan presensi.");
-        }
-
-        $participantQuery = \App\Models\Participant::with(['user', 'event'])
-            ->whereIn('event_id', $myEventIds)
-            ->where(function ($w) use ($query) {
-                if (is_numeric($query)) {
-                    $w->where('id', $query)->orWhere('user_id', $query);
-                }
-                $w->orWhereHas('user', function ($q) use ($query) {
-                    $q->where('nama', 'LIKE', "%{$query}%")
-                      ->orWhere('email', 'LIKE', "%{$query}%")
-                      ->orWhere('no_telp', 'LIKE', "%{$query}%");
-                });
-            });
-
-        if (!empty($validated['event_id']) && in_array($validated['event_id'], $myEventIds)) {
-            $participant = (clone $participantQuery)->where('event_id', $validated['event_id'])->first();
-            if (!$participant) {
-                $participant = $participantQuery->first();
+        if (preg_match('/^CV-(\d+)-(\d+)$/i', $query, $matches)) {
+            if ((int) $matches[1] !== (int) $event->id) {
+                return redirect()->back()->with('error', "Kode tiket tersebut bukan untuk acara {$event->nama_event}.");
             }
+            $participant = Participant::with('user')
+                ->where('event_id', $event->id)
+                ->where('id', (int) $matches[2])
+                ->first();
+        } elseif (ctype_digit($query)) {
+            $participant = Participant::with('user')
+                ->where('event_id', $event->id)
+                ->where('id', (int) $query)
+                ->first();
         } else {
-            $participant = $participantQuery->first();
+            $participant = Participant::with('user')
+                ->where('event_id', $event->id)
+                ->whereHas('user', function ($q) use ($query) {
+                    $q->whereRaw('LOWER(email) = ?', [strtolower($query)]);
+                })
+                ->first();
         }
 
         if (!$participant) {
-            return redirect()->route('organizer.dashboard')->with('error', "Peserta dengan data '{$query}' tidak ditemukan pada event yang Anda kelola!");
+            return redirect()->back()->with('error', "Tiket atau email peserta '{$query}' tidak ditemukan pada acara {$event->nama_event}.");
+        }
+
+        if ($participant->status === 'canceled') {
+            return redirect()->back()->with('error', "Pendaftaran peserta {$participant->user->nama} sudah dibatalkan dan tidak dapat dipresensi.");
         }
 
         if ($participant->status === 'attended') {
-            return redirect()->route('organizer.dashboard')->with('success', "Peserta {$participant->user->nama} ({$participant->event->nama_event}) SUDAH HADIR sebelumnya pada " . $participant->updated_at->format('H:i') . " WIB.");
+            return redirect()->back()->with('success', "Peserta {$participant->user->nama} sudah tercatat HADIR sebelumnya pada " . $participant->updated_at->format('H:i') . ' WIB.');
         }
 
         $participant->update(['status' => 'attended']);
 
-        return redirect()->route('organizer.dashboard')->with('success', "Presensi Berhasil! {$participant->user->nama} resmi tercatat HADIR di {$participant->event->nama_event}.");
+        return redirect()->back()->with('success', "Presensi Berhasil! {$participant->user->nama} ({$participant->ticketCode()}) tercatat HADIR di {$event->nama_event}.");
     }
 
     public function exportCsv(Request $request, $eventId = null)
@@ -275,17 +343,17 @@ class OrganizerController extends Controller
             abort(403, 'Unauthorized access.');
         }
 
-        $myEventIds = Event::where('created_by', Auth::id())->pluck('id');
+        $query = Participant::with(['user', 'event']);
 
-        $query = \App\Models\Participant::with(['user', 'event'])
-            ->whereIn('event_id', $myEventIds);
-
-        if ($eventId) {
-            $query->where('event_id', $eventId);
+        if ($eventId !== null) {
+            $event = Event::where('created_by', Auth::id())->findOrFail($eventId);
+            $query->where('event_id', $event->id);
+        } else {
+            $myEventIds = Event::where('created_by', Auth::id())->pluck('id');
+            $query->whereIn('event_id', $myEventIds);
         }
 
         $participants = $query->orderBy('created_at', 'DESC')->get();
-
         $fileName = 'log_presensi_campven_' . date('Ymd_His') . '.csv';
 
         $headers = [
@@ -298,19 +366,19 @@ class OrganizerController extends Controller
 
         $callback = function () use ($participants) {
             $file = fopen('php://output', 'w');
-            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
-            
-            fputcsv($file, ['ID Tiket', 'Nama Mahasiswa', 'Email', 'No Telepon', 'Nama Acara', 'Kategori', 'Tanggal Pelaksanaan', 'Status Kehadiran', 'Waktu Registrasi', 'Waktu Verifikasi Presensi']);
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            fputcsv($file, ['Kode Tiket', 'Nama Mahasiswa', 'Email', 'No Telepon', 'Nama Acara', 'Kategori', 'Tanggal Pelaksanaan', 'Status Kehadiran', 'Waktu Registrasi', 'Waktu Verifikasi Presensi']);
 
             foreach ($participants as $p) {
                 fputcsv($file, [
-                    $p->id,
+                    $p->ticketCode(),
                     $p->user->nama ?? '-',
                     $p->user->email ?? '-',
                     $p->user->no_telp ?? '-',
                     $p->event->nama_event ?? '-',
                     $p->event->kategori ?? '-',
-                    $p->event->tanggal ?? '-',
+                    $p->event->tanggal ? Carbon::parse($p->event->tanggal)->format('Y-m-d') : '-',
                     ucfirst($p->status),
                     $p->created_at ? $p->created_at->format('Y-m-d H:i:s') : '-',
                     $p->updated_at ? $p->updated_at->format('Y-m-d H:i:s') : '-',

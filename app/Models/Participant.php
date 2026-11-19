@@ -24,4 +24,9 @@ class Participant extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function ticketCode(): string
+    {
+        return sprintf('CV-%d-%d', $this->event_id, $this->id);
+    }
 }

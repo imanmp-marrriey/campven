@@ -19,4 +19,14 @@ class Announcement extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function getJudulAttribute(): ?string
+    {
+        return $this->attributes['title'] ?? null;
+    }
+
+    public function getIsiAttribute(): ?string
+    {
+        return $this->attributes['content'] ?? null;
+    }
 }

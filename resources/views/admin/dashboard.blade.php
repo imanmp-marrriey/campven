@@ -5,77 +5,32 @@
 @section('content')
 <div class="min-h-screen bg-slate-50/70 flex">
 
-    <!-- ===== LEFT SIDEBAR (Matching Collegiate SaaS Design) ===== -->
-    <aside class="w-64 bg-white border-r border-slate-200/90 flex flex-col justify-between fixed top-0 bottom-0 left-0 z-40 hidden md:flex">
-        <div>
-            <!-- Brand Logo -->
-            <div class="h-20 flex items-center gap-3 px-6 border-b border-slate-100">
-                <div class="w-9 h-9 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-indigo-600/20">
-                    <i class="fas fa-cubes text-sm"></i>
-                </div>
-                <div>
-                    <span class="text-xl font-extrabold text-slate-900 tracking-tight">Camp<span class="text-indigo-600">ven</span></span>
-                    <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider -mt-1">Pusat Administrator</span>
-                </div>
-            </div>
-
-            <!-- Nav Menu List -->
-            <div class="p-4 space-y-1.5 text-xs">
-                <div class="px-3 py-1.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Navigasi Utama</div>
-                
-                <a href="{{ route('admin.dashboard') }}" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-indigo-600 text-white font-bold shadow-md shadow-indigo-600/20 transition">
-                    <i class="fas fa-calendar-alt text-sm w-4"></i>
-                    <span>Manajemen Acara</span>
-                </a>
-
-                <a href="{{ route('admin.users') }}" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-semibold transition">
-                    <i class="fas fa-users text-sm w-4 text-slate-400"></i>
-                    <span>Manajemen Pengguna</span>
-                </a>
-
-                <a href="{{ route('admin.categories') }}" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-semibold transition">
-                    <i class="fas fa-tags text-sm w-4 text-slate-400"></i>
-                    <span>Kategori Acara</span>
-                </a>
-
-                <div class="px-3 pt-4 pb-1 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Akses Cepat</div>
-                
-                <a href="{{ route('profile') }}" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-semibold transition">
-                    <i class="fas fa-user-circle text-sm w-4 text-slate-400"></i>
-                    <span>Profil Saya</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Sidebar Bottom: Back to Campus View -->
-        <div class="p-4 border-t border-slate-100">
-            <a href="{{ route('home') }}" class="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 font-bold text-xs transition">
-                <i class="fas fa-arrow-left text-xs"></i>
-                <span>Kembali ke Beranda Kampus</span>
-            </a>
-        </div>
-    </aside>
+    @include('partials.admin-sidebar', ['activeAdmin' => 'dashboard'])
 
     <!-- ===== MAIN CONTENT AREA ===== -->
-    <div class="flex-grow md:ml-64 flex flex-col min-h-screen">
-        
+    <div class="flex-grow md:ml-64 flex flex-col min-h-screen w-full">
+
         <!-- Top Operational Header -->
-        <header class="h-20 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-6 sm:px-8 flex items-center justify-between sticky top-0 z-30">
-            <!-- Search bar -->
-            <div class="relative w-72 sm:w-96">
-                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                <input type="text" id="adminSearchInput" onkeyup="filterAdminEvents()" placeholder="Cari acara, lokasi, penyelenggara..." class="w-full pl-10 pr-12 py-2 rounded-full bg-slate-100 border border-transparent focus:border-slate-300 focus:bg-white text-xs text-slate-800 placeholder-slate-400 focus:outline-none transition">
-                <kbd class="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-bold text-slate-400">⌘K</kbd>
+        <header class="h-20 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-4 sm:px-8 flex items-center justify-between gap-3 sticky top-0 z-30">
+            <div class="flex items-center gap-3 flex-1 min-w-0">
+                <button type="button" onclick="toggleAdminSidebar()" class="md:hidden w-10 h-10 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center flex-shrink-0" aria-label="Buka Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="relative w-full max-w-sm">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="adminSearchInput" onkeyup="filterAdminEvents()" placeholder="Cari acara, lokasi, penyelenggara..." class="w-full pl-10 pr-12 py-2 rounded-full bg-slate-100 border border-transparent focus:border-slate-300 focus:bg-white text-xs text-slate-800 placeholder-slate-400 focus:outline-none transition">
+                    <kbd class="hidden sm:inline-block absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-bold text-slate-400">⌘K</kbd>
+                </div>
             </div>
 
-            <!-- Right Header Actions -->
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 flex-shrink-0">
                 <a href="{{ route('home') }}" class="hidden sm:flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-indigo-600 px-3 py-1.5 rounded-full hover:bg-slate-100 transition">
                     <i class="fas fa-external-link-alt text-[10px]"></i>
                     <span>Lihat Web</span>
                 </a>
 
-                <div class="flex items-center gap-2.5 pl-2 border-l border-slate-200">
+                <a href="{{ route('profile') }}" class="flex items-center gap-2.5 pl-2 border-l border-slate-200">
                     <div class="w-9 h-9 rounded-full overflow-hidden bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
                         @if(Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
                             <img src="{{ Storage::url(Auth::user()->foto) }}" alt="Foto" class="w-full h-full object-cover">
@@ -85,32 +40,35 @@
                     </div>
                     <div class="text-left hidden sm:block">
                         <span class="block text-xs font-bold text-slate-900 leading-tight">{{ Auth::user()->nama }}</span>
-                        <span class="text-[10px] font-medium text-slate-400 capitalize">Administrator</span>
+                        <span class="text-[10px] font-medium text-slate-400">Administrator</span>
                     </div>
-                </div>
+                </a>
             </div>
         </header>
 
         <!-- Dashboard Body Container -->
-        <div class="p-6 sm:p-8 space-y-8 max-w-7xl w-full mx-auto">
-            
-            <!-- Welcome Hero & Quick Toolbar Banner -->
+        <div class="p-4 sm:p-8 space-y-8 max-w-7xl w-full mx-auto">
+
+            <!-- Welcome Hero & Toolbar -->
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2">
                 <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-bold text-slate-600 mb-2 shadow-2xs">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-bold text-slate-600 mb-2 shadow-sm">
                         <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
                         <span>Panel Kontrol Administrator • {{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y') }}</span>
                     </div>
                     <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                        Manajemen Acara & Kegiatan Kampus ⚡
+                        Manajemen Acara &amp; Kegiatan Kampus
                     </h1>
                     <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl">
-                        Kelola publikasi seluruh event, status kuota pendaftaran, dan partisipasi mahasiswa lintas jurusan.
+                        Pantau seluruh event kampus, daftar peserta, kategori kegiatan, pengumuman, dan akun pengguna.
                     </p>
                 </div>
 
-                <!-- Action Toolbar Row -->
                 <div class="flex items-center gap-2.5 flex-wrap">
+                    <a href="{{ route('admin.announcements') }}" class="px-4 py-3 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-sm transition btn-spring flex items-center gap-2">
+                        <i class="fas fa-bullhorn text-indigo-600"></i>
+                        <span>Kelola Pengumuman ({{ $total_announcements }})</span>
+                    </a>
                     <button type="button" onclick="openCreateModal()" class="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition btn-spring flex items-center gap-2">
                         <i class="fas fa-plus"></i>
                         <span>Tambah Event Baru</span>
@@ -120,52 +78,41 @@
 
             <!-- 4 KPI Metric Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                <!-- KPI 1: Total Event -->
-                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-3">
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">TOTAL ACARA</span>
                         <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-sm">
                             <i class="far fa-calendar-alt"></i>
                         </div>
                     </div>
-                    <div>
-                        <div class="text-3xl font-black text-slate-900 tracking-tight">{{ $total_events }} <span class="text-xs font-semibold text-slate-400">Acara</span></div>
-                    </div>
-                    <div class="flex items-center gap-2 text-[11px] font-semibold text-slate-500 pt-1 border-t border-slate-100">
-                        <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold text-[10px]">Aktif</span>
-                        <span>Semua kategori</span>
+                    <div class="text-3xl font-black text-slate-900 tracking-tight">{{ $total_events }} <span class="text-xs font-semibold text-slate-400">Acara</span></div>
+                    <div class="text-[11px] font-semibold text-slate-500 pt-2 border-t border-slate-100">
+                        Seluruh acara terdaftar
                     </div>
                 </div>
 
-                <!-- KPI 2: Total Peserta -->
-                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-3">
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">TOTAL TIKET TERDAFTAR</span>
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">PARTISIPASI AKTIF</span>
                         <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-sm">
                             <i class="fas fa-ticket-alt"></i>
                         </div>
                     </div>
-                    <div>
-                        <div class="text-3xl font-black text-slate-900 tracking-tight">{{ number_format($total_participants) }} <span class="text-xs font-semibold text-slate-400">Tiket</span></div>
-                    </div>
-                    <div class="flex items-center gap-2 text-[11px] font-semibold text-slate-500 pt-1 border-t border-slate-100">
-                        <span class="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 font-bold text-[10px]">Tervalidasi</span>
-                        <span>Partisipan mahasiswa</span>
+                    <div class="text-3xl font-black text-slate-900 tracking-tight">{{ number_format($total_participants) }} <span class="text-xs font-semibold text-slate-400">Tiket</span></div>
+                    <div class="text-[11px] font-semibold text-slate-500 pt-2 border-t border-slate-100">
+                        Tiket terdaftar, dikonfirmasi &amp; hadir
                     </div>
                 </div>
 
-                <!-- KPI 3: Total Pengguna -->
-                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-3">
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">TOTAL PENGGUNA</span>
                         <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
                             <i class="fas fa-users"></i>
                         </div>
                     </div>
-                    <div>
-                        <div class="text-3xl font-black text-slate-900 tracking-tight">{{ $total_users }} <span class="text-xs font-semibold text-slate-400">Akun</span></div>
-                    </div>
-                    <div class="flex items-center gap-2 text-[11px] font-semibold text-slate-500 pt-1 border-t border-slate-100">
+                    <div class="text-3xl font-black text-slate-900 tracking-tight">{{ $total_users }} <span class="text-xs font-semibold text-slate-400">Akun</span></div>
+                    <div class="text-[11px] font-semibold text-slate-500 pt-2 border-t border-slate-100">
                         <a href="{{ route('admin.users') }}" class="text-indigo-600 font-bold hover:underline flex items-center gap-1">
                             <span>Kelola Akun</span>
                             <i class="fas fa-arrow-right text-[9px]"></i>
@@ -173,20 +120,17 @@
                     </div>
                 </div>
 
-                <!-- KPI 4: Kategori Acara -->
-                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-3">
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">TOTAL KATEGORI</span>
                         <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">
                             <i class="fas fa-tags"></i>
                         </div>
                     </div>
-                    <div>
-                        <div class="text-3xl font-black text-slate-900 tracking-tight">{{ count($categories) }} <span class="text-xs font-semibold text-slate-400">Kategori</span></div>
-                    </div>
-                    <div class="flex items-center gap-2 text-[11px] font-semibold text-slate-500 pt-1 border-t border-slate-100">
+                    <div class="text-3xl font-black text-slate-900 tracking-tight">{{ count($categories) }} <span class="text-xs font-semibold text-slate-400">Kategori</span></div>
+                    <div class="text-[11px] font-semibold text-slate-500 pt-2 border-t border-slate-100">
                         <a href="{{ route('admin.categories') }}" class="text-indigo-600 font-bold hover:underline flex items-center gap-1">
-                            <span>Lihat Kategori</span>
+                            <span>Kelola Kategori</span>
                             <i class="fas fa-arrow-right text-[9px]"></i>
                         </a>
                     </div>
@@ -195,15 +139,15 @@
 
             <!-- Event Management Section -->
             <div class="space-y-6">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between gap-4 flex-wrap">
                     <div>
                         <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
                             <span class="w-1.5 h-5 rounded-full bg-indigo-600 inline-block"></span>
                             <span>Katalog Seluruh Acara Kampus</span>
                         </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Daftar semua acara yang terdaftar di sistem beserta kuota dan partisipan</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Daftar semua acara di sistem beserta penyelenggara, kuota, dan peserta</p>
                     </div>
-                    <span class="px-3 py-1 rounded-full bg-white border border-slate-200 text-xs font-bold text-slate-700 shadow-2xs">
+                    <span class="px-3 py-1 rounded-full bg-white border border-slate-200 text-xs font-bold text-slate-700 shadow-sm">
                         {{ count($events) }} Acara Terdaftar
                     </span>
                 </div>
@@ -213,10 +157,10 @@
                     @foreach($events as $event)
                     @php
                         $hasPoster = $event->poster && file_exists(public_path('storage/' . $event->poster));
-                        $participantCount = $event->participants()->count();
+                        $participantCount = $event->activeParticipants()->count();
                     @endphp
                     <div class="admin-event-card bg-white rounded-3xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group" data-title="{{ strtolower($event->nama_event . ' ' . $event->lokasi . ' ' . ($event->creator->nama ?? '')) }}">
-                        
+
                         <!-- Media Header -->
                         <div class="relative h-44 w-full overflow-hidden bg-slate-900">
                             @if($hasPoster)
@@ -230,24 +174,21 @@
 
                             <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20"></div>
 
-                            <!-- Floating Category Tag -->
                             <div class="absolute top-3 left-3">
                                 <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-white/90 backdrop-blur-md text-slate-800 shadow-sm">
                                     {{ $event->kategori }}
                                 </span>
                             </div>
 
-                            <!-- Floating Price / ID -->
                             <div class="absolute top-3 right-3">
                                 <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-indigo-600/90 backdrop-blur-md text-white shadow-sm">
-                                    #EV-{{ $event->id }}
+                                    {{ $event->formattedHarga() }}
                                 </span>
                             </div>
 
-                            <!-- Bottom Info inside Banner -->
                             <div class="absolute bottom-3 left-3 right-3 text-white">
-                                <span class="text-[10px] font-semibold text-slate-300 block truncate">
-                                    <i class="fas fa-user-tie text-[9px] mr-1 text-indigo-400"></i> {{ $event->creator->nama ?? 'Penyelenggara Kampus' }}
+                                <span class="text-[10px] font-semibold text-slate-200 block truncate">
+                                    <i class="fas fa-user-tie text-[9px] mr-1 text-indigo-300"></i> {{ $event->creator->nama ?? 'Penyelenggara Kampus' }}
                                 </span>
                             </div>
                         </div>
@@ -266,7 +207,7 @@
                                 @if($event->waktu_mulai)
                                 <div class="flex items-center gap-2">
                                     <i class="far fa-clock text-slate-400 w-4"></i>
-                                    <span>{{ \Carbon\Carbon::parse($event->waktu_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($event->waktu_selesai)->format('H:i') }} WIB</span>
+                                    <span>{{ \Carbon\Carbon::parse($event->waktu_mulai)->format('H:i') }}{{ $event->waktu_selesai ? ' - ' . \Carbon\Carbon::parse($event->waktu_selesai)->format('H:i') : '' }} WIB</span>
                                 </div>
                                 @endif
                                 <div class="flex items-center gap-2">
@@ -277,29 +218,29 @@
                         </div>
 
                         <!-- Card Footer & Actions -->
-                        <div class="px-5 py-3.5 border-t border-slate-100 flex items-center justify-between text-xs bg-slate-50/50">
+                        <div class="px-5 py-3.5 border-t border-slate-100 flex items-center justify-between gap-2 text-xs bg-slate-50/50">
                             <span class="font-bold text-slate-600 flex items-center gap-1.5">
                                 <i class="fas fa-users text-indigo-600 text-[11px]"></i>
-                                <span>{{ $participantCount }}{{ $event->kuota ? ' / ' . $event->kuota : '' }} Peserta</span>
+                                <span>{{ $participantCount }}{{ $event->kuota ? ' / ' . $event->kuota : '' }}</span>
                             </span>
 
-                            <div class="flex items-center gap-2">
-                                <a href="{{ route('admin.event.edit', $event->id) }}" class="p-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-indigo-600 hover:border-indigo-300 transition shadow-2xs" title="Edit Acara">
+                            <div class="flex items-center gap-1.5">
+                                <a href="{{ route('admin.event.participants', $event->id) }}" class="px-2.5 py-1.5 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold text-[11px] transition" title="Lihat Daftar Peserta">
+                                    <i class="fas fa-users mr-1"></i>Peserta
+                                </a>
+
+                                <a href="{{ route('admin.event.edit', $event->id) }}" class="p-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-indigo-600 hover:border-indigo-300 transition shadow-sm" title="Edit Acara">
                                     <i class="fas fa-edit text-xs"></i>
                                 </a>
 
                                 @if($participantCount > 0)
-                                <button type="button" class="p-2 rounded-xl bg-slate-100 text-slate-400 cursor-not-allowed" title="Tidak dapat dihapus karena sudah ada peserta">
-                                    <i class="fas fa-trash-alt text-xs"></i>
-                                </button>
-                                @else
-                                <form method="POST" action="{{ route('admin.event.delete', $event->id) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus acara ini?')" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-rose-600 hover:border-rose-300 transition shadow-2xs" title="Hapus Acara">
+                                    <button type="button" disabled class="p-2 rounded-xl bg-slate-100 text-slate-300 cursor-not-allowed" title="Tidak dapat dihapus karena masih memiliki peserta aktif">
                                         <i class="fas fa-trash-alt text-xs"></i>
                                     </button>
-                                </form>
+                                @else
+                                    <button type="button" onclick="openDeleteModal('{{ route('admin.event.delete', $event->id) }}', '{{ addslashes($event->nama_event) }}')" class="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-rose-600 hover:border-rose-300 transition shadow-sm" title="Hapus Acara">
+                                        <i class="fas fa-trash-alt text-xs"></i>
+                                    </button>
                                 @endif
                             </div>
                         </div>
@@ -331,7 +272,7 @@
                 <i class="fas fa-calendar-plus text-indigo-600"></i>
                 <span>Tambah Event Kampus Baru (Admin)</span>
             </h3>
-            <button onclick="closeCreateModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-sm hover:bg-slate-200 transition">
+            <button type="button" onclick="closeCreateModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-sm hover:bg-slate-200 transition">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -374,23 +315,38 @@
 
             <div class="space-y-1">
                 <label class="block font-bold text-slate-700">Lokasi / Gedung Acara <span class="text-rose-500">*</span></label>
-                <input type="text" name="lokasi" required placeholder="Contoh: Auditorium Utama Gedung D, Kampus Pusat" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
+                <input type="text" name="lokasi" required placeholder="Contoh: Auditorium Utama Gedung D" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="space-y-1">
+                    <label class="block font-bold text-slate-700">Batas Kuota</label>
+                    <input type="number" name="kuota" min="1" placeholder="Unlimited" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
+                </div>
+                <div class="space-y-1">
+                    <label class="block font-bold text-slate-700">Harga Tiket (Rp)</label>
+                    <input type="number" name="harga" value="0" min="0" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
+                </div>
+                <div class="space-y-1">
+                    <label class="block font-bold text-slate-700">Poin SKPI</label>
+                    <input type="number" name="skpi_poin" value="10" min="0" max="100" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <label class="block font-bold text-slate-700">Penyelenggara Acara</label>
+                <select name="created_by" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
+                    @foreach($organizers as $org)
+                        <option value="{{ $org->id }}" {{ $org->id === Auth::id() ? 'selected' : '' }}>
+                            {{ $org->nama }} ({{ ucfirst($org->role) }})
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
             <div class="space-y-1">
                 <label class="block font-bold text-slate-700">Deskripsi Lengkap Acara</label>
-                <textarea name="deskripsi" rows="3" placeholder="Pemaparan topik materi, pemateri, dan benefit peserta..." class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition"></textarea>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="space-y-1">
-                    <label class="block font-bold text-slate-700">Batas Kuota Peserta</label>
-                    <input type="number" name="kuota" min="1" placeholder="Kosongkan jika unlimited" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
-                </div>
-                <div class="space-y-1">
-                    <label class="block font-bold text-slate-700">Dibuat Oleh (ID Penyelenggara)</label>
-                    <input type="number" name="created_by" value="{{ Auth::id() }}" placeholder="ID Akun Pengguna" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition">
-                </div>
+                <textarea name="deskripsi" rows="3" placeholder="Pemaparan topik materi dan informasi peserta..." class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white transition"></textarea>
             </div>
 
             <div class="space-y-1">
@@ -403,7 +359,7 @@
                     Batal
                 </button>
                 <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md shadow-indigo-600/20 transition btn-spring">
-                    Simpan & Publikasikan
+                    Simpan &amp; Publikasikan
                 </button>
             </div>
         </form>
@@ -442,11 +398,7 @@
         const cards = document.querySelectorAll('.admin-event-card');
         cards.forEach(card => {
             const title = card.getAttribute('data-title');
-            if (title.includes(query)) {
-                card.style.display = '';
-            } else {
-                card.style.display = 'none';
-            }
+            card.style.display = title.includes(query) ? '' : 'none';
         });
     }
 </script>

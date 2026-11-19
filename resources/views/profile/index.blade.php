@@ -9,21 +9,25 @@
         <div class="flex items-center justify-between h-20">
             <!-- Brand Logo -->
             <a href="{{ $back_url ?? route('home') }}" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-slate-900 to-slate-700 flex items-center justify-center text-white font-extrabold text-xl shadow-md shadow-slate-900/10 group-hover:scale-105 transition-transform duration-300">
+                <div class="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-extrabold text-xl shadow-md shadow-indigo-600/20 group-hover:scale-105 transition-transform duration-300">
                     <i class="fas fa-cubes text-sm"></i>
                 </div>
                 <div>
                     <span class="text-xl font-extrabold text-slate-900 tracking-tight">Camp<span class="text-indigo-600">ven</span></span>
-                    <span class="block text-[10px] font-semibold text-slate-400 tracking-wider uppercase -mt-1">Campus Events</span>
+                    <span class="block text-[10px] font-semibold text-slate-400 tracking-wider uppercase -mt-1">Portal Kegiatan Kampus</span>
                 </div>
             </a>
 
             <!-- Right Action -->
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2.5">
                 <a href="{{ $back_url ?? route('home') }}" class="inline-flex items-center gap-2 text-xs font-bold px-4 py-2.5 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 transition btn-spring">
                     <i class="fas fa-arrow-left text-slate-400"></i>
                     <span>Kembali</span>
                 </a>
+                <button type="button" onclick="openLogoutModal()" class="inline-flex items-center gap-1.5 text-xs font-bold px-4 py-2.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 transition btn-spring">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="hidden sm:inline">Keluar</span>
+                </button>
             </div>
         </div>
     </div>
@@ -144,7 +148,7 @@
                 </div>
 
                 <div class="pt-6 border-t border-slate-100 flex items-center justify-end gap-3">
-                    <button type="submit" class="px-8 py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm shadow-md shadow-slate-900/10 transition btn-spring">
+                    <button type="submit" class="px-8 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-indigo-600/20 transition btn-spring">
                         Simpan Perubahan
                     </button>
                 </div>

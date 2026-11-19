@@ -5,106 +5,56 @@
 @section('content')
 <div class="min-h-screen bg-slate-50/70 flex">
 
-    <!-- ===== LEFT SIDEBAR ===== -->
-    <aside class="w-64 bg-white border-r border-slate-200/90 flex flex-col justify-between fixed top-0 bottom-0 left-0 z-40 hidden md:flex">
-        <div>
-            <!-- Brand Logo -->
-            <div class="h-20 flex items-center gap-3 px-6 border-b border-slate-100">
-                <div class="w-9 h-9 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-indigo-600/20">
-                    <i class="fas fa-cubes text-sm"></i>
-                </div>
-                <div>
-                    <span class="text-xl font-extrabold text-slate-900 tracking-tight">Camp<span class="text-indigo-600">ven</span></span>
-                    <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider -mt-1">Pusat Administrator</span>
-                </div>
-            </div>
-
-            <!-- Nav Menu List -->
-            <div class="p-4 space-y-1.5 text-xs">
-                <div class="px-3 py-1.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Navigasi Utama</div>
-                
-                <a href="{{ route('admin.dashboard') }}" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-semibold transition">
-                    <i class="fas fa-calendar-alt text-sm w-4 text-slate-400"></i>
-                    <span>Manajemen Acara</span>
-                </a>
-
-                <a href="{{ route('admin.users') }}" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-indigo-600 text-white font-bold shadow-md shadow-indigo-600/20 transition">
-                    <i class="fas fa-users text-sm w-4"></i>
-                    <span>Manajemen Pengguna</span>
-                </a>
-
-                <a href="{{ route('admin.categories') }}" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-semibold transition">
-                    <i class="fas fa-tags text-sm w-4 text-slate-400"></i>
-                    <span>Kategori Acara</span>
-                </a>
-
-                <div class="px-3 pt-4 pb-1 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Akses Cepat</div>
-                
-                <a href="{{ route('profile') }}" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-semibold transition">
-                    <i class="fas fa-user-circle text-sm w-4 text-slate-400"></i>
-                    <span>Profil Saya</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Sidebar Bottom: Back to Campus View -->
-        <div class="p-4 border-t border-slate-100">
-            <a href="{{ route('home') }}" class="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 font-bold text-xs transition">
-                <i class="fas fa-arrow-left text-xs"></i>
-                <span>Kembali ke Beranda Kampus</span>
-            </a>
-        </div>
-    </aside>
+    @include('partials.admin-sidebar', ['activeAdmin' => 'users'])
 
     <!-- ===== MAIN CONTENT AREA ===== -->
-    <div class="flex-grow md:ml-64 flex flex-col min-h-screen">
-        
-        <!-- Top Operational Header -->
-        <header class="h-20 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-6 sm:px-8 flex items-center justify-between sticky top-0 z-30">
-            <!-- Search bar -->
-            <div class="relative w-72 sm:w-96">
-                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                <input type="text" id="userSearchInput" onkeyup="filterUsersTable()" placeholder="Cari nama, email, role..." class="w-full pl-10 pr-12 py-2 rounded-full bg-slate-100 border border-transparent focus:border-slate-300 focus:bg-white text-xs text-slate-800 placeholder-slate-400 focus:outline-none transition">
-                <kbd class="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-bold text-slate-400">⌘K</kbd>
-            </div>
+    <div class="flex-grow md:ml-64 flex flex-col min-h-screen w-full">
 
-            <!-- Right Header Actions -->
-            <div class="flex items-center gap-3">
-                <div class="flex items-center gap-2.5 pl-2 border-l border-slate-200">
-                    <div class="w-9 h-9 rounded-full overflow-hidden bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
-                        @if(Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
-                            <img src="{{ Storage::url(Auth::user()->foto) }}" alt="Foto" class="w-full h-full object-cover">
-                        @else
-                            {{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}
-                        @endif
-                    </div>
-                    <div class="text-left hidden sm:block">
-                        <span class="block text-xs font-bold text-slate-900 leading-tight">{{ Auth::user()->nama }}</span>
-                        <span class="text-[10px] font-medium text-slate-400">Administrator</span>
-                    </div>
+        <!-- Top Operational Header -->
+        <header class="h-20 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-4 sm:px-8 flex items-center justify-between gap-3 sticky top-0 z-30">
+            <div class="flex items-center gap-3 flex-1 min-w-0">
+                <button type="button" onclick="toggleAdminSidebar()" class="md:hidden w-10 h-10 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center flex-shrink-0" aria-label="Buka Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="relative w-full max-w-sm">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="userSearchInput" onkeyup="filterUsersTable()" placeholder="Cari nama, email, role..." class="w-full pl-10 pr-12 py-2 rounded-full bg-slate-100 border border-transparent focus:border-slate-300 focus:bg-white text-xs text-slate-800 placeholder-slate-400 focus:outline-none transition">
                 </div>
             </div>
+
+            <a href="{{ route('profile') }}" class="flex items-center gap-2.5 pl-2 flex-shrink-0">
+                <div class="w-9 h-9 rounded-full overflow-hidden bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
+                    @if(Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
+                        <img src="{{ Storage::url(Auth::user()->foto) }}" alt="Foto" class="w-full h-full object-cover">
+                    @else
+                        {{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}
+                    @endif
+                </div>
+                <div class="text-left hidden sm:block">
+                    <span class="block text-xs font-bold text-slate-900 leading-tight">{{ Auth::user()->nama }}</span>
+                    <span class="text-[10px] font-medium text-slate-400">Administrator</span>
+                </div>
+            </a>
         </header>
 
         <!-- Dashboard Body Container -->
-        <div class="p-6 sm:p-8 space-y-8 max-w-7xl w-full mx-auto">
-            
+        <div class="p-4 sm:p-8 space-y-8 max-w-7xl w-full mx-auto">
+
             <!-- Welcome Header -->
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2">
                 <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-bold text-slate-600 mb-2 shadow-2xs">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-bold text-slate-600 mb-2 shadow-sm">
                         <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
                         <span>Otoritas Pengguna Kampus</span>
                     </div>
                     <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                        Manajemen Akun & Hak Akses 👥
+                        Manajemen Akun &amp; Hak Akses
                     </h1>
                     <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl">
-                        Daftar pengguna terdaftar, organisasi penyelenggara kegiatan, dan mahasiswa.
+                        Kelola akun administrator, organisasi penyelenggara acara, serta akun mahasiswa.
                     </p>
                 </div>
 
-                <!-- Action Button -->
                 <button type="button" onclick="openCreateUserModal()" class="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition btn-spring flex items-center gap-2 self-start lg:self-auto">
                     <i class="fas fa-user-plus"></i>
                     <span>Tambah Pengguna Baru</span>
@@ -113,33 +63,33 @@
 
             <!-- 4 KPI Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-2">
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm space-y-2">
                     <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">TOTAL PENGGUNA</span>
                     <div class="text-3xl font-black text-slate-900 tracking-tight">{{ $total_users }} <span class="text-xs font-semibold text-slate-400">Akun</span></div>
                     <div class="text-[11px] text-slate-500 pt-1 border-t border-slate-100">Keseluruhan akun sistem</div>
                 </div>
 
-                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-2">
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm space-y-2">
                     <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">ADMINISTRATOR</span>
                     <div class="text-3xl font-black text-amber-700 tracking-tight">{{ $total_admin }} <span class="text-xs font-semibold text-slate-400">Admin</span></div>
-                    <div class="text-[11px] text-slate-500 pt-1 border-t border-slate-100">Hak akses super user</div>
+                    <div class="text-[11px] text-slate-500 pt-1 border-t border-slate-100">Hak akses pengelola sistem</div>
                 </div>
 
-                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-2">
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm space-y-2">
                     <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">PENYELENGGARA</span>
                     <div class="text-3xl font-black text-emerald-700 tracking-tight">{{ $total_penyelenggara }} <span class="text-xs font-semibold text-slate-400">Ormawa</span></div>
-                    <div class="text-[11px] text-slate-500 pt-1 border-t border-slate-100">BEM, Himpunan & UKM</div>
+                    <div class="text-[11px] text-slate-500 pt-1 border-t border-slate-100">BEM, Himpunan &amp; UKM</div>
                 </div>
 
-                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-2">
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm space-y-2">
                     <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">MAHASISWA</span>
                     <div class="text-3xl font-black text-indigo-700 tracking-tight">{{ $total_mahasiswa }} <span class="text-xs font-semibold text-slate-400">Peserta</span></div>
-                    <div class="text-[11px] text-slate-500 pt-1 border-t border-slate-100">Peserta aktif kegiatan</div>
+                    <div class="text-[11px] text-slate-500 pt-1 border-t border-slate-100">Peserta kegiatan</div>
                 </div>
             </div>
 
             <!-- Users Table Container -->
-            <div class="bg-white rounded-3xl border border-slate-200/90 shadow-2xs overflow-hidden">
+            <div class="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden">
                 <div class="p-6 pb-4 border-b border-slate-100 flex items-center justify-between">
                     <div>
                         <h2 class="text-lg font-extrabold text-slate-900">Daftar Seluruh Pengguna</h2>
@@ -154,7 +104,7 @@
                     <table class="w-full text-left text-xs text-slate-600" id="usersTable">
                         <thead class="bg-slate-50/70 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 border-b border-slate-100">
                             <tr>
-                                <th class="px-6 py-3.5">ID & PENGGUNA</th>
+                                <th class="px-6 py-3.5">ID &amp; PENGGUNA</th>
                                 <th class="px-4 py-3.5">EMAIL</th>
                                 <th class="px-4 py-3.5">NO. TELEPON</th>
                                 <th class="px-4 py-3.5">ROLE AKSES</th>
@@ -181,7 +131,12 @@
                                             @endif
                                         </div>
                                         <div>
-                                            <span class="font-bold text-slate-900 block text-xs">{{ $u->nama }}</span>
+                                            <span class="font-bold text-slate-900 block text-xs">
+                                                {{ $u->nama }}
+                                                @if((int) $u->id === (int) Auth::id())
+                                                    <span class="text-[10px] text-indigo-600 font-extrabold">(Anda)</span>
+                                                @endif
+                                            </span>
                                             <span class="text-[10px] text-slate-400 font-mono">#ID-{{ $u->id }}</span>
                                         </div>
                                     </div>
@@ -199,22 +154,18 @@
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
-                                        <button type="button" onclick="openEditUserModal({{ $u->id }}, '{{ addslashes($u->nama) }}', '{{ addslashes($u->email) }}', '{{ addslashes($u->no_telp ?? '') }}', '{{ $u->role }}')" class="p-2 rounded-xl bg-slate-100 text-slate-700 hover:text-indigo-600 hover:bg-indigo-50 transition" title="Edit Pengguna">
+                                        <button type="button" onclick="openEditUserModal({{ $u->id }}, '{{ addslashes($u->nama) }}', '{{ addslashes($u->email) }}', '{{ addslashes($u->no_telp ?? '') }}', '{{ $u->role }}', {{ (int) $u->id === (int) Auth::id() ? 'true' : 'false' }})" class="p-2 rounded-xl bg-slate-100 text-slate-700 hover:text-indigo-600 hover:bg-indigo-50 transition" title="Edit Pengguna">
                                             <i class="fas fa-edit text-xs"></i>
                                         </button>
 
-                                        @if($u->role !== 'admin')
-                                        <form method="POST" action="{{ route('admin.user.delete', $u->id) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun {{ $u->nama }}?')" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="p-2 rounded-xl bg-slate-100 text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition" title="Hapus Pengguna">
+                                        @if($u->role !== 'admin' && (int) $u->id !== (int) Auth::id())
+                                            <button type="button" onclick="openDeleteModal('{{ route('admin.user.delete', $u->id) }}', '{{ addslashes($u->nama) }}')" class="p-2 rounded-xl bg-slate-100 text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition" title="Hapus Pengguna">
                                                 <i class="fas fa-trash-alt text-xs"></i>
                                             </button>
-                                        </form>
                                         @else
-                                        <span class="text-[10px] font-bold text-slate-400 px-2 py-1 rounded bg-slate-100">
-                                            Dilindungi
-                                        </span>
+                                            <span class="text-[10px] font-bold text-slate-400 px-2 py-1 rounded bg-slate-100">
+                                                Dilindungi
+                                            </span>
                                         @endif
                                     </div>
                                 </td>
@@ -239,7 +190,7 @@
                 <i class="fas fa-user-plus text-indigo-600"></i>
                 <span>Tambah Pengguna Baru</span>
             </h3>
-            <button onclick="closeCreateUserModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-sm hover:bg-slate-200 transition">
+            <button type="button" onclick="closeCreateUserModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-sm hover:bg-slate-200 transition">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -300,7 +251,7 @@
                 <i class="fas fa-user-edit text-indigo-600"></i>
                 <span>Edit Pengguna</span>
             </h3>
-            <button onclick="closeEditUserModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-sm hover:bg-slate-200 transition">
+            <button type="button" onclick="closeEditUserModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-sm hover:bg-slate-200 transition">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -337,6 +288,8 @@
                         <option value="penyelenggara">Penyelenggara / Ormawa</option>
                         <option value="admin">Administrator</option>
                     </select>
+                    <input type="hidden" id="editRoleFallback" name="role" value="admin" disabled>
+                    <span id="editRoleSelfNotice" class="hidden text-[10px] text-amber-600 font-semibold">Role akun sendiri terkunci sebagai Administrator.</span>
                 </div>
             </div>
 
@@ -383,12 +336,27 @@
     const editUserBackdrop = document.getElementById('editUserBackdrop');
     const editUserCard = document.getElementById('editUserCard');
 
-    function openEditUserModal(id, nama, email, telp, role) {
+    function openEditUserModal(id, nama, email, telp, role, isSelf) {
         document.getElementById('editUserForm').action = '/admin/user/' + id;
         document.getElementById('editNama').value = nama;
         document.getElementById('editEmail').value = email;
         document.getElementById('editTelp').value = telp;
-        document.getElementById('editRole').value = role;
+
+        const roleSelect = document.getElementById('editRole');
+        const roleFallback = document.getElementById('editRoleFallback');
+        const notice = document.getElementById('editRoleSelfNotice');
+        roleSelect.value = role;
+
+        if (isSelf) {
+            roleSelect.disabled = true;
+            roleFallback.disabled = false;
+            roleFallback.value = role;
+            notice.classList.remove('hidden');
+        } else {
+            roleSelect.disabled = false;
+            roleFallback.disabled = true;
+            notice.classList.add('hidden');
+        }
 
         editUserModal.classList.remove('hidden');
         editUserModal.classList.add('flex');
@@ -413,8 +381,7 @@
         const query = document.getElementById('userSearchInput').value.toLowerCase();
         const rows = document.querySelectorAll('#usersTable tbody tr');
         rows.forEach(row => {
-            const text = row.innerText.toLowerCase();
-            row.style.display = text.includes(query) ? '' : 'none';
+            row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
         });
     }
 </script>

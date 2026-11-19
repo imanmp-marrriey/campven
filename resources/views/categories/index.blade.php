@@ -5,99 +5,53 @@
 @section('content')
 <div class="min-h-screen bg-slate-50/70 flex">
 
-    <!-- ===== LEFT SIDEBAR ===== -->
-    <aside class="w-64 bg-white border-r border-slate-200/90 flex flex-col justify-between fixed top-0 bottom-0 left-0 z-40 hidden md:flex">
-        <div>
-            <!-- Brand Logo -->
-            <div class="h-20 flex items-center gap-3 px-6 border-b border-slate-100">
-                <div class="w-9 h-9 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-indigo-600/20">
-                    <i class="fas fa-cubes text-sm"></i>
-                </div>
-                <div>
-                    <span class="text-xl font-extrabold text-slate-900 tracking-tight">Camp<span class="text-indigo-600">ven</span></span>
-                    <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider -mt-1">Pusat Administrator</span>
-                </div>
-            </div>
-
-            <!-- Nav Menu List -->
-            <div class="p-4 space-y-1.5 text-xs">
-                <div class="px-3 py-1.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Navigasi Utama</div>
-                
-                <a href="{{ route('admin.dashboard') }}" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-semibold transition">
-                    <i class="fas fa-calendar-alt text-sm w-4 text-slate-400"></i>
-                    <span>Manajemen Acara</span>
-                </a>
-
-                <a href="{{ route('admin.users') }}" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-semibold transition">
-                    <i class="fas fa-users text-sm w-4 text-slate-400"></i>
-                    <span>Manajemen Pengguna</span>
-                </a>
-
-                <a href="{{ route('admin.categories') }}" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-indigo-600 text-white font-bold shadow-md shadow-indigo-600/20 transition">
-                    <i class="fas fa-tags text-sm w-4"></i>
-                    <span>Kategori Acara</span>
-                </a>
-
-                <div class="px-3 pt-4 pb-1 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Akses Cepat</div>
-                
-                <a href="{{ route('profile') }}" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-semibold transition">
-                    <i class="fas fa-user-circle text-sm w-4 text-slate-400"></i>
-                    <span>Profil Saya</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Sidebar Bottom: Back to Campus View -->
-        <div class="p-4 border-t border-slate-100">
-            <a href="{{ route('home') }}" class="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 font-bold text-xs transition">
-                <i class="fas fa-arrow-left text-xs"></i>
-                <span>Kembali ke Beranda Kampus</span>
-            </a>
-        </div>
-    </aside>
+    @include('partials.admin-sidebar', ['activeAdmin' => 'categories'])
 
     <!-- ===== MAIN CONTENT AREA ===== -->
-    <div class="flex-grow md:ml-64 flex flex-col min-h-screen">
-        
-        <!-- Top Operational Header -->
-        <header class="h-20 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-6 sm:px-8 flex items-center justify-between sticky top-0 z-30">
-            <div>
-                <h1 class="text-base font-extrabold text-slate-900">Kategori Kegiatan</h1>
-                <p class="text-xs text-slate-400">Taksonomi klasifikasi acara mahasiswa</p>
-            </div>
+    <div class="flex-grow md:ml-64 flex flex-col min-h-screen w-full">
 
+        <!-- Top Operational Header -->
+        <header class="h-20 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30">
             <div class="flex items-center gap-3">
-                <div class="flex items-center gap-2.5 pl-2 border-l border-slate-200">
-                    <div class="w-9 h-9 rounded-full overflow-hidden bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
-                        @if(Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
-                            <img src="{{ Storage::url(Auth::user()->foto) }}" alt="Foto" class="w-full h-full object-cover">
-                        @else
-                            {{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}
-                        @endif
-                    </div>
-                    <div class="text-left hidden sm:block">
-                        <span class="block text-xs font-bold text-slate-900 leading-tight">{{ Auth::user()->nama }}</span>
-                        <span class="text-[10px] font-medium text-slate-400">Administrator</span>
-                    </div>
+                <button type="button" onclick="toggleAdminSidebar()" class="md:hidden w-10 h-10 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center" aria-label="Buka Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div>
+                    <h1 class="text-base font-extrabold text-slate-900">Kategori Kegiatan</h1>
+                    <p class="text-xs text-slate-400">Taksonomi klasifikasi acara mahasiswa</p>
                 </div>
             </div>
+
+            <a href="{{ route('profile') }}" class="flex items-center gap-2.5 pl-2">
+                <div class="w-9 h-9 rounded-full overflow-hidden bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
+                    @if(Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
+                        <img src="{{ Storage::url(Auth::user()->foto) }}" alt="Foto" class="w-full h-full object-cover">
+                    @else
+                        {{ strtoupper(substr(Auth::user()->nama, 0, 1)) }}
+                    @endif
+                </div>
+                <div class="text-left hidden sm:block">
+                    <span class="block text-xs font-bold text-slate-900 leading-tight">{{ Auth::user()->nama }}</span>
+                    <span class="text-[10px] font-medium text-slate-400">Administrator</span>
+                </div>
+            </a>
         </header>
 
         <!-- Body Container -->
-        <div class="p-6 sm:p-8 space-y-8 max-w-7xl w-full mx-auto">
-            
+        <div class="p-4 sm:p-8 space-y-8 max-w-7xl w-full mx-auto">
+
             <!-- Hero Banner -->
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2">
                 <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-bold text-slate-600 mb-2 shadow-2xs">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-bold text-slate-600 mb-2 shadow-sm">
                         <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
                         <span>Struktur Taksonomi Acara</span>
                     </div>
                     <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                        Kategori & Label Acara 🏷️
+                        Kategori &amp; Label Acara
                     </h1>
                     <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl">
-                        Atur kategori kegiatan kampus untuk pengelompokan pendaftaran, filter pencarian, dan penerbitan sertifikat.
+                        Atur kategori kegiatan kampus untuk pengelompokan pendaftaran dan filter pencarian.
                     </p>
                 </div>
 
@@ -111,9 +65,9 @@
             @if(count($categories) > 0)
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                 @foreach($categories as $cat)
-                <div class="bg-white rounded-3xl border border-slate-200/90 shadow-2xs p-6 flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 space-y-4 group">
+                <div class="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 space-y-4 group">
                     <div class="space-y-3">
-                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl shadow-xs transition-transform group-hover:scale-110" style="background-color: {{ $cat->color ?? '#4F46E5' }}15; color: {{ $cat->color ?? '#4F46E5' }};">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl shadow-sm transition-transform group-hover:scale-110" style="background-color: {{ $cat->color ?? '#4F46E5' }}15; color: {{ $cat->color ?? '#4F46E5' }};">
                             <i class="fas {{ $cat->icon ?? 'fa-tag' }}"></i>
                         </div>
 
@@ -134,13 +88,9 @@
                             <a href="{{ route('admin.categories') }}?edit={{ $cat->id }}" class="p-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-600 transition" title="Edit Kategori">
                                 <i class="fas fa-edit text-xs"></i>
                             </a>
-                            <form method="POST" action="{{ route('admin.category.delete', $cat->id) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori {{ $cat->nama }}?')" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="p-2 rounded-xl bg-slate-100 text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition" title="Hapus Kategori">
-                                    <i class="fas fa-trash-alt text-xs"></i>
-                                </button>
-                            </form>
+                            <button type="button" onclick="openDeleteModal('{{ route('admin.category.delete', $cat->id) }}', '{{ addslashes($cat->nama) }}')" class="p-2 rounded-xl bg-slate-100 text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition" title="Hapus Kategori">
+                                <i class="fas fa-trash-alt text-xs"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -170,7 +120,7 @@
                 <i class="fas fa-tag text-indigo-600"></i>
                 <span>Tambah Kategori Baru</span>
             </h3>
-            <button onclick="closeCreateCatModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-sm hover:bg-slate-200 transition">
+            <button type="button" onclick="closeCreateCatModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-sm hover:bg-slate-200 transition">
                 <i class="fas fa-times"></i>
             </button>
         </div>

@@ -20,16 +20,15 @@ class RegisterController extends Controller
             'nama' => 'required|string|max:100',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6|confirmed',
-            'role' => 'required|in:mahasiswa,penyelenggara',
             'no_telp' => 'nullable|string|max:20',
         ]);
 
-        $user = User::create([
+        User::create([
             'nama' => $validated['nama'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => $validated['role'],
-            'no_telp' => $validated['no_telp'],
+            'role' => 'mahasiswa',
+            'no_telp' => $validated['no_telp'] ?? null,
         ]);
 
         return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login.');

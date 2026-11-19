@@ -6,6 +6,8 @@ use App\Models\Announcement;
 use App\Models\Category;
 use App\Models\Event;
 use App\Models\Participant;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,6 +19,7 @@ class HomeController extends Controller
         $kategori = $request->input('kategori');
         $rentang = $request->input('rentang');
         $lokasi_filter = $request->input('lokasi_filter');
+        $sort = $request->input('sort', 'terbaru');
         $is_logged_in = Auth::check();
         $user = Auth::user();
 
@@ -41,7 +44,7 @@ class HomeController extends Controller
 
         if (!empty($rentang)) {
             if ($rentang === 'minggu_ini') {
-                $query->whereBetween('tanggal', [\Carbon\Carbon::now()->startOfWeek()->toDateString(), \Carbon\Carbon::now()->endOfWeek()->toDateString()]);
+                $query->whereBetween('tanggal', [Carbon::now()->startOfWeek()->toDateString(), Carbon::now()->endOfWeek()->toDateString()]);
             } elseif ($rentang === 'bulan_ini') {
                 $query->whereMonth('tanggal', date('m'))->whereYear('tanggal', date('Y'));
             } elseif ($rentang === 'semester') {
@@ -49,26 +52,35 @@ class HomeController extends Controller
             }
         }
 
-        $events = $query->orderBy('tanggal', 'DESC')->get();
+        if ($sort === 'terdekat') {
+            $query->orderBy('tanggal', 'ASC');
+        } elseif ($sort === 'kuota') {
+            $query->orderByRaw('COALESCE(kuota, 0) DESC');
+        } else {
+            $query->orderBy('tanggal', 'DESC');
+        }
+
+        $events = $query->paginate(6)->withQueryString();
 
         $featured_events = Event::with('creator')
             ->where('tanggal', '>=', date('Y-m-d'))
             ->orderBy('tanggal', 'ASC')
-            ->limit(6)
+            ->limit(4)
             ->get();
 
         if ($featured_events->isEmpty()) {
             $featured_events = Event::with('creator')
                 ->orderBy('tanggal', 'DESC')
-                ->limit(6)
+                ->limit(4)
                 ->get();
         }
 
         $categories = Category::all();
         $announcements = Announcement::orderBy('created_at', 'DESC')->limit(3)->get();
         $total_events = Event::count();
-        $total_users = \App\Models\User::count();
-        $total_participants = Participant::count();
+        $total_users = User::count();
+        $total_organizers = User::where('role', 'penyelenggara')->count();
+        $total_participants = Participant::whereIn('status', ['registered', 'confirmed', 'attended'])->count();
 
         return view('mahasiswa.index', compact(
             'events',
@@ -77,21 +89,22 @@ class HomeController extends Controller
             'announcements',
             'total_events',
             'total_users',
+            'total_organizers',
             'total_participants',
             'is_logged_in',
             'user',
             'search',
             'kategori',
             'rentang',
-            'lokasi_filter'
+            'lokasi_filter',
+            'sort'
         ));
     }
 
     public function myEvents()
     {
         $user = Auth::user();
-        
-        // Jika user bukan mahasiswa, redirect ke dashboard sesuai role
+
         if ($user->role === 'admin') {
             return redirect()->route('admin.dashboard');
         } elseif ($user->role === 'penyelenggara') {
@@ -104,11 +117,11 @@ class HomeController extends Controller
             ->get();
 
         $status_counts = [
-            'all' => Participant::where('user_id', $user->id)->count(),
-            'registered' => Participant::where('user_id', $user->id)->where('status', 'registered')->count(),
-            'confirmed' => Participant::where('user_id', $user->id)->where('status', 'confirmed')->count(),
-            'attended' => Participant::where('user_id', $user->id)->where('status', 'attended')->count(),
-            'canceled' => Participant::where('user_id', $user->id)->where('status', 'canceled')->count(),
+            'all' => $my_events->count(),
+            'registered' => $my_events->where('status', 'registered')->count(),
+            'confirmed' => $my_events->where('status', 'confirmed')->count(),
+            'attended' => $my_events->where('status', 'attended')->count(),
+            'canceled' => $my_events->where('status', 'canceled')->count(),
         ];
 
         return view('mahasiswa.my-events', compact('my_events', 'status_counts'));
@@ -116,6 +129,10 @@ class HomeController extends Controller
 
     public function cancelEvent(Request $request, $id)
     {
+        if (Auth::user()->role !== 'mahasiswa') {
+            abort(403, 'Akses ditolak.');
+        }
+
         $participant = Participant::where('event_id', $id)
             ->where('user_id', Auth::id())
             ->first();
@@ -126,5 +143,27 @@ class HomeController extends Controller
         }
 
         return redirect()->route('my.events')->with('error', 'Pendaftaran tidak dapat dibatalkan atau sudah diproses.');
+    }
+
+    public function certificate($id)
+    {
+        if (Auth::user()->role !== 'mahasiswa') {
+            abort(403, 'Sertifikat hanya tersedia untuk akun mahasiswa.');
+        }
+
+        $participant = Participant::with(['event.creator', 'user'])
+            ->where('event_id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        if ($participant->status !== 'attended') {
+            abort(403, 'Sertifikat hanya dapat dicetak setelah kehadiran Anda terverifikasi.');
+        }
+
+        $event = $participant->event;
+        $user = $participant->user;
+        $cert_number = sprintf('CERT/CV/%d/%d/%s', $event->id, $participant->id, Carbon::parse($event->tanggal)->format('Y'));
+
+        return view('mahasiswa.certificate', compact('participant', 'event', 'user', 'cert_number'));
     }
 }

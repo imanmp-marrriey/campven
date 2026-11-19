@@ -5,7 +5,7 @@
 @section('content')
 <div class="min-h-screen bg-slate-50/70 py-10 px-4 sm:px-6 lg:px-8">
     <div class="max-w-3xl mx-auto space-y-6">
-        
+
         <!-- Header & Breadcrumbs -->
         <div class="flex items-center justify-between">
             <div>
@@ -17,7 +17,7 @@
                 <h1 class="text-2xl font-black text-slate-900 tracking-tight">Perbarui Acara (Administrator)</h1>
             </div>
 
-            <a href="{{ route('admin.dashboard') }}" class="px-4 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs transition flex items-center gap-2 shadow-2xs">
+            <a href="{{ route('admin.dashboard') }}" class="px-4 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs transition flex items-center gap-2 shadow-sm">
                 <i class="fas fa-arrow-left text-xs"></i>
                 <span>Kembali</span>
             </a>
@@ -87,23 +87,34 @@
                     <input type="text" name="lokasi" value="{{ old('lokasi', $event->lokasi) }}" required class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-indigo-600 transition">
                 </div>
 
-                <!-- Kuota & Pembuat Acara (Created By) -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <!-- Kuota, Harga & Poin SKPI -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
                     <div class="space-y-1.5">
-                        <label class="block font-bold text-slate-700">Batas Kuota Peserta</label>
-                        <input type="number" name="kuota" value="{{ old('kuota', $event->kuota) }}" placeholder="Kosongkan jika unlimited" min="1" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-indigo-600 transition">
+                        <label class="block font-bold text-slate-700">Batas Kuota</label>
+                        <input type="number" name="kuota" value="{{ old('kuota', $event->kuota) }}" placeholder="Unlimited" min="1" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-indigo-600 transition">
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="block font-bold text-slate-700">Dibuat Oleh (Penyelenggara)</label>
-                        <select name="created_by" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-indigo-600 transition">
-                            @foreach($users as $u)
-                                <option value="{{ $u->id }}" {{ old('created_by', $event->created_by) == $u->id ? 'selected' : '' }}>
-                                    {{ $u->nama }} ({{ $u->role }})
-                                </option>
-                            @endforeach
-                        </select>
+                        <label class="block font-bold text-slate-700">Harga Tiket (Rp)</label>
+                        <input type="number" name="harga" value="{{ old('harga', $event->harga ?? 0) }}" min="0" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-indigo-600 transition">
                     </div>
+
+                    <div class="space-y-1.5">
+                        <label class="block font-bold text-slate-700">Poin SKPI</label>
+                        <input type="number" name="skpi_poin" value="{{ old('skpi_poin', $event->skpi_poin ?? 10) }}" min="0" max="100" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-indigo-600 transition">
+                    </div>
+                </div>
+
+                <!-- Penyelenggara Acara -->
+                <div class="space-y-1.5">
+                    <label class="block font-bold text-slate-700">Penyelenggara Acara</label>
+                    <select name="created_by" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-indigo-600 transition">
+                        @foreach($users as $u)
+                            <option value="{{ $u->id }}" {{ old('created_by', $event->created_by) == $u->id ? 'selected' : '' }}>
+                                {{ $u->nama }} ({{ ucfirst($u->role) }})
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
 
                 <!-- Deskripsi Acara -->
@@ -117,7 +128,7 @@
                     @if($event->poster && Storage::disk('public')->exists($event->poster))
                     <div class="space-y-2">
                         <label class="block font-bold text-slate-700">Poster Saat Ini</label>
-                        <div class="w-48 h-28 rounded-2xl overflow-hidden border border-slate-200 shadow-2xs">
+                        <div class="w-48 h-28 rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
                             <img src="{{ Storage::url($event->poster) }}" alt="Poster" class="w-full h-full object-cover">
                         </div>
                     </div>
